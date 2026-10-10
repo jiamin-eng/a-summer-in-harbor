@@ -410,3 +410,8 @@ prepareAfterRainDialogue是默认关闭的localFixture-only dry adapter。调用
 ### 教堂本地扩展（未发布）
 `src/story/chapel.ts`只消费权威flags/分钟/known；实体动作走原applyAction/空间绑定/唯一authority的CAS与回执。新的有限玩法错误加入active-business-failure，unsupported保存仍保留请求待恢复。旧档不自动补参与，新增事实缺省为空。世界声明由chapel-layout加入，`_qa/export-chapel-layout.ts`从实际World导出，`scripts/assemble-chapel.py`只构建新场景四层和带实际碰撞的TMX，不重烘焙其他地图。Pillow沿已安装x86_64 Python运行，无安装。
 复用动物7c89d8c中的renderer module-instance/disposal修复为独立共享依赖，未引入动物AI host；owner组合时保留一次，不整份覆盖其他Main/View变化。QA环回5590→5591使用合成内存authority，外网被浏览器harness阻断、无生产身份/存档。真实生产/PostgreSQL/平台证据须独立验接，不能继承本地通过。
+
+
+## 2026-10-10 天气四五期 owner 整合候选
+
+客户端weather/storm.ts以有效原pin和townMinutes导出rainProfileForSave，不新增保存字段；weather/scene-masks.ts仅投影美术排除区。现有后台、package/lock/public、业务规则保持391字节。完整合同见weather-owner-391/INTEGRATION.md；本轮尚未发布。
