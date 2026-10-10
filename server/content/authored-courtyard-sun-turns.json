@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "animals:courtyard-sun-turns",
+  "revision": 1,
+  "capability": "animal-notebook-v1",
+  "resident": "dani",
+  "title": ["同一片阳光，轮流的座位", "Taking turns in the sun"],
+  "brief": [
+    "“我总以为庭院里那片阳光只属于一只猫。帮我分别记下庭院猫2上午晒太阳、庭院猫3下午晒太阳，再回来聊聊。不用招呼它们，也不用喂食；没有期限。”",
+    "“I thought that sunny corner in the courtyard belonged to one cat. Record courtyard cat 2 sunning in the morning and courtyard cat 3 sunning in the afternoon, then tell me. No calling, feeding, or deadline.”"
+  ],
+  "page": [
+    "我把两次观察讲给Dani Costa听：庭院猫2上午晒太阳，庭院猫3下午晒太阳。Dani笑了：“原来不是一只猫守着座位，是两只猫各有自己的时候。”我们给这个小角落留了名字：轮流的阳光。",
+    "I told Dani Costa about two visits: courtyard cat 2 sunning in the morning, courtyard cat 3 in the afternoon. Dani smiled. “One cat isn't guarding the seat. Each has its own time.” We named that little corner: taking turns in the sun."
+  ],
+  "requirements": [
+    {"animal": "harbor-cat-2", "behavior": "sun-rest"},
+    {"animal": "harbor-cat-3", "behavior": "sun-rest"}
+  ]
+}
