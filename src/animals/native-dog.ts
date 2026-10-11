@@ -5,6 +5,7 @@ import {createAnimalRuntime} from './behavior';
 import {previewClear,type Geometry,type PreviewContext} from './display-space';
 import {bodyAt} from './spatial';
 import {prepareDogFamily} from './dog-admission';
+import {nativeDogRoutine} from './native-dog-observation';
 import type {AnimalArt} from './render-contract';
 import type {AnimalDef,AnimalState,Context,Slot} from './types';
 import type {Point} from '../engine/world';
@@ -27,7 +28,7 @@ export const nativeDogEntities=(scene:string)=>Object.values(nativeDogDef.schedu
 /** Live visual and interaction coordinates share one admitted foot. Read-only:
  * no dog relationship/feeding/commission command is introduced by this target. */
 export function nativeDogTargets(states:readonly AnimalState[],scene:string){
- return states.filter(s=>s.id===nativeDogId&&s.visible&&s.scene===scene).map(s=>({id:nativeDogId,animalId:nativeDogId,kind:'object' as const,label:['狗','Dog'] as [string,string],at:{...s.foot},approach:{x:s.foot.x-8,y:s.foot.y+50},actions:[]}));
+ return states.filter(s=>s.id===nativeDogId&&s.visible&&s.scene===scene).map(s=>({id:nativeDogId,animalId:nativeDogId,kind:'object' as const,label:['狗','Dog'] as [string,string],at:{...s.foot},approach:{x:s.foot.x-8,y:s.foot.y+50},actions:[],dogRoutine:nativeDogRoutine(s)}));
 }
 export const nativeDogObservationText=['这只狗待在照看它的人附近。给它留出一些空间，静静看看。','The dog stays near its caretaker. Leave it some room and take a quiet look.'] as [string,string];
 /** Native measured ground plus full visual protection, independent of the frozen
