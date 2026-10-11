@@ -1,3 +1,4 @@
+import {neighborTopicIds} from './neighbor-chapter';
 import {chapelTopicIds} from './chapel';
 import {growthTopicIds,growthObservationVerbs,relationshipProfiles} from './relationship-growth';
 import {nomadTopicIds} from './tech-nomads';
@@ -16,7 +17,7 @@ const key=(scene:string,entity:string,verb:string)=>scene+'/'+entity+'/'+verb;
 const rpgChapelActor=(e:Entity)=>rooms.chapel.entities.includes(e)&&['dani','samira'].includes(e.person??'');
 function verbs(e:Entity):string[]{
  if(e.kind==='portal')return ['travel'];
- if(e.person)return ['introduce','ask',...(e.person==='june'&&rooms.workshop.entities.includes(e)?['notes-generate']:[]),...(topics[e.person]??[]).map(t=>'talk:'+t.id),...[...(relationshipProfiles[e.person]?growthTopicIds:[]),...lifeTopicIds(e.person),...(rpgChapelActor(e)?chapelTopicIds:[]),...nextTopicIds(e.person),...nomadTopicIds(e.person)].map(id=>'talk:'+id),...(e.person==='idris'?['talk:class-invite']:[]),...(e.person==='dani'?newsTopicIds.map(id=>'talk:'+id):[]),...(e.person==='idris'?['sparring','footwork','endurance']:e.person==='ruth'?['fishing']:[]).map(id=>'challenge-start:'+id)];
+ if(e.person)return ['introduce','ask',...(e.person==='june'&&rooms.workshop.entities.includes(e)?['notes-generate']:[]),...(topics[e.person]??[]).map(t=>'talk:'+t.id),...[...(relationshipProfiles[e.person]?growthTopicIds:[]),...lifeTopicIds(e.person),...(rpgChapelActor(e)?chapelTopicIds:[]),...nextTopicIds(e.person),...nomadTopicIds(e.person),...neighborTopicIds(e.person)].map(id=>'talk:'+id),...(e.person==='idris'?['talk:class-invite']:[]),...(e.person==='dani'?newsTopicIds.map(id=>'talk:'+id):[]),...(e.person==='idris'?['sparring','footwork','endurance']:e.person==='ruth'?['fishing']:[]).map(id=>'challenge-start:'+id)];
  return [...growthObservationVerbs(e.id),...(e.actions??[]),...(e.id==='terrace'?['challenge-start:repair']:e.id==='old-map'?['challenge-start:map']:[])];
 }
 const entityDefs=Object.values(rooms).flatMap(r=>r.entities.map(e=>({

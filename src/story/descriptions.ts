@@ -1,3 +1,4 @@
+import {neighborDescription} from './neighbor-chapter';
 import {chapelDescription} from './chapel';
 import {relationshipGreeting} from './relationship-growth';
 import {newsMemory} from './town-news';
@@ -11,7 +12,8 @@ export function description(s:Save,e:Entity):Words{
  return reaction?[original[0]+' '+reaction[0],original[1]+' '+reaction[1]]:original;
 }
 function baseDescription(s:Save,e:Entity):Words{
- const chapel=chapelDescription(s,e.id);if(chapel)return chapel;
+ const neighbor=neighborDescription(s,e.id);if(neighbor)return neighbor;
+  const chapel=chapelDescription(s,e.id);if(chapel)return chapel;
  if(e.id==='visitor-note')return newsMemory(s)??['这里留着一小块贴游客留言的地方。','A little space is kept for visitors’ notes.'];
  if(plotIds.includes(e.id))return plotDescription(s,e.id);
  if(e.id==='crop-counter')return shopHours;
