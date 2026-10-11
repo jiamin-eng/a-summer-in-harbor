@@ -1,7 +1,10 @@
 import {isInAigramNow} from '../shared/runtime/bridge';import {GAME_UUID} from '../game-id';import {IdentityEpoch} from './epoch';
 export function liveShellAccount():string|null{
- if(!isInAigramNow())return null;
  const w=window as any;
+ // Native hosts may publish the live account before the web shell flag. An
+ // explicit false remains logout; neither launch queries nor guest IDs qualify.
+ const native=typeof w.webkit?.messageHandlers?.aigram?.postMessage==='function';
+ if(!isInAigramNow()&&!(native&&w.Aigram?.isInAigram===undefined))return null;
  // A top-level URL can make the public shell populate an ID without a host.
  // Require an actual existing transport context, not that query-only shim.
  if(w.parent===w&&typeof w.Aigram?.callAigramAPI!=='function'&&typeof w.webkit?.messageHandlers?.aigram?.postMessage!=='function')return null;

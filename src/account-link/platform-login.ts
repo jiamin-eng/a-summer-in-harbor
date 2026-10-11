@@ -1,3 +1,4 @@
+import {callAigramAPI} from '../shared/runtime/bridge';
 import {GAME_UUID} from '../game-id';
 import {liveShellAccount,identitySnapshot} from './transport';
 
@@ -10,13 +11,15 @@ export function signInToPlatform():Promise<string>{
  const known=currentAccount();if(known)return Promise.resolve(known);
  opening=(async()=>{
   const deadline=Date.now()+10000;
-  while(typeof (window as any).Aigram?.callAigramAPI!=='function'){
+  const native=()=>typeof (window as any).webkit?.messageHandlers?.aigram?.postMessage==='function';
+  while(typeof (window as any).Aigram?.callAigramAPI!=='function'&&!native()){
+   const id=currentAccount();if(id)return id;
    if(Date.now()>=deadline)throw Error('PLATFORM_LOGIN_UNAVAILABLE');
    await new Promise<void>(resolve=>setTimeout(resolve,100));
   }
   return new Promise<string>((resolve,reject)=>{
    let settled=false,sawDialog=false,closedAt:number|undefined;
-   const finish=(id:string|null,error?:unknown)=>{if(settled)return;settled=true;clearInterval(poll);if(id){identitySnapshot().assert();resolve(id)}else reject(error??Error('PLATFORM_ID_UNAVAILABLE'))};
+   const finish=(id:string|null,error?:unknown)=>{if(settled)return;settled=true;clearInterval(poll);clearTimeout(timeout);if(id){identitySnapshot().assert();resolve(id)}else reject(error??Error('PLATFORM_ID_UNAVAILABLE'))};
    // The protected GET opens the original login window. Its statistics reply
    // may arrive after the shell has authenticated and published the live ID;
    // that unrelated reply must not keep the game's entry action locked.
@@ -25,8 +28,11 @@ export function signInToPlatform():Promise<string>{
     if(dialog){sawDialog=true;closedAt=undefined}else if(sawDialog){closedAt??=Date.now();if(Date.now()-closedAt>=2000)finish(null,Error('PLATFORM_ID_UNAVAILABLE'))}
    };
    const poll=setInterval(check,100);
+   // Web sign-in can wait for human OTP entry; bound only the native round-trip.
+   const timeout=native()?setTimeout(()=>finish(currentAccount(),Error('PLATFORM_LOGIN_UNAVAILABLE')),10000):undefined;
    try{
-    const reply=(window as any).Aigram.callAigramAPI(`/note/aigram/ai/game/get/play/stats?session_id=${encodeURIComponent(GAME_UUID)}&event=play`,'GET',null);
+    const request=native()?callAigramAPI:(window as any).Aigram.callAigramAPI.bind((window as any).Aigram);
+    const reply=request(`/note/aigram/ai/game/get/play/stats?session_id=${encodeURIComponent(GAME_UUID)}&event=play`,'GET',null);
     Promise.resolve(reply).then(result=>{if(settled)return;const id=currentAccount();if(id){finish(id);return}finish(null,Error(result&&(result.retcode===0||result.errcode===0)?'PLATFORM_ID_UNAVAILABLE':'PLATFORM_LOGIN_REQUIRED'))},error=>{if(!settled)finish(currentAccount(),error)});
     check();
    }catch(error){finish(currentAccount(),error)}
