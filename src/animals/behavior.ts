@@ -1,6 +1,7 @@
 import {advanceRoute} from '../engine/distance-motion';
 import type {Point} from '../engine/world';
 import {profiles} from './config';
+import {familiarCatGreeting} from './familiarity';
 import {animalPath,finitePoint,freePoint,pointClear,terrainClear,candidates} from './spatial';
 import type {AnimalDef,AnimalState,Context,Facing,Period,Pose,Slot,SpeciesProfile} from './types';
 export function periodAt(minutes:number):Period{if(!Number.isSafeInteger(minutes)||minutes<0)throw Error('INVALID_TOWN_TIME');const m=minutes%1440;return m<360||m>=1260?'night':m<720?'morning':m<1020?'afternoon':'evening'}
@@ -18,8 +19,9 @@ export function createAnimalRuntime(defs:readonly AnimalDef[],options:{profiles?
   return [preferred,...candidates(slot)].filter(p=>Math.hypot(p.x-preferred.x,p.y-preferred.y)<=96).sort((a,b)=>Math.hypot(a.x-preferred.x,a.y-preferred.y)-Math.hypot(b.x-preferred.x,b.y-preferred.y)).find(p=>clear(p,slot,profile,ctx,others)&&Math.hypot(p.x-player.x,p.y-player.y)>=minimum);
  };
  if(new Set(defs.map(a=>a.id)).size!==defs.length)throw Error('DUPLICATE_ANIMAL_ID');
- const states=new Map(defs.map(a=>[a.id,initial(a)]));let signature='',lastMinutes=-1;
+ const states=new Map(defs.map(a=>[a.id,initial(a)])),greeted=new Set<string>();let signature='',lastMinutes=-1,visitScene='';
  const reconcile=(ctx:Context)=>{
+  if(visitScene!==ctx.scene){visitScene=ctx.scene;greeted.clear()}
   periodAt(ctx.townMinutes);const nextSignature=ctx.scene+':'+ctx.townMinutes+':'+JSON.stringify(ctx.animalSlots??{});
   // First lazy activation may replace an ordinary old58 slot. Preserve its
   // actual visible foot too, rather than resetting a walking cat to spawn.
@@ -57,6 +59,16 @@ export function createAnimalRuntime(defs:readonly AnimalDef[],options:{profiles?
    if(!dt){if(def.species==='dog'){s.phase='idle';s.pose='stand';s.route=[]}continue}
    s.cooldown=Math.max(0,s.cooldown-dt);s.attention=Math.max(0,s.attention-dt);s.wait=Math.max(0,s.wait-dt);
    const player={x:ctx.player.x+ctx.player.w/2,y:ctx.player.y+ctx.player.h/2},near=Math.hypot(player.x-s.foot.x,player.y-s.foot.y);
+   // Recognition uses saved familiarity, but never adds proof/save fields or
+   // interrupts sunning/sleep/shelter. One pause per approach; distance hysteresis
+   // prevents jitter from retriggering it. No movement, reward or player following.
+   if(def.species==='cat'){
+    if(near>familiarCatGreeting.rearmDistance)greeted.delete(def.id);
+    const familiarity=ctx.catFamiliarities?.[def.id]??0;
+    if(slot.activity==='wander'&&Number.isSafeInteger(familiarity)&&familiarity>=familiarCatGreeting.minimum&&familiarity<=3&&near<=familiarCatGreeting.distance&&!greeted.has(def.id)&&s.attention===0){
+     greeted.add(def.id);s.attention=familiarCatGreeting.seconds;s.route=[];
+    }
+   }
    if(s.attention>0){s.phase='attention';s.pose='stand';s.direction=face(s.foot,player,s.direction);s.route=[];continue}
    if(slot.shelter){
     const r=slot.shelter.homeRegion,b={x:s.foot.x-profile.collision.w/2,y:s.foot.y-profile.collision.h,w:profile.collision.w,h:profile.collision.h},home=b.x>=r.x&&b.y>=r.y&&b.x+b.w<=r.x+r.w&&b.y+b.h<=r.y+r.h;
@@ -106,5 +118,5 @@ export function createAnimalRuntime(defs:readonly AnimalDef[],options:{profiles?
   return snapshot();
  };
  const snapshot=()=>structuredClone([...states.values()]);
- return {tick,snapshot,reconcile,reset:()=>{signature='';lastMinutes=-1;for(const def of defs)states.set(def.id,initial(def))},react:(id:string,verb:'call'|'pet',ctx:Context)=>{reconcile(ctx);const s=states.get(id);if(!s?.visible||s.species!=='cat'||s.slot?.activity==='sleep')return false;s.attention=verb==='call'?2:1.2;s.phase='attention';s.pose='stand';s.direction=face(s.foot,{x:ctx.player.x+ctx.player.w/2,y:ctx.player.y+ctx.player.h/2},s.direction);s.route=[];return true},committedMinute:()=>lastMinutes};
+ return {tick,snapshot,reconcile,reset:()=>{signature='';lastMinutes=-1;visitScene='';greeted.clear();for(const def of defs)states.set(def.id,initial(def))},react:(id:string,verb:'call'|'pet',ctx:Context)=>{reconcile(ctx);const s=states.get(id);if(!s?.visible||s.species!=='cat'||s.slot?.activity==='sleep')return false;greeted.add(id);s.attention=verb==='call'?2:1.2;s.phase='attention';s.pose='stand';s.direction=face(s.foot,{x:ctx.player.x+ctx.player.w/2,y:ctx.player.y+ctx.player.h/2},s.direction);s.route=[];return true},committedMinute:()=>lastMinutes};
 }

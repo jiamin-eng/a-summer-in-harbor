@@ -9,5 +9,5 @@ export type AnimalDef={id:string;species:Species;visualVersion:string;ownerId?:s
 export type SpeciesProfile={collision:{w:number;h:number};speed:number;stride:number;retreatDistance:number;landingDistance:number;flightSpeed:number;flightHeight:number;wingHz:number;cooldown:number;followStop:number;followMax:number};
 export type AnimalMemory={familiarity:number;lastPetMinute?:number};
 export type AnimalSave={schema:1;individuals:Record<string,AnimalMemory>};
-export type Context={world:World;scene:string;townMinutes:number;player:Rect;people:Record<string,{scene:string;foot:Point;body:Rect}>;forbidden:Record<string,Rect[]>;paused:boolean;animalSlots?:Record<string,Slot>};
+export type Context={world:World;scene:string;townMinutes:number;player:Rect;people:Record<string,{scene:string;foot:Point;body:Rect}>;forbidden:Record<string,Rect[]>;paused:boolean;animalSlots?:Record<string,Slot>;catFamiliarities?:Readonly<Record<string,number>>};
 export type AnimalState={id:string;species:Species;visualVersion:string;scene:string|null;slot:Slot|null;foot:Point;direction:Facing;pose:Pose;phase:Phase;visible:boolean;reason?:string;distance:number;elevation:number;attention:number;cooldown:number;route:Point[];flightDistance:number;flightTotal:number;wingTime:number;waypoint:number;wait:number};

@@ -8,6 +8,7 @@ import {harborContext} from './harbor-adapter';
 import {applyAnimalInteraction} from './memory';
 import type {Context} from './types';
 import {weatherAnimalSlots} from '../weather/animal-shelter';
+import {catFamiliarities} from './familiarity';
 
 /** Current admitted roster (22 configured; pending art is absent). Server conservatively reserves each legal
  * stroll corridor because transient NPC movement is not persisted. Renderer
@@ -22,8 +23,8 @@ export function animalPeople(save: Pick<Save,'townMinutes'|'flags'>, positions?:
  }
  return people;
 }
-export function gameAnimalContext(save: Pick<Save,'scene'|'townMinutes'|'flags'|'weatherV1'|'weatherEcologyV1'>, position:Point, options:{world?:World;positions?:ReadonlyMap<string,Point>;paused?:boolean;dynamic?:boolean;weatherShelter?:boolean}={}) {
- return {...harborContext(save, options.world ?? dynamicWorld(save.flags, !!options.dynamic), rooms, position, animalPeople(save,options.positions), !!options.paused),...(save.weatherEcologyV1&&options.weatherShelter!==false?{animalSlots:weatherAnimalSlots(save)}:{})};
+export function gameAnimalContext(save: Pick<Save,'scene'|'townMinutes'|'flags'|'weatherV1'|'weatherEcologyV1'|'animalsV1'>, position:Point, options:{world?:World;positions?:ReadonlyMap<string,Point>;paused?:boolean;dynamic?:boolean;weatherShelter?:boolean}={}):Context {
+ return {...harborContext(save, options.world ?? dynamicWorld(save.flags, !!options.dynamic), rooms, position, animalPeople(save,options.positions), !!options.paused),catFamiliarities:catFamiliarities(save.animalsV1),...(save.weatherEcologyV1&&options.weatherShelter!==false?{animalSlots:weatherAnimalSlots(save)}:{})};
 }
 export function gameAnimalInteraction(save:Save, action:Action, spatialWorld?:World) {
  const entity:Entity|undefined=rooms[save.scene]?.entities.find(e=>e.id===action.target);
