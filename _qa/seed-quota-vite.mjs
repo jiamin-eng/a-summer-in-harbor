@@ -1,0 +1,3 @@
+import {createServer} from 'vite';
+const badge='<script>addEventListener("DOMContentLoaded",()=>{const b=document.createElement("div");b.textContent="LOCAL SYNTHETIC QA";b.style.cssText="position:fixed;bottom:0;right:0;z-index:99999;background:#171b22;color:white;font:11px sans-serif;padding:3px;pointer-events:none";document.body.append(b)})</script>';
+const server=await createServer({cacheDir:'.data/seed-quota-vite-cache',plugins:[{name:'seed-qa-label',transformIndexHtml:html=>html.replace('</body>',badge+'</body>')}],server:{host:'127.0.0.1',port:5680,strictPort:true,proxy:{'^/[0-9a-f-]{36}/api/':{target:'http://127.0.0.1:5681',rewrite:p=>p.replace(/^\/[0-9a-f-]{36}/,'')}}}});await server.listen();server.printUrls();

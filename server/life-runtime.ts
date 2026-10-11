@@ -12,14 +12,14 @@ type Base=ReturnType<typeof createRuntime>;
 export type LifeHost={admit:(save:Readonly<LifeSave>,action:Readonly<Action>,command:Readonly<Command>)=>Admission|Promise<Admission>};
 const fields:Record<Command['verb'],string[]>={
  'permit-land':['verb','region'],cultivate:['verb','region','at'],
- 'buy-seed':['verb','ref'],plant:['verb','ref','plot'],water:['verb','plot'],harvest:['verb','plot'],sell:['verb','ref'],'save-seed':['verb','ref'],
+ 'buy-seed':['verb','ref'],plant:['verb','ref','plot'],water:['verb','plot'],harvest:['verb','plot'],sell:['verb','ref'],'save-seed':['verb','ref','harvestBatch'],
  'accept-order':['verb','ref'],'deliver-order':['verb'],'close-order':['verb'],'share-dani':['verb'],'observe-animal':['verb','animal','behavior'],'display-gift':['verb','slot','gift'],'news-memento':['verb','edition'],
 };
 export function parseLifeCommand(a:Action):Command{
  const p=a.payload as any,c=p?.command;
  if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).join(',')!=='command'||!c||typeof c!=='object'||Array.isArray(c)||!Object.hasOwn(fields,c.verb))throw Error('INVALID_LIFE_COMMAND');
- const allowed=fields[c.verb as Command['verb']];if(a.action!=='life:'+c.verb||Object.keys(c).some(k=>!allowed.includes(k))||allowed.some(k=>k!=='gift'&&c[k]===undefined))throw Error('INVALID_LIFE_COMMAND');
- for(const k of ['plot','animal','behavior','slot','gift','edition','region'])if(c[k]!==undefined&&(typeof c[k]!=='string'||c[k].length>80||!c[k]))throw Error('INVALID_LIFE_COMMAND');
+ const allowed=fields[c.verb as Command['verb']];if(a.action!=='life:'+c.verb||Object.keys(c).some(k=>!allowed.includes(k))||allowed.some(k=>!['gift','harvestBatch'].includes(k)&&c[k]===undefined))throw Error('INVALID_LIFE_COMMAND');
+ for(const k of ['plot','animal','behavior','slot','gift','edition','region','harvestBatch'])if(c[k]!==undefined&&(typeof c[k]!=='string'||c[k].length>80||!c[k]))throw Error('INVALID_LIFE_COMMAND');
  if(c.ref!==undefined&&(!c.ref||typeof c.ref!=='object'||Array.isArray(c.ref)||Object.keys(c.ref).sort().join(',')!=='capability,hash,id,revision'))throw Error('INVALID_LIFE_COMMAND');
  if(c.verb==='observe-animal'&&!['sun-rest','sleep'].includes(c.behavior))throw Error('INVALID_LIFE_COMMAND');
  if(c.at!==undefined&&!landPoint(c.at))throw Error('INVALID_LIFE_COMMAND');

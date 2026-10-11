@@ -4,7 +4,8 @@ import {residentHere} from '../world/residents';
 import {acceptedAnimals} from '../animals/art';
 import {slotAt} from '../animals/behavior';
 import {ContentRegistry} from './registry';
-import {addLot,assertLifeReadable,consumeLot,displaySlots,giftItems,pinLegacy,sameRef} from './save';
+import {addLot,assertLifeReadable,consumeForSeed,consumeLot,displaySlots,giftItems,pinLegacy,sameRef} from './save';
+import {pinSeedPlant,recordSeedHarvest} from './seed-quota';
 import type {Admission,ContentRef,Discovery,Intent,LifeEvent,LifePlot,LifeResult,LifeSave} from './types';
 
 function requireRule(condition:unknown,code:string):asserts condition{if(!condition)throw Error(code)}
@@ -39,19 +40,19 @@ export function applyLife(previous:LifeSave,intent:Intent,r:ContentRegistry,a:Ad
    requireRule(a.target==='crop-counter','SHOP_ADMISSION_REQUIRED');requireRule(shopOpen(s),'SHOP_CLOSED');startAllowed(r,c.ref);const d=r.get(c.ref);requireRule(s.cash>=d.seedCost,'CASH_LOW');s.cash-=d.seedCost;addLot(s,r,c.ref,'seed',1,intent.actionId);text=['买到一包种子。','You bought a packet of seeds.'];break;
   }
   case 'plant':{
-   requireRule(a.plot===c.plot&&a.cultivated===true&&/^life-bed-[12]$/.test(c.plot),'PLOT_ADMISSION_REQUIRED');requireRule(!life.plots[c.plot],'PLOT_OCCUPIED');startAllowed(r,c.ref);requireRule(!r.isLegacy(c.ref),'USE_AUTHORED_PLOT');requireRule(s.energy>=2,'ENERGY_LOW');consumeLot(s,r,c.ref,'seed',1);const now=minute(s);life.plots[c.plot]={ref:{...c.ref},grown:0,updatedAt:now,wetUntil:now};labor(s);text=['种子已播下。浇水后才开始生长。','The seed is planted. Water it to begin growth.'];break;
+   requireRule(a.plot===c.plot&&a.cultivated===true&&/^life-bed-[12]$/.test(c.plot),'PLOT_ADMISSION_REQUIRED');requireRule(!life.plots[c.plot],'PLOT_OCCUPIED');startAllowed(r,c.ref);requireRule(!r.isLegacy(c.ref),'USE_AUTHORED_PLOT');requireRule(s.energy>=2,'ENERGY_LOW');consumeLot(s,r,c.ref,'seed',1);const now=minute(s);life.plots[c.plot]={ref:{...c.ref},grown:0,updatedAt:now,wetUntil:now};pinSeedPlant(s,c.ref,c.plot,intent.actionId);labor(s);text=['种子已播下。浇水后才开始生长；这株收成最多留一包种。','The seed is planted. Water it to begin growth; this plant can provide one saved seed packet.'];break;
   }
   case 'water':{
    const p=plot(s,a,c.plot),status=lifePlotStatus(s,c.plot,r)!;requireRule(status.needsWater,'WATER_UNAVAILABLE');requireRule(s.energy>=2,'ENERGY_LOW');p.grown=status.grown;p.updatedAt=minute(s);p.wetUntil=minute(s)+r.get(p.ref).wetMinutes;labor(s);text=['土已浇湿，可以先去做别的事。','The soil is watered. You can leave it to grow.'];break;
   }
   case 'harvest':{
-   const p=plot(s,a,c.plot);requireRule(lifePlotStatus(s,c.plot,r)!.ready,'CROP_NOT_READY');requireRule(s.energy>=2,'ENERGY_LOW');addLot(s,r,p.ref,'produce',r.get(p.ref).yield,intent.actionId);delete life.plots[c.plot];labor(s);text=['收成已放进行囊，可以在杂货柜台卖出或留种。','The harvest is in your bag: sell it at the grocer or save a seed.'];break;
+   const p=plot(s,a,c.plot);requireRule(lifePlotStatus(s,c.plot,r)!.ready,'CROP_NOT_READY');requireRule(s.energy>=2,'ENERGY_LOW');addLot(s,r,p.ref,'produce',r.get(p.ref).yield,intent.actionId);recordSeedHarvest(s,p.ref,c.plot,intent.actionId,r.get(p.ref).yield);delete life.plots[c.plot];labor(s);text=['收成已放进行囊，可以在杂货柜台卖出或留种。','The harvest is in your bag: sell it at the grocer or save a seed.'];break;
   }
   case 'sell':{
    requireRule(a.target==='crop-counter','SHOP_ADMISSION_REQUIRED');requireRule(shopOpen(s),'SHOP_CLOSED');const d=r.get(c.ref);requireRule(s.cash+d.salePrice<=999,'PURSE_FULL');consumeLot(s,r,c.ref,'produce',1);s.cash+=d.salePrice;text=['一份收成已卖出。','You sold one portion.'];break;
   }
   case 'save-seed':{
-   r.get(c.ref);consumeLot(s,r,c.ref,'produce',1);addLot(s,r,c.ref,'seed',1,intent.actionId);if(discover(s,'seed:'+c.ref.id,intent.actionId,{ref:{...c.ref}}))facts.push('seed:'+c.ref.id);text=r.canStart(c.ref)?['留下一包同批次种子，可以再种；发现记录不会随种子消耗消失。','You saved a seed from this batch to plant again. Its discovery record survives use.']:['同批次种子与发现已保留；此批次目前停止新种植。','Your seed and discovery are kept. New planting is currently closed for this batch.'];break;
+   r.get(c.ref);const limited=consumeForSeed(s,r,c.ref,c.harvestBatch);addLot(s,r,c.ref,'seed',1,intent.actionId);if(discover(s,'seed:'+c.ref.id,intent.actionId,{ref:{...c.ref}}))facts.push('seed:'+c.ref.id);text=r.canStart(c.ref)?(limited?['已用1份收成留下一包种；这株余下收成可出售或交货，不能再次留种。','One portion became a seed packet. This plant’s remaining harvest can be sold or delivered, but cannot provide another seed.']:['留下一包旧规则种子，可以再种；发现记录不会随种子消耗消失。','You saved an old-rule seed packet to plant again. Its discovery record survives use.']):['同批次种子与发现已保留；此批次目前停止新种植。','Your seed and discovery are kept. New planting is currently closed for this batch.'];break;
   }
   case 'accept-order':{
    resident(s,a,'theo');requireRule(a.premiseRead===true,'ORDER_PREMISE_UNREAD');requireRule(shopOpen(s),'SHOP_CLOSED');requireRule(!life.order,'ORDER_ACTIVE');requireRule(minute(s)>=life.cooldownUntil,'ORDER_COOLDOWN');startAllowed(r,c.ref);const d=r.get(c.ref);requireRule(c.ref.id==='crop:snap-pea'&&10<=2*d.salePrice+2,'ORDER_CONTENT_UNSUPPORTED');

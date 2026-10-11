@@ -361,3 +361,17 @@ UI沿既有海湾像素风和中英双语，不改菜单/HUD。读便条保留�
 ## 2026-10-10 天气四五期 owner 整合候选
 
 天气四五期增加确定性雨窗视觉轮换小雨/暴雨/雷阵雨；精简与关闭闪光可选。没有新增收益、惩罚、存档迁移；国际海边小镇、中英语言不变。
+
+
+## 2026-10-11 local candidate: plant-instance seed quota and Dani note
+
+Audience and location remain the existing international coastal town; paired English/Chinese UI. Authorized Oct7 plant decision and Oct10 continuation relay; no publication in this task.
+
+- Plant → water → harvest → choose seed/sale/delivery. New planting pins `one-seed-per-plant-v1`, actual planting action, exact crop ref and game minute. Harvest pins the actual harvest action and remaining portions. One portion buys one saved seed packet, at most once per plant. Planting that packet starts a fresh instance, preserving long-term self-supply.
+- Old seeds, merged old goods, and standing old plants remain unchanged. Reads neither migrate nor pin them. Old and new goods can share physical inventory while their seed eligibility stays distinct. UI displays the real source batch and sends its ID; the server owns every decrement.
+- Sales/delivery consume old goods first, then already-seeded harvests, then eligible harvests. A stale explicit batch never falls back to another one. Exhausted records retire only when no physical portion remains; replay is governed by the existing authority receipt/CAS transaction.
+- Definition hashes, time, growth, yields, prices, orders, gifts, weather, animals, chapel, account and movement rules remain the same. No offline growth/death, new plot, regrowth or paid model.
+- At most 9999 unconsumed harvest records are readable (matching the existing new-crop inventory ceiling); a full provenance record set preserves the standing plant and goods and reports a recoverable technical capacity rejection. This is not a new visible bag-slot mechanic.
+- Dani describes the checked financial note and $3 reserve only for the pinned finance edition. Old hours stories retain their hours note. Dates/sources never advance because of this copy fix.
+
+Focused acceptance: old raw/pinned reads unchanged; old-standing/new-planted crops; exact mixed batch accounting across sale, both orders and seed; reuse one saved packet in another lifecycle; malformed provenance; SQLite close/reopen, CAS, original-ID replay and owner isolation; real current Bag list/detail in 320×568/390×844 English/Chinese. Mechanical paths and visual readability can pass locally; fresh-player comprehension and real signed platform/device QA remain unverified.
