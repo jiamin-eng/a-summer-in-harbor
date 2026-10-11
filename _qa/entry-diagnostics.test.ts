@@ -1,0 +1,9 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {readEntryDiagnostics} from '../src/account-link/entry-diagnostics';
+test('phone diagnostic serializes only bounded enums/booleans/version; no account/token/url/storage/request access',()=>{
+ const privateId='710987654321',privateToken='synthetic-never-a-credential';let calls=0;
+ const w:any={location:{search:'?telegram_id='+privateId+'&token='+privateToken,hostname:'game.aiwaves.tech'},Aigram:{telegramId:privateId,isInAigram:true,isGuestWeb:true,__alteruGuestTransportPatched:true,callAigramAPI:()=>{calls++}},__ALTERU_GUEST__:{version:'0.1.0+b0f8c0a'},webkit:{messageHandlers:{aigram:{postMessage:()=>{calls++}}}}};
+ Object.defineProperty(w,'localStorage',{get:()=>{throw Error('storage must not be read')}});
+ const d=readEntryDiagnostics(w),output=JSON.stringify(d);assert.equal(d.liveIdentity,'numeric');assert.equal(d.launchIdentity,'numeric');assert.equal(d.guestTransport,true);assert.equal(d.nativeBridge,true);assert.equal(d.extensionVersion,'0.1.0+b0f8c0a');assert.equal(calls,0);assert.ok(!output.includes(privateId));assert.ok(!output.includes(privateToken));assert.ok(!output.includes('telegram_id='));
+ w.__ALTERU_GUEST__.version=privateToken;w.Aigram.telegramId='';w.Aigram.isInAigram=false;const next=readEntryDiagnostics(w);assert.equal(next.extensionVersion,'absent-or-other');assert.equal(next.liveIdentity,'missing');assert.equal(next.shellFlag,'false');assert.equal(next.launchIdentity,'numeric');assert.ok(!JSON.stringify(next).includes(privateToken));
+});
+test('a foreign extension getter failure does not crash the entry UI or expose its error',()=>{const w:any={};Object.defineProperty(w,'Aigram',{get(){throw Error('synthetic-private-error')}});assert.deepEqual(readEntryDiagnostics(w),{snapshotStatus:'read-error',diagnostic:'entry-diag-v1-base16c0e9a'})});

@@ -1,3 +1,4 @@
+import {EntryDiagnostics} from './EntryDiagnostics';
 import type {JourneyChoice} from '../story/client';
 import {tx,type Locale,type Words} from '../world/data';
 export function AccountStart({account,directory,locale,busy,error,onLogin,onContinue,onNew,onRetry}:{account:boolean;directory?:JourneyChoice;locale:Locale;busy:boolean;error:Words|null;onLogin:()=>void;onContinue:()=>void;onNew:()=>void;onRetry:()=>void}){
@@ -17,5 +18,6 @@ export function AccountStart({account,directory,locale,busy,error,onLogin,onCont
  {!busy&&error&&<p className="harbor-error" role="alert">{tx(error,locale)}</p>}
  {full&&<p>{tx(['已保留100段旅程。继续游戏后，可在系统里切换旧档。','You have 100 saved journeys. Continue, then switch journeys in System.'],locale)}</p>}
  </div>
+ <EntryDiagnostics locale={locale}/>
  </main>;
 }

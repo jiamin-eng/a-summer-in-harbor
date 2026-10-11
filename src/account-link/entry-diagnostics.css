@@ -1,0 +1,6 @@
+.harbor-entry-diagnostics{width:min(100%,480px);margin:16px auto 0;text-align:left;font:16px/1.5 system-ui,sans-serif;color:#183f40;border-top:1px solid #cabb9f;overflow-wrap:anywhere}
+.harbor-entry-diagnostics summary{min-height:44px;padding:12px 0;cursor:pointer;touch-action:manipulation}
+.harbor-entry-diagnostics summary:focus-visible{outline:3px solid #d49541;outline-offset:3px}
+.harbor-entry-diagnostics p{font-size:16px;line-height:1.5}
+.harbor-entry-diagnostics dl{margin:12px 0}.harbor-entry-diagnostics dl>div{padding:8px 0;border-top:1px solid #cabb9f}
+.harbor-entry-diagnostics dt{font-weight:600}.harbor-entry-diagnostics dd{margin:0;user-select:text;-webkit-user-select:text}
