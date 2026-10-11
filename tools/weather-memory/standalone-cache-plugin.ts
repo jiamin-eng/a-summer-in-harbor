@@ -1,0 +1,3 @@
+/** MockContext owns a cache per room. Resolve every transfer through the
+ * original directory instead of growing a chain of per-room caches. */
+export function standaloneCachePlugin(){return{name:'isolated-standalone-room-directory',enforce:'pre' as const,transform(code:string,id:string){if(!id.endsWith('/@rpgjs/client/dist/services/standalone.js'))return null;const init='this.room = new ServerIo("lobby-1", this.rooms);';const lookup='this.room.context.parties.main.get(this.roomId)';for(const anchor of [init,lookup])if(!code.includes(anchor))throw Error('STANDALONE_CACHE_TARGET_MISMATCH');code=code.replace(init,init+'\n this._harborRoomDirectory=this.room.context.parties.main;').replace(lookup,'this._harborRoomDirectory.get(this.roomId)');return{code,map:null}}}}
