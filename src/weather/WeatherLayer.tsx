@@ -33,8 +33,7 @@ export function WeatherLayer({kind,outdoor,paused,quality,decorations=[],storm=f
  const activeDecorations=[...(kind==='light-rain'?[...decorations.filter(d=>d.kind==='splash').slice(0,budgets[0]),...decorations.filter(d=>d.kind==='ripple').slice(0,budgets[1])]:[]),...(quality==='full'?decorations.filter(d=>d.kind==='leaves').slice(0,4):[])];
  return <div className="harbor-weather" data-weather={kind} data-rain-profile={profile} data-storm={storm&&kind==='light-rain'} data-storm-gust={stormFrame.gust} data-impact-count={activeDecorations.filter(d=>d.kind!=='leaves').length} data-weather-reduced={reduceMotion||systemReduced} data-weather-quality={quality} data-weather-paused={paused||hidden} aria-hidden="true">
   <div className="harbor-weather__shade"/>
-  {flashAllowed&&<div className="harbor-weather__lightning" data-active={stormFrame.flash!==0} onAnimationEnd={()=>setStormFrame(f=>({...f,flash:0}))}><b/></div>}
-  {quality==='full'&&kind!=='clear'&&<div className="harbor-weather__clouds"><b/><b/></div>}
+  {flashAllowed&&<div className="harbor-weather__lightning" data-active={stormFrame.flash!==0} onAnimationEnd={()=>setStormFrame(f=>({...f,flash:0}))}/>}
   {activeDecorations.map((d,i)=><span key={d.id} className={'harbor-weather__anchor harbor-weather__anchor--'+d.kind} data-world-x={d.at.x} data-world-y={d.at.y} style={{'--weather-delay':`${-((i*47)%97)/97*2.3}s`,'--weather-width':`${d.width}px`} as CSSProperties}>{d.kind==='leaves'?<><b/><b/><b/></>:<b/>}</span>)}
   {count>0&&<div className="harbor-weather__rain">{Array.from({length:count},(_,i)=><i key={i} style={{'--rain-x':`${(i*37+11)%100}%`,'--rain-delay':`${-(i%7)*.13}s`,'--rain-duration':`${.9+(i%3)*.12}s`} as CSSProperties}/>)}</div>}
  </div>
