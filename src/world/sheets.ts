@@ -11,7 +11,9 @@ export const sheets:any[]=Object.values(rooms).flatMap(r=>[
  ...['base','north','side','front'].flatMap(layer=>{const d=mapDimensions[(r.id+'-'+layer) as keyof typeof mapDimensions];return d.empty?[]:[graphic(`${layer}-${r.id}`,`./map/${r.id}-${layer}.png`,d.width,d.height,[0,layer==='front'?1:0],1)]}),
  ...r.props.filter(p=>!p.floorDecoration).flatMap(p=>[p.art,...(p.state?[p.state.art]:[])].map((art,index)=>{const d=dimensions[art as keyof typeof dimensions];return graphic(propId(r.id,p)+(index?'-active':''),`./art/${art}.png`,d.width,d.height,[.5,1],p.width/d.width)}))]);
 
-export const npcSheets=Object.keys(people).filter(techNomadAdmitted).map(id=>({...heroSheet,id:'npc-'+id,image:`./art/npc-${people[id].mapArt??people[id].art}.png`,textures:Object.fromEntries([['stand',1],['stride-0',0],['stride-1',1],['stride-2',2]].map(([name,col])=>[name,{animations:({direction}:{direction:Direction})=>[[{frameX:col,frameY:row(direction),time:0,anchor:[.5,122/128],scale:[56/108,56/108],x:0,y:0}]]}]))}));
+const npcRow=(id:string,d:Direction)=>id==='gabriel'?({down:0,up:1,left:2,right:3}[d]??0):row(d);
+const npcTexture=(id:string,col:number)=>({animations:({direction}:{direction:Direction})=>[[{frameX:col,frameY:npcRow(id,direction),time:0,anchor:[.5,122/128],scale:[56/108,56/108],x:0,y:0}]]});
+export const npcSheets=Object.keys(people).filter(techNomadAdmitted).map(id=>({...heroSheet,id:'npc-'+id,image:`./art/npc-${people[id].mapArt??people[id].art}.png`,textures:Object.fromEntries([['stand',1],['stride-0',0],['stride-1',1],['stride-2',2]].map(([name,col])=>[name,npcTexture(id,Number(col))]))}));
 sheets.push(...npcSheets);
 
 // Three platform-generated growth stages, one shared image/world scale and root anchor.

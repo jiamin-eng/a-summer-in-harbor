@@ -199,6 +199,15 @@
         256,
         256
       ]
+    },
+    {
+      "person": "gabriel",
+      "sha256": "8dd9261e7fb5ae3c8b9bbc9bd7adef6c89ba424ba39ed5163ded9241fdae153d",
+      "sourceSeries": "priest-gabriel-eight-actions-approved-20261012-v1/local-consumer",
+      "dimensions": [
+        256,
+        256
+      ]
     }
   ]
 }
