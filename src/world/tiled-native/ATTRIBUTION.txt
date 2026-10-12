@@ -1,0 +1,9 @@
+Outdoor tiles, again — Michele "Buch" Bucelli.
+Art licensed CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
+Author: https://opengameart.org/users/buch
+Original release: https://opengameart.org/content/outdoor-tiles-again
+Contains tiles adapted from the artist’s Top down dungeon tileset; assets sponsor Abram Connelly.
+Official example selection/terrain labels: Tiled mapeditor/tiled examples/orthogonal-outside.tmx and buch-outdoor.png.
+https://github.com/mapeditor/tiled/tree/master/examples
+Tiled official PNG is byte-compression optimized; every decoded pixel matches the author’s sheet_19.png.
+This review constructs new demonstration layouts with original, unmodified tiles using official corner metadata. Not a Tiled GUI screenshot or a Harbor release. No newly generated art.

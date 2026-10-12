@@ -1,3 +1,5 @@
+import {createStaticMapSprites} from './static-map-sprites';
+import {createSpriteLifecycle} from './sprite-lifecycle';
 import {instanceClientModules} from './module-instance';
 import {explorationCamera,type CameraInsets} from './exploration-camera';
 import {TilingSprite,Sprite,Graphics,Container as FloorContainer,Texture,Rectangle} from 'pixi.js';
@@ -40,7 +42,7 @@ export type SpaceOptions={
  cameraBounds?:(scene:string)=>{x:number;y:number;w:number;h:number};
  cameraWalkBounds?:(scene:string)=>{x:number;y:number;w:number;h:number};
  cameraSafeArea?:()=>CameraInsets;cameraBackdrop?:(scene:string)=>Texture;
- floorLayers?:(scene:string)=>{texture:Texture;at:Point;clip:{x:number;y:number;w:number;h:number};crop?:{x:number;y:number;w:number;h:number};polygon?:Point[]}[];
+ floorLayers?:(scene:string)=>{texture:Texture;at:Point;clip:{x:number;y:number;w:number;h:number};crop?:{x:number;y:number;w:number;h:number};polygon?:Point[];repeat?:{w:number;h:number;tileW:number;tileH:number};nativeTerrain?:boolean}[];
  foregroundReveal?:Parameters<typeof createForegroundReveal>[0][];
  onReady:(space:Space)=>void;onError:(error:unknown)=>void;
 };
@@ -102,7 +104,16 @@ function createRawRpgSpace(options:SpaceOptions){
   // Reuse cached source textures with masks, never a giant new coastal bitmap.
   if(floorScene!==scene||!floors||floors.destroyed||floors.parent!==view){
    floors?.destroy({children:true});floorCuts.forEach(t=>t.destroy(false));floorCuts=[];floors=new FloorContainer();floors.label='harbor-continuous-floors';floors.zIndex=-999999;floorScene=scene;view.addChild(floors);
-   for(const layer of options.floorLayers?.(scene)??[]){const texture=layer.crop?new Texture({source:layer.texture.source,frame:new Rectangle(layer.crop.x,layer.crop.y,layer.crop.w,layer.crop.h)}):layer.texture;if(layer.crop)floorCuts.push(texture);const sprite=new Sprite(texture),mask=new Graphics();if(layer.polygon)mask.poly(layer.polygon.flatMap(p=>[p.x,p.y]));else mask.rect(layer.clip.x,layer.clip.y,layer.clip.w,layer.clip.h);mask.fill(0xffffff);sprite.position.set(layer.at.x,layer.at.y);sprite.mask=mask;floors.addChild(sprite,mask);}
+   const nativeGroups=new Map<string,FloorContainer>();
+   for(const layer of options.floorLayers?.(scene)??[]){
+    const texture=layer.crop?new Texture({source:layer.texture.source,frame:new Rectangle(layer.crop.x,layer.crop.y,layer.crop.w,layer.crop.h)}):layer.texture;if(layer.crop)floorCuts.push(texture);
+    if(layer.nativeTerrain&&layer.repeat){
+     const sprite=new TilingSprite({texture,width:layer.clip.w,height:layer.clip.h});sprite.label='harbor-native-terrain';sprite.position.set(layer.clip.x,layer.clip.y);sprite.tileScale.set(layer.repeat.tileW/texture.width,layer.repeat.tileH/texture.height);sprite.tilePosition.set(layer.at.x-layer.clip.x,layer.at.y-layer.clip.y);
+     if(layer.polygon){const key=JSON.stringify(layer.polygon);let group=nativeGroups.get(key);if(!group){group=new FloorContainer();const mask=new Graphics().poly(layer.polygon.flatMap(p=>[p.x,p.y])).fill(0xffffff);group.mask=mask;floors.addChild(group,mask);nativeGroups.set(key,group)}group.addChild(sprite)}else floors.addChild(sprite);
+     continue;
+    }
+    const sprite=new Sprite(texture),mask=new Graphics();if(layer.polygon)mask.poly(layer.polygon.flatMap(p=>[p.x,p.y]));else mask.rect(layer.clip.x,layer.clip.y,layer.clip.w,layer.clip.h);mask.fill(0xffffff);sprite.position.set(layer.at.x,layer.at.y);sprite.mask=mask;floors.addChild(sprite,mask);
+   }
   }
   // One camera owner: default RPGJS follow/initial animation must not recenter
   // after our safe-area solve. Immediate following has no lag at a world edge.
@@ -124,13 +135,16 @@ function createRawRpgSpace(options:SpaceOptions){
  // The embedded RPGJS sync/physics tick may apply an older local ACK after
  // Harbor's rAF projection. Commit the same swept pose and camera together at
  // the public Pixi paint boundary; this performs no motion or time settlement.
- const presentation={prerender:()=>{if(!disposed&&candidateEnabled()){projectPlayer();configureCamera()}}};
+ const spriteLifecycle=createSpriteLifecycle(new URLSearchParams(location.search).get('terrain-native')==='1');
+ const staticSprites=createStaticMapSprites(options,new URLSearchParams(location.search).get('terrain-native')==='1');
+ const prepareVisualScene=async(id:string)=>{await options.prepareScene?.(id);await staticSprites.prepare(id)};
+ const presentation={prerender:()=>{if(!disposed&&candidateEnabled()){projectPlayer();configureCamera();staticSprites.mount(client)}}};
  const observer=new ResizeObserver(resize);observer.observe(host.parentElement!);resize();
- const runtime:Space={dispose:()=>{if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clearInput);document.removeEventListener('visibilitychange',visibility);checks.clear();client?.renderer?.runners.prerender.remove(presentation);client?.clear();client=undefined;player=undefined},sampleMovement:()=>{if(candidateEnabled())advancePlayer(performance.now(),paused||changing||options.controlsBlocked()||document.hidden,0)},movementPending:()=>!!(stick.x||stick.y||keys.size||route.length),suspendPrediction:value=>{predictionBlocked=value;changedInput()},projectEventGraphic:(id,graphic)=>{const e=(client as any)?.sceneMap?.events?.()[id];if(e&&JSON.stringify(e.graphics())!==JSON.stringify(graphic))e.graphics.set([...graphic])},installSpritesheets:sheets=>{if(!client)throw Error("RENDERER_NOT_READY");for(const sheet of sheets)client.addSpriteSheet(sheet)},position:()=>({...pos}),scene:()=>scene,renderedScene:()=>loaded,
+ const runtime:Space={dispose:()=>{if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clearInput);document.removeEventListener('visibilitychange',visibility);checks.clear();spriteLifecycle.dispose();staticSprites.dispose();floors?.destroy({children:true});floorCuts.forEach(t=>t.destroy(false));floorCuts=[];floors=undefined;client?.renderer?.runners.prerender.remove(presentation);client?.clear();client=undefined;player=undefined},sampleMovement:()=>{if(candidateEnabled())advancePlayer(performance.now(),paused||changing||options.controlsBlocked()||document.hidden,0)},movementPending:()=>!!(stick.x||stick.y||keys.size||route.length),suspendPrediction:value=>{predictionBlocked=value;changedInput()},projectEventGraphic:(id,graphic)=>{const e=(client as any)?.sceneMap?.events?.()[id];if(e&&JSON.stringify(e.graphics())!==JSON.stringify(graphic))e.graphics.set([...graphic])},installSpritesheets:sheets=>{if(!client)throw Error("RENDERER_NOT_READY");for(const sheet of sheets)client.addSpriteSheet(sheet)},position:()=>({...pos}),scene:()=>scene,renderedScene:()=>loaded,
   move:(x,y)=>{stick={x,y};if(x||y)cancel();changedInput()},
   walkTo:(target,callback)=>{if(paused||changing)return false;const next=options.findPath?.(pos,target,scene)??findPath(world,scene,pos,target);if(!next.length)return false;route=next;arrive=callback;options.onDestination(target);changedInput();return true},
   pause:value=>{paused=value;stick={x:0,y:0};keys.clear();if(value){cancel();stand()}elapsed.reset(performance.now(),input())},
-  restore:async(next,p)=>{if(!(options.arrivalWalkable?.(p,next)??walkable(world,next,p)))throw new Error('INVALID_ARRIVAL');changing=true;cancel();stick={x:0,y:0};stand();try{if(next!==scene){await options.prepareScene?.(next);loaded=null;joined=null;const changed=await player!.changeMap(next,p);if(!changed)throw new Error('MAP_CHANGE_REJECTED');await wait(next)}else await player!.teleport(p);scene=next;pos={...p};cameraSignature='';configureCamera();player!.syncChanges();projectPlayer();options.onPosition(pos)}finally{changing=false;elapsed.reset(performance.now(),input())}},
+  restore:async(next,p)=>{if(!(options.arrivalWalkable?.(p,next)??walkable(world,next,p)))throw new Error('INVALID_ARRIVAL');changing=true;cancel();stick={x:0,y:0};stand();try{if(next!==scene){await prepareVisualScene(next);loaded=null;joined=null;const changed=await player!.changeMap(next,p);if(!changed)throw new Error('MAP_CHANGE_REJECTED');await wait(next);spriteLifecycle.prune(client)}else await player!.teleport(p);scene=next;pos={...p};cameraSignature='';configureCamera();player!.syncChanges();projectPlayer();options.onPosition(pos)}finally{changing=false;elapsed.reset(performance.now(),input())}},
   project:screen,toWorld:unproject,
   face:target=>{if(!player)return;const dx=target.x-pos.x,dy=target.y-pos.y;player.direction.set(Math.abs(dx)>Math.abs(dy)?(dx>0?Direction.Right:Direction.Left):(dy>0?Direction.Down:Direction.Up));stand();player.syncChanges()},
  };
@@ -144,12 +158,12 @@ function createRawRpgSpace(options:SpaceOptions){
  // remove their entire floor texture even while that texture fills the screen.
  const server=createServer({providers:[tiledServer({basePath:'./map',streaming:false}),provideServerModules([{player:{
   onJoinMap(instance,map){if(disposed)return;player=instance;instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');joined=map.id.replace(/^map-/,'');checks.forEach(fn=>fn())},
-  async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await options.prepareScene?.(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
- },maps:ids.map(id=>({id,events:options.mapEvents(id)}))}]) ]});
+  async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
+ },maps:ids.map(id=>({id,events:staticSprites.mapEvents(id)}))}]) ]});
  startGame({providers:[
   provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
-  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
+  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
  ]}).catch(error=>{if(!disposed)options.onError(error)});
  const advancePlayer=(time:number,blocked:boolean,dt:number)=>{
   if(player&&!blocked){
@@ -172,7 +186,7 @@ function createRawRpgSpace(options:SpaceOptions){
   const worldPaused=paused||changing||(options.worldPaused?.()??options.controlsBlocked())||document.hidden;
   const blocked=worldPaused||options.controlsBlocked();
   advancePlayer(time,blocked,dt);
-  configureCamera();for(const reveal of reveals)reveal(stage(),scene,pos);
+  configureCamera();staticSprites.mount(client);for(const reveal of reveals)reveal(stage(),scene,pos);
   options.onFrame?.(dt,{...pos},scene,worldPaused);projectPlayer();frame=requestAnimationFrame(tick);
   if(debug){host.dataset.projectedX=String(pos.x);host.dataset.projectedY=String(pos.y);host.dataset.predictionBlocked=String(blocked);host.dataset.worldPaused=String(worldPaused);const sprite=client?.getCurrentPlayer();host.dataset.playerGraphics=String(sprite?.graphics().length??-1);host.dataset.playerSheets=String(sprite?.graphicsSignals().length??-1);host.dataset.roomEvents=String(Object.keys((client?.activeRoom() as unknown as {events?:()=>Record<string,unknown>})?.events?.()??{}).length)}
  };
