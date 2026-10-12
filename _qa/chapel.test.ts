@@ -6,8 +6,8 @@ const seed=():Save=>({...initial('en',randomUUID()),scene:'chapel',position:room
 const command=(s:Save,id:string,target:string):Action=>({action_id:randomUUID(),expected_version:s.version,scene:s.scene,position:rooms[s.scene].entities.find(e=>e.id===target)!.approach,target,action:id});
 const act=(s:Save,id:string,target:string)=>applyAction(s,command(s,id,target)).head;
 const resources=(s:Save)=>({id:s.id,items:s.items,cash:s.cash,energy:s.energy,standing:s.standing,relations:s.relations,townMinutes:s.townMinutes});
-test('one playable room preserves 22 identities and leaves the old outdoor collision/coordinates intact',()=>{
- assert.equal(Object.keys(people).length,22);const entry=rooms.hill.entities.find(e=>e.id==='to-chapel')!;
+test('one playable room preserves 22 existing identities plus the new priest and leaves the old outdoor collision/coordinates intact',()=>{
+ assert.equal(Object.keys(people).length,23);const entry=rooms.hill.entities.find(e=>e.id==='to-chapel')!;
  assert.ok(findPath(world,'hill',rooms.hill.spawn,entry.approach).length);assert.equal(walkable(world,'hill',entry.approach),true);
  for(const e of rooms.chapel.entities){assert.equal(walkable(world,'chapel',e.approach),true,e.id);assert.ok(findPath(world,'chapel',rooms.chapel.spawn,e.approach).length,e.id)}
  for(const person of ['dani','samira'])for(const minute of [540,720,780,1019,1020,1300]){const locations=Object.keys(rooms).filter(scene=>rooms[scene].entities.some(e=>e.person===person)&&residentHere({townMinutes:minute},person,scene));assert.equal(locations.length,minute===1300?0:1,person+minute);if(minute>=720&&minute<1020)assert.deepEqual(locations,['chapel']);}

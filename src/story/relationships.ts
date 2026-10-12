@@ -1,4 +1,6 @@
 import {neighborStoryLeads} from './neighbor-chapter';
+import {chapelPriestRoles} from '../world/chapel-priest';
+import {priestStoryLeads} from './chapel-priest';
 import {relationshipProfiles,relationshipStage,stageNames} from './relationship-growth';
 import {techRoles,techNomadAdmitted} from '../world/tech-nomads';
 import {nomadStoryLeads} from './tech-nomads';
@@ -11,7 +13,7 @@ import type {Save} from './state';
 import {questProgress} from './progress';
 
 export type StoryLead={id:string;title:Words;people:string[];state:'active'|'done'|'upcoming'|'available'|'return-later';summary:Words;next?:Words;place?:string};
-const roles:Record<string,Words>={...nextRoles,...techRoles,mara:['你的房东，住在海湾多年。','Your landlady, a longtime local.'],theo:['潮间咖啡馆的店员。','Works at Tide & Table.'],june:['经营修理铺，熟悉镇上的修修补补。','Runs the workshop and knows the town’s repairs.'],idris:['港口拳馆的教练。','Coach at Harbor Boxing Club.'],ruth:['常在码头钓鱼。','An angler at the pier.'],luis:['街角杂货铺的店主。','Runs the Corner Grocer.'],nell:['经营旧物店，保存老照片。','Keeps old photographs at Second Chances.'],elena:['庭院的住户，照顾花草和家人。','A courtyard resident who cares for the garden and her family.'],arthur:['曾在气象站工作。','Formerly worked at the weather station.'],avery:['送包裹之余，喜欢随手画画。','Delivers parcels and sketches in their spare time.'],samira:['在学校食堂工作，喜欢轻声哼歌。','Works in the school kitchen and enjoys humming.'],owen:['退休的公交车修理工，喜欢听海鸟。','A retired bus mechanic who listens for seabirds.'],dani:['在图书馆工作，记录街坊的花园故事。','Works at the library and collects neighbors’ garden stories.']};
+const roles:Record<string,Words>={...nextRoles,...techRoles,...chapelPriestRoles,mara:['你的房东，住在海湾多年。','Your landlady, a longtime local.'],theo:['潮间咖啡馆的店员。','Works at Tide & Table.'],june:['经营修理铺，熟悉镇上的修修补补。','Runs the workshop and knows the town’s repairs.'],idris:['港口拳馆的教练。','Coach at Harbor Boxing Club.'],ruth:['常在码头钓鱼。','An angler at the pier.'],luis:['街角杂货铺的店主。','Runs the Corner Grocer.'],nell:['经营旧物店，保存老照片。','Keeps old photographs at Second Chances.'],elena:['庭院的住户，照顾花草和家人。','A courtyard resident who cares for the garden and her family.'],arthur:['曾在气象站工作。','Formerly worked at the weather station.'],avery:['送包裹之余，喜欢随手画画。','Delivers parcels and sketches in their spare time.'],samira:['在学校食堂工作，喜欢轻声哼歌。','Works in the school kitchen and enjoys humming.'],owen:['退休的公交车修理工，喜欢听海鸟。','A retired bus mechanic who listens for seabirds.'],dani:['在图书馆工作，记录街坊的花园故事。','Works at the library and collects neighbors’ garden stories.']};
 /** No migration writes. Only encountered identities and explicit interaction facts count. */
 export function knownPeople(s:Save,registry=people){
  const ids=new Set(s.known);
@@ -40,6 +42,6 @@ export function relationshipStory(s:Save,registry=people){
   const done=f('residents:song-shared'),minutes=(s as Save&{townMinutes?:number}).townMinutes,m=typeof minutes==='number'?minutes%1440:undefined;
   add({id:'quiet-song',people:['avery','samira'],title:['码头边的一小段歌','A quiet tune at the pier'],state:done?'done':m===undefined||m<1020&&m>=360?'upcoming':m>=1020&&m<1260?'available':'return-later',summary:done?['你们曾一起在码头听歌、听水声。','You shared a tune and listened to the water together.']:['萨米拉约你们在钓鱼码头相聚，17:00–21:00；另一个傍晚也可以。','Samira invited you to the Fishing Pier, 17:00–21:00. Another evening is fine too.'],...(done?{}:{next:m!==undefined&&m>=1020&&m<1260?['去钓鱼码头，找萨米拉听那段歌。','Find Samira at the Fishing Pier to hear the tune.']:['另一个傍晚也可以，不需要赶时间。','Come another evening if you like. There is no rush.'],place:'dock'})});
  }
- for(const lead of [...nextStoryLeads(s),...nomadStoryLeads(s),...neighborStoryLeads(s)])add(lead);
+ for(const lead of [...nextStoryLeads(s),...nomadStoryLeads(s),...neighborStoryLeads(s),...priestStoryLeads(s)])add(lead);
  return {leads,people:known.map(id=>{const history=s.history.filter(h=>h.person===id),related=leads.filter(l=>l.people.includes(id));return {id,...registry[id],role:roles[id]??['海湾里认识的人。','Someone you met in the bay.'],stage:relationshipProfiles[id]?stageNames[relationshipStage(s,id)]:related.some(l=>l.state==='done')?['有共同经历','Shared experiences'] as Words:history.length>1?['聊过一些事情','We have talked'] as Words:['已相识','We have met'] as Words,history,related,places:!!residentRoutes[id]&&!f(`talk:${id}:routine`)?[]:Object.values(rooms).filter(r=>s.visited.includes(r.id)&&r.entities.some(e=>e.person===id)).map(r=>r.id)};})};
 }

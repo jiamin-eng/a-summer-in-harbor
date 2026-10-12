@@ -18,7 +18,7 @@ import {AsyncSessionAuthority,openAsyncSqliteAuthorityStore} from '../vendor/dyn
 
 test('Mira addition restores existing knowledge without rewriting earlier history or repeating completed stories',()=>{
  const ids=['rowan','mira','jordan','leila','casey','grant'];
- assert.deepEqual(nextResidents.map(p=>p.id),ids);assert.equal(Object.keys(people).length,22);
+ assert.deepEqual(nextResidents.map(p=>p.id),ids);assert.equal(Object.keys(people).length,23);
  assert.equal(people.mira.mapArt,'mira');assert.ok(nextRoutes.mira);assert.ok(npcSheets.some(p=>p.id==='npc-mira'&&p.image==='./art/npc-mira.png'));
  const s:Save={...initial('en',randomUUID()),scene:'secondhand',townMinutes:780,position:entityAt('secondhand','nell')!.approach,
   known:['nell','mira',...ids.filter(p=>p!=='mira')],relations:{mira:3,rowan:1},

@@ -1,4 +1,5 @@
 import {addNeighborGathering} from './neighbor-gathering';
+import {chapelPriestPeople} from './chapel-priest';
 import {addChapel} from './chapel-layout';
 import {nativeCrabEntities} from '../animals/native-crab-config';
 import {techPeople} from './tech-nomads';
@@ -19,7 +20,7 @@ export type Entity={gatheringRole?:'guest'|'routine';landRegion?:string;landAt?:
 export const entityLabel=(e:Entity,flags:string[]):Words=>e.id==='bridge'&&flags.includes('bridge-fixed')?['修好的小桥','Repaired footbridge']:e.id==='terrace'&&flags.includes('terrace-fixed')?['露台灯','Terrace lantern']:e.label;
 export type Room={id:string;title:Words;area:string;outdoor:boolean;spawn:Point;interior:Rect;props:Prop[];entities:Entity[];neighbors:string[];map:Point};
 const labels:Record<string,Words>={station:['车站街','Station Street'],harbor:['港口','The Harbor'],market:['旧街','Market Lane'],coast:['海岸','The Coast'],hill:['山坡','The Hill'],home:['你的租屋','Your Room'],cafe:['潮间咖啡馆','Tide & Table'],grocery:['街角杂货铺','Corner Grocer'],dock:['钓鱼码头','Fishing Pier'],workshop:['琼的修理铺','June’s Workshop'],gym:['港口拳馆','Harbor Boxing Club'],bazaar:['集市广场','Market Square'],secondhand:['旧物店','Second Chances'],courtyard:['住户庭院','Residents’ Courtyard'],beach:['贝壳海滩','Shell Beach'],path:['滨海道','Coastal Path'],lighthouse:['灯塔','The Lighthouse'],garden:['山坡花园','Hillside Garden'],camp:['松林营地','Pine Camp'],weather:['旧气象站','Weather Station']};
-export const people:Record<string,{name:Words;unknown:Words;intro:Words;art:string;mapArt?:string;avatarArt?:string;portraitShape?:'square'}>={...residentPeople,...nextPeople,...techPeople,
+export const people:Record<string,{name:Words;unknown:Words;intro:Words;art:string;mapArt?:string;avatarArt?:string;portraitShape?:'square'}>={...residentPeople,...nextPeople,...techPeople,...chapelPriestPeople,
  mara:{name:['玛拉','Mara'],unknown:['提着钥匙的女士','Woman with the keys'],intro:['一位穿亚麻衬衣的女士抬手招呼。她晃了晃钥匙：“你就是来住一夏的新房客吧？我是玛拉。先放下行李，别急着认全镇的人。”','A woman in a linen shirt waves a key. “You must be my summer tenant. I’m Mara. Let’s put your bag down before you try to learn the whole town.”'],art:'mara'},
  theo:{name:['西奥','Theo'],unknown:['系围裙的年轻人','Young man in an apron'],intro:['年轻人停下脚步，围裙上写着Theo。“叫我西奥。你刚到？玛拉把她的工具袋忘在这里了。”','The young man pauses. His apron reads Theo. “Just arrived? Mara left her tool bag here. You’re welcome to sit a while.”'],art:'theo'},
  june:{name:['琼','June'],unknown:['穿工装的女人','Woman in work clothes'],intro:['穿工装的女人抬起头：“我是琼，这间修理铺是我的。全年都有人弄坏东西。需要借工具？”','The woman in work clothes looks up. “June. Like the sign. Things break all year, though. Need to borrow something?”'],art:'june'},
