@@ -46,9 +46,12 @@ export function createNativeCrab(input:readonly CrabPrototypeDef[],previewGuard?
   return options.filter(q=>clear(q,s,ctx,reserved)&&(!rescue||Math.abs(q[a]-preferred[a])<=24&&line(preferred,q,s,ctx,reserved,true))).sort((x,y)=>Math.abs(x[a]-preferred[a])-Math.abs(y[a]-preferred[a]))[0];
  };
  const reconcile=(ctx:Context,reserved:readonly Rect[])=>{
-  periodAt(ctx.townMinutes);if(!validRect(ctx.player)||reserved.some(r=>!validRect(r)))throw Error('CRAB_CONTEXT');const sig=ctx.scene+':'+ctx.townMinutes;if(sig===signature)return;signature=sig;minutes=ctx.townMinutes;
-  for(const d of defs)states.set(d.id,initial(d));
-  defs.forEach((d,index)=>{const s=states.get(d.id)!,lane=d.schedule[periodAt(ctx.townMinutes)];s.lane=lane??null;s.scene=lane?.scene??null;s.reason=lane?'other-scene':'schedule-away';if(!lane||lane.scene!==ctx.scene)return;s.direction=lane.facing;const a=axis(lane.facing),start={...lane.ends[0],[a]:lane.ends[0][a]+Math.sign(lane.ends[1][a]-lane.ends[0][a])*index*24};const q=spawn(start,s,ctx,reserved);if(!q){s.reason='no-safe-position';return}s.visible=true;s.foot={...q};s.phase='idle';s.wait=P.endPause;s.reason=undefined;
+  periodAt(ctx.townMinutes);if(!validRect(ctx.player)||reserved.some(r=>!validRect(r)))throw Error('CRAB_CONTEXT');const sig=ctx.scene+':'+ctx.townMinutes;if(sig===signature)return;
+  // A foreground minute confirmation is not a new visit or elapsed motion.
+  // Keep only an identical current-scene lane; ordinary tick safety still runs.
+  const consecutive=minutes>=0&&ctx.townMinutes===minutes+1&&periodAt(minutes)===periodAt(ctx.townMinutes),preserved=new Set(defs.filter(d=>{const s=states.get(d.id)!,lane=d.schedule[periodAt(ctx.townMinutes)];return consecutive&&s.scene===ctx.scene&&lane?.scene===ctx.scene&&JSON.stringify(s.lane)===JSON.stringify(lane)}).map(d=>d.id));signature=sig;minutes=ctx.townMinutes;
+  for(const d of defs)if(!preserved.has(d.id))states.set(d.id,initial(d));
+  defs.forEach((d,index)=>{if(preserved.has(d.id))return;const s=states.get(d.id)!,lane=d.schedule[periodAt(ctx.townMinutes)];s.lane=lane??null;s.scene=lane?.scene??null;s.reason=lane?'other-scene':'schedule-away';if(!lane||lane.scene!==ctx.scene)return;s.direction=lane.facing;const a=axis(lane.facing),start={...lane.ends[0],[a]:lane.ends[0][a]+Math.sign(lane.ends[1][a]-lane.ends[0][a])*index*24};const q=spawn(start,s,ctx,reserved);if(!q){s.reason='no-safe-position';return}s.visible=true;s.foot={...q};s.phase='idle';s.wait=P.endPause;s.reason=undefined;
   });
  };
  const snapshot=()=>structuredClone([...states.values()]);
