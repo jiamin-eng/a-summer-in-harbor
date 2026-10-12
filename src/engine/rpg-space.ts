@@ -1,5 +1,6 @@
 import {createStaticMapSprites} from './static-map-sprites';
 import {createSpriteLifecycle} from './sprite-lifecycle';
+import {createSceneResourceCache} from './scene-resource-cache';
 import {instanceClientModules} from './module-instance';
 import {explorationCamera,type CameraInsets} from './exploration-camera';
 import {TilingSprite,Sprite,Graphics,Container as FloorContainer,Texture,Rectangle} from 'pixi.js';
@@ -75,8 +76,24 @@ function createRawRpgSpace(options:SpaceOptions){
  const stand=()=>{stride=0;if(player&&player.animationName()!=='stand')player.animationName.set('stand');projectPlayer()};
  const stage=()=>(client as unknown as {canvasApp?:{stage:Container}})?.canvasApp?.stage;
  const viewport=():Viewport|undefined=>{const visit=(node:Container|undefined):Viewport|undefined=>{if(!node)return;if('toWorld' in node&&'clamp' in node)return node as Viewport;for(const child of node.children??[]){const found=visit(child);if(found)return found}};return visit(stage())};
- let cameraSignature='',backdrop:TilingSprite|undefined,floors:FloorContainer|undefined,floorScene='',floorCuts:Texture[]=[];
+ let cameraSignature='',backdrop:TilingSprite|undefined;
+ const floorResources=createSceneResourceCache(scene=>{
+  const layers=options.floorLayers?.(scene)??[],cuts:Texture[]=[],container=new FloorContainer();
+  container.label='harbor-continuous-floors';container.zIndex=-999999;
+  const nativeGroups=new Map<string,FloorContainer>();
+  for(const layer of layers){
+   const texture=layer.crop?new Texture({source:layer.texture.source,frame:new Rectangle(layer.crop.x,layer.crop.y,layer.crop.w,layer.crop.h)}):layer.texture;if(layer.crop)cuts.push(texture);
+   if(layer.nativeTerrain&&layer.repeat){
+    const sprite=new TilingSprite({texture,width:layer.clip.w,height:layer.clip.h});sprite.label='harbor-native-terrain';sprite.position.set(layer.clip.x,layer.clip.y);sprite.tileScale.set(layer.repeat.tileW/texture.width,layer.repeat.tileH/texture.height);sprite.tilePosition.set(layer.at.x-layer.clip.x,layer.at.y-layer.clip.y);
+    if(layer.polygon){const key=JSON.stringify(layer.polygon);let group=nativeGroups.get(key);if(!group){group=new FloorContainer();const mask=new Graphics().poly(layer.polygon.flatMap(p=>[p.x,p.y])).fill(0xffffff);group.mask=mask;container.addChild(group,mask);nativeGroups.set(key,group)}group.addChild(sprite)}else container.addChild(sprite);
+    continue;
+   }
+   const sprite=new Sprite(texture),mask=new Graphics();if(layer.polygon)mask.poly(layer.polygon.flatMap(p=>[p.x,p.y]));else mask.rect(layer.clip.x,layer.clip.y,layer.clip.w,layer.clip.h);mask.fill(0xffffff);sprite.position.set(layer.at.x,layer.at.y);sprite.mask=mask;container.addChild(sprite,mask);
+  }
+  return{container,cuts,reusable:layers.some(layer=>layer.nativeTerrain)};
+ },entry=>{entry.container.parent?.removeChild(entry.container)},entry=>{if(!entry.container.destroyed)entry.container.destroy({children:true});for(const cut of entry.cuts)if(!cut.destroyed)cut.destroy(false)},entry=>!entry.container.destroyed);
  const configureCamera=()=>{
+  if(changing)return;
   const view=viewport();if(!view)return;
   // Pausing plugins alone does not disable RPGJS character.ce's reactive
   // instant-follow callback, which calls moveCenter again when x/y change.
@@ -102,19 +119,7 @@ function createRawRpgSpace(options:SpaceOptions){
    cameraSignature=signature;
   }
   // Reuse cached source textures with masks, never a giant new coastal bitmap.
-  if(floorScene!==scene||!floors||floors.destroyed||floors.parent!==view){
-   floors?.destroy({children:true});floorCuts.forEach(t=>t.destroy(false));floorCuts=[];floors=new FloorContainer();floors.label='harbor-continuous-floors';floors.zIndex=-999999;floorScene=scene;view.addChild(floors);
-   const nativeGroups=new Map<string,FloorContainer>();
-   for(const layer of options.floorLayers?.(scene)??[]){
-    const texture=layer.crop?new Texture({source:layer.texture.source,frame:new Rectangle(layer.crop.x,layer.crop.y,layer.crop.w,layer.crop.h)}):layer.texture;if(layer.crop)floorCuts.push(texture);
-    if(layer.nativeTerrain&&layer.repeat){
-     const sprite=new TilingSprite({texture,width:layer.clip.w,height:layer.clip.h});sprite.label='harbor-native-terrain';sprite.position.set(layer.clip.x,layer.clip.y);sprite.tileScale.set(layer.repeat.tileW/texture.width,layer.repeat.tileH/texture.height);sprite.tilePosition.set(layer.at.x-layer.clip.x,layer.at.y-layer.clip.y);
-     if(layer.polygon){const key=JSON.stringify(layer.polygon);let group=nativeGroups.get(key);if(!group){group=new FloorContainer();const mask=new Graphics().poly(layer.polygon.flatMap(p=>[p.x,p.y])).fill(0xffffff);group.mask=mask;floors.addChild(group,mask);nativeGroups.set(key,group)}group.addChild(sprite)}else floors.addChild(sprite);
-     continue;
-    }
-    const sprite=new Sprite(texture),mask=new Graphics();if(layer.polygon)mask.poly(layer.polygon.flatMap(p=>[p.x,p.y]));else mask.rect(layer.clip.x,layer.clip.y,layer.clip.w,layer.clip.h);mask.fill(0xffffff);sprite.position.set(layer.at.x,layer.at.y);sprite.mask=mask;floors.addChild(sprite,mask);
-   }
-  }
+  const floors=floorResources.enter(scene).container;if(floors.parent!==view){floors.parent?.removeChild(floors);view.addChild(floors)}
   // One camera owner: default RPGJS follow/initial animation must not recenter
   // after our safe-area solve. Immediate following has no lag at a world edge.
   view.plugins.pause('follow');view.plugins.pause('animate');
@@ -140,11 +145,11 @@ function createRawRpgSpace(options:SpaceOptions){
  const prepareVisualScene=async(id:string)=>{await options.prepareScene?.(id);await staticSprites.prepare(id)};
  const presentation={prerender:()=>{if(!disposed&&candidateEnabled()){projectPlayer();configureCamera();staticSprites.mount(client)}}};
  const observer=new ResizeObserver(resize);observer.observe(host.parentElement!);resize();
- const runtime:Space={dispose:()=>{if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clearInput);document.removeEventListener('visibilitychange',visibility);checks.clear();spriteLifecycle.dispose();staticSprites.dispose();floors?.destroy({children:true});floorCuts.forEach(t=>t.destroy(false));floorCuts=[];floors=undefined;client?.renderer?.runners.prerender.remove(presentation);client?.clear();client=undefined;player=undefined},sampleMovement:()=>{if(candidateEnabled())advancePlayer(performance.now(),paused||changing||options.controlsBlocked()||document.hidden,0)},movementPending:()=>!!(stick.x||stick.y||keys.size||route.length),suspendPrediction:value=>{predictionBlocked=value;changedInput()},projectEventGraphic:(id,graphic)=>{const e=(client as any)?.sceneMap?.events?.()[id];if(e&&JSON.stringify(e.graphics())!==JSON.stringify(graphic))e.graphics.set([...graphic])},installSpritesheets:sheets=>{if(!client)throw Error("RENDERER_NOT_READY");for(const sheet of sheets)client.addSpriteSheet(sheet)},position:()=>({...pos}),scene:()=>scene,renderedScene:()=>loaded,
+ const runtime:Space={dispose:()=>{if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clearInput);document.removeEventListener('visibilitychange',visibility);checks.clear();spriteLifecycle.dispose();staticSprites.dispose();floorResources.dispose();backdrop?.destroy();backdrop=undefined;client?.renderer?.runners.prerender.remove(presentation);client?.clear();client=undefined;player=undefined},sampleMovement:()=>{if(candidateEnabled())advancePlayer(performance.now(),paused||changing||options.controlsBlocked()||document.hidden,0)},movementPending:()=>!!(stick.x||stick.y||keys.size||route.length),suspendPrediction:value=>{predictionBlocked=value;changedInput()},projectEventGraphic:(id,graphic)=>{const e=(client as any)?.sceneMap?.events?.()[id];if(e&&JSON.stringify(e.graphics())!==JSON.stringify(graphic))e.graphics.set([...graphic])},installSpritesheets:sheets=>{if(!client)throw Error("RENDERER_NOT_READY");for(const sheet of sheets)client.addSpriteSheet(sheet)},position:()=>({...pos}),scene:()=>scene,renderedScene:()=>loaded,
   move:(x,y)=>{stick={x,y};if(x||y)cancel();changedInput()},
   walkTo:(target,callback)=>{if(paused||changing)return false;const next=options.findPath?.(pos,target,scene)??findPath(world,scene,pos,target);if(!next.length)return false;route=next;arrive=callback;options.onDestination(target);changedInput();return true},
   pause:value=>{paused=value;stick={x:0,y:0};keys.clear();if(value){cancel();stand()}elapsed.reset(performance.now(),input())},
-  restore:async(next,p)=>{if(!(options.arrivalWalkable?.(p,next)??walkable(world,next,p)))throw new Error('INVALID_ARRIVAL');changing=true;cancel();stick={x:0,y:0};stand();try{if(next!==scene){await prepareVisualScene(next);loaded=null;joined=null;const changed=await player!.changeMap(next,p);if(!changed)throw new Error('MAP_CHANGE_REJECTED');await wait(next);spriteLifecycle.prune(client)}else await player!.teleport(p);scene=next;pos={...p};cameraSignature='';configureCamera();player!.syncChanges();projectPlayer();options.onPosition(pos)}finally{changing=false;elapsed.reset(performance.now(),input())}},
+  restore:async(next,p)=>{if(!(options.arrivalWalkable?.(p,next)??walkable(world,next,p)))throw new Error('INVALID_ARRIVAL');changing=true;cancel();stick={x:0,y:0};stand();try{if(next!==scene){await prepareVisualScene(next);floorResources.leave();loaded=null;joined=null;const changed=await player!.changeMap(next,p);if(!changed)throw new Error('MAP_CHANGE_REJECTED');await wait(next);spriteLifecycle.prune(client)}else await player!.teleport(p);scene=next;pos={...p};changing=false;cameraSignature='';configureCamera();player!.syncChanges();projectPlayer();options.onPosition(pos)}finally{changing=false;elapsed.reset(performance.now(),input())}},
   project:screen,toWorld:unproject,
   face:target=>{if(!player)return;const dx=target.x-pos.x,dy=target.y-pos.y;player.direction.set(Math.abs(dx)>Math.abs(dy)?(dx>0?Direction.Right:Direction.Left):(dy>0?Direction.Down:Direction.Up));stand();player.syncChanges()},
  };
