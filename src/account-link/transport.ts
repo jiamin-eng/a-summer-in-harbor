@@ -1,3 +1,5 @@
+import {entryTimer} from './entry-timing';
+const hostIdentityReady=entryTimer('host-identity');
 import {isInAigramNow} from '../shared/runtime/bridge';import {GAME_UUID} from '../game-id';import {IdentityEpoch} from './epoch';
 export function liveShellAccount():string|null{
  const w=window as any;
@@ -13,7 +15,7 @@ export function liveShellAccount():string|null{
  const raw=(window as any).Aigram?.telegramId;
  if(raw===undefined||raw===null||raw===''||raw==='__alteru_guest__')return null;
  if(typeof raw==='number'&&!Number.isSafeInteger(raw))return '__invalid_shell_identity__';
- const value=String(raw);if(!/^[1-9][0-9]{0,19}$/.test(value))return '__invalid_shell_identity__';return value;
+ const value=String(raw);if(!/^[1-9][0-9]{0,19}$/.test(value))return '__invalid_shell_identity__';hostIdentityReady();return value;
 }
 export const identityEpoch=new IdentityEpoch(liveShellAccount);
 // The published account policy is known before bootstrap: never bootstrap as a

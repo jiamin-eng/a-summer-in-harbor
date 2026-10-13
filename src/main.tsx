@@ -1,3 +1,4 @@
+import {entrySpan} from './account-link/entry-timing';
 import {neighborActionAvailable,neighborActionLabels} from './story/neighbor-chapter';
 import {stormForSave,heavyRainForSave} from './weather/storm';
 import {nativeDogId,nativeDogObservationText} from './animals/native-dog';
@@ -104,7 +105,7 @@ function App(){
  const dynamicCache=useRef(new Map<string,{key:string;sheets:any[];scene:string;dispose:()=>void}>());
  const [dynamicError,setDynamicError]=useState(false);
  useEffect(()=>{if(!save?.dynamicAssetRooms)return;let live=true;setDynamicError(false);setWorldReady(false);
-  void prepareDynamicRoom(save).then(value=>{
+  void entrySpan('dynamic-assets',()=>prepareDynamicRoom(save)).then(value=>{
    if(!live){value.dispose();return}
    // Authorization is rechecked on every visit; immutable verified textures can
    // stay cached while one RPGJS engine changes maps.
