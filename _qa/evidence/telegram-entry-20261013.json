@@ -1,0 +1,1514 @@
+{
+  "environment": "isolated headless Chromium on user Mac, actual RPGJS renderer, synthetic scenes, no authority server or real player actions",
+  "realTelegram": false,
+  "userScreenshotPixelsRead": false,
+  "comparison": [
+    {
+      "variant": "baseline",
+      "imageLatencyMs": 0,
+      "navigationToReadyMs": 2315,
+      "frames": [
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "baseline",
+      "imageLatencyMs": 250,
+      "navigationToReadyMs": 5146,
+      "frames": [
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 2,
+          "heroSprites": 2,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [],
+          "retired": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "candidate",
+      "imageLatencyMs": 0,
+      "navigationToReadyMs": 1176,
+      "frames": [
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4090,
+              "durationMs": 23,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4090,
+              "durationMs": 23,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8616,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4090,
+              "durationMs": 23,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8616,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9010,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4090,
+              "durationMs": 23,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8616,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9010,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9479,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 139,
+              "durationMs": 141,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 319,
+              "durationMs": 2,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 280,
+              "durationMs": 720,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 1451,
+              "durationMs": 31,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 3693,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4090,
+              "durationMs": 23,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8616,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9010,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9479,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9854,
+              "durationMs": 0,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9941,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 221,
+              "durationMs": 132,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 377,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 353,
+              "durationMs": 604,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "candidate",
+      "imageLatencyMs": 250,
+      "navigationToReadyMs": 4078,
+      "frames": [
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8230,
+              "durationMs": 279,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8230,
+              "durationMs": 279,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14207,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8230,
+              "durationMs": 279,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14207,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14597,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8230,
+              "durationMs": 279,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14207,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14597,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 15081,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 138,
+              "durationMs": 2586,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2761,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2725,
+              "durationMs": 1178,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4354,
+              "durationMs": 778,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 7842,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 8230,
+              "durationMs": 279,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14207,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 14597,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 15081,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 15479,
+              "durationMs": 0,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 15580,
+              "durationMs": 4,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 261,
+              "durationMs": 2615,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2906,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 2876,
+              "durationMs": 1150,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "retirementVerification": [
+    {
+      "variant": "candidate",
+      "imageLatencyMs": 0,
+      "navigationToReadyMs": 1879,
+      "frames": [
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4751,
+              "durationMs": 24,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4751,
+              "durationMs": 24,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9125,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4751,
+              "durationMs": 24,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9125,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9510,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4751,
+              "durationMs": 24,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9125,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9510,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9978,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 220,
+              "durationMs": 159,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 574,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 380,
+              "durationMs": 1313,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 2152,
+              "durationMs": 30,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4359,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 4751,
+              "durationMs": 24,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9125,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9510,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 9978,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 10362,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 10449,
+              "durationMs": 1,
+              "outcome": "ready"
+            }
+          ],
+          "retired": [
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            },
+            {
+              "disposed": true,
+              "tickClosed": true
+            }
+          ]
+        },
+        {
+          "players": 1,
+          "heroSprites": 1,
+          "canvases": 1,
+          "timings": [
+            {
+              "stage": "scene-assets",
+              "startMs": 232,
+              "durationMs": 111,
+              "outcome": "ready"
+            },
+            {
+              "stage": "scene-assets",
+              "startMs": 366,
+              "durationMs": 1,
+              "outcome": "ready"
+            },
+            {
+              "stage": "renderer",
+              "startMs": 343,
+              "durationMs": 618,
+              "outcome": "ready"
+            }
+          ],
+          "retired": []
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
