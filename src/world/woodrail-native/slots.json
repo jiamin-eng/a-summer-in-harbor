@@ -1,0 +1,1808 @@
+{
+  "atUTC": "2026-10-12T11:19:16.199470+00:00",
+  "logicalRoles": [
+    "N",
+    "E",
+    "S",
+    "W",
+    "outer-NW",
+    "outer-NE",
+    "outer-SE",
+    "outer-SW",
+    "inner-NW",
+    "inner-NE",
+    "inner-SE",
+    "inner-SW",
+    "cap-N",
+    "cap-E",
+    "cap-S",
+    "cap-W",
+    "post-N",
+    "post-E",
+    "post-S",
+    "post-W"
+  ],
+  "logicalComponentCount": 20,
+  "newLogicalRoles": 16,
+  "renderFrameCount": 24,
+  "capCompatibilityVariants": "Four caproles have oneadditional directionalface variant each; notnewsemanticcomponents.",
+  "sourceRawSHA256": "1ca5822ebb8e62cdb48fca7241cd3647e7ebc36d5d5016377de972ede0562d67",
+  "artProcess": "Existing AI directionalwoodtexture plus deterministic geometry/alpha/light/shadow correction",
+  "reusedFourBodyRGBA_SHA256": {
+    "E": "5a8e9dacb7f0af0627904b5e30be146d5bc319a1f44adb62ab03657d4ab2d44a",
+    "W": "0395981358dfb827f81dce64bfedf4a1bbd047d29e44dc6747b197d989a0958e",
+    "post-E": "f1b5153f73fcd4b92a8d61809e551fffd0f3b736fa02ea1f104750ca69a9b847",
+    "post-W": "9fc45dc0b2bdbaf65da93b3c8bff2a08de5aa4d95130ea08e003d9b6d77a7db3"
+  },
+  "donors": {
+    "E": {
+      "sourceNativeSlot": 1,
+      "crop": [
+        19,
+        11,
+        23,
+        28
+      ],
+      "size": [
+        8,
+        40
+      ],
+      "RGBA_SHA256": "4e15691d1de9dd360f0cdfec1b4a9ea988a5a423fe64392c910826bde2caaa24",
+      "rotatedOrMirrored": false
+    },
+    "W": {
+      "sourceNativeSlot": 3,
+      "crop": [
+        17,
+        10,
+        21,
+        29
+      ],
+      "size": [
+        8,
+        40
+      ],
+      "RGBA_SHA256": "f4186d6bc943cc1e4d3cb0a87d3b667249504d1ace6ee28c09707c51e75bbeee",
+      "rotatedOrMirrored": false
+    },
+    "N": {
+      "sourceNativeSlot": 0,
+      "crop": [
+        8,
+        16,
+        33,
+        25
+      ],
+      "size": [
+        40,
+        8
+      ],
+      "RGBA_SHA256": "73348bb92e34c7101d1c6c2408c21fba6d1bb8fa0c42734c94b545ca05231e12",
+      "rotatedOrMirrored": false
+    },
+    "S": {
+      "sourceNativeSlot": 2,
+      "crop": [
+        7,
+        16,
+        33,
+        25
+      ],
+      "size": [
+        40,
+        8
+      ],
+      "RGBA_SHA256": "8cf07b44660bbad73e66c80532ab282aa4245628d182c2c3b8bde12e5de49424",
+      "rotatedOrMirrored": false
+    },
+    "post-N": {
+      "sourceNativeSlot": 16,
+      "crop": [
+        18,
+        7,
+        24,
+        27
+      ],
+      "size": [
+        5,
+        26
+      ],
+      "RGBA_SHA256": "eda1048d757519701bf49ea86495b2e68c93297bf8631f6a8e57fb3b00be34ae",
+      "rotatedOrMirrored": false
+    },
+    "post-S": {
+      "sourceNativeSlot": 18,
+      "crop": [
+        16,
+        6,
+        22,
+        27
+      ],
+      "size": [
+        5,
+        26
+      ],
+      "RGBA_SHA256": "65c64928f1d34a0b24df3ed34e4804d03834145ccbc54a9fa8f26e3d83382075",
+      "rotatedOrMirrored": false
+    }
+  },
+  "frames": [
+    {
+      "name": "N",
+      "role": "N",
+      "ports": {
+        "E": "N",
+        "W": "N"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/N.png",
+          "SHA256": "9e677eb74fd7991fc576c56fb324a2e15da2c97434fa47d5bdcb27d40e36518e",
+          "RGBA_SHA256": "f98f221948aac8c7b736b5c71c203133ce08443d08eb855321d2eecdf6d89093"
+        },
+        "ground": {
+          "path": "ground/N.png",
+          "SHA256": "c53d6d2d3470a13b14a47873ec9108042449ebbdc0040f9c5836cd3e9ec93cb6",
+          "RGBA_SHA256": "36a168148ff69ac2aa3c6fa5a77ae71b2563932ee132a21615678daab7a69889"
+        },
+        "raised": {
+          "path": "raised/N.png",
+          "SHA256": "41aa4af93ba0c921df20a3dfa0c1ca826fe5b087046221dc6aa59b1769b6bd93",
+          "RGBA_SHA256": "6706096ca7164a7d904f250f9a4c4958b60bc60306334f36380753edd83fc5a1"
+        },
+        "shadow": {
+          "path": "shadow/N.png",
+          "SHA256": "dba76c9e71b940142f548015d62a810f39e93d7bdea329f0473ba1f198c9c1aa",
+          "RGBA_SHA256": "7237f2864af13fffa16b1274d829f5aa734f8ed7c1550cb0afbe692aecfc6aaa"
+        }
+      },
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "E",
+      "role": "E",
+      "ports": {
+        "N": "E",
+        "S": "E"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/E.png",
+          "SHA256": "658a829aa795b8334689bacd0b636f8787e675ea108d60b8d29998e671ee0899",
+          "RGBA_SHA256": "1bed2390b5d1e076c5930304983920600565bcd6765659c083089e889d7c4a46"
+        },
+        "ground": {
+          "path": "ground/E.png",
+          "SHA256": "90e21d356ef294d9de079bf124e55a3121a9ffb6524375336cba9b2dbb3aa863",
+          "RGBA_SHA256": "4eb5f2f663a17f692527dbe7e1435ce90161e28ba307a44862957e5ed5413f5f"
+        },
+        "raised": {
+          "path": "raised/E.png",
+          "SHA256": "1695889f3f94b82bea7103506683595c334864bc34303d08a38d06767c462de8",
+          "RGBA_SHA256": "bb2c3ee76217873114675642ee1becd89db6642f0418df3d8dcb527e349f04c7"
+        },
+        "shadow": {
+          "path": "shadow/E.png",
+          "SHA256": "b680d8075477b8370248039fdc6d1dd9513799f158b2c8734212727e1b451f06",
+          "RGBA_SHA256": "15fddf7aa67dbf12d7aeda0457cf95fc30a4df71958008c9f2367182f2148eb6"
+        }
+      },
+      "sourceRect": {
+        "x": 44,
+        "y": 0,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "S",
+      "role": "S",
+      "ports": {
+        "E": "S",
+        "W": "S"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/S.png",
+          "SHA256": "171bf18a31927c912fb21768fb4dee05282133fcb832b7f29dcf3d29d7b32d6e",
+          "RGBA_SHA256": "ed0394f1fad4bb9abfe299c90c1eec034681cabacd54be87827e9296204986a7"
+        },
+        "ground": {
+          "path": "ground/S.png",
+          "SHA256": "a5d67d4db243fa83ebb52dd109650445fa678ef353b987f043dc204563d6b8b1",
+          "RGBA_SHA256": "e3fa451436ffe730e825f74ade929e957ddace5e41221d7b64d8a84bfd12491f"
+        },
+        "raised": {
+          "path": "raised/S.png",
+          "SHA256": "55d7dbe462e6624848e5fed48393875db8b721b8b0dc544c36f5b4130083c191",
+          "RGBA_SHA256": "20a5072a85c02f46c9db4f84f8c1a31569f4f0ef73ca1484583add28f4ce3701"
+        },
+        "shadow": {
+          "path": "shadow/S.png",
+          "SHA256": "dba76c9e71b940142f548015d62a810f39e93d7bdea329f0473ba1f198c9c1aa",
+          "RGBA_SHA256": "7237f2864af13fffa16b1274d829f5aa734f8ed7c1550cb0afbe692aecfc6aaa"
+        }
+      },
+      "sourceRect": {
+        "x": 88,
+        "y": 0,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "W",
+      "role": "W",
+      "ports": {
+        "N": "W",
+        "S": "W"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/W.png",
+          "SHA256": "b2127f721be3ef767833845a3c30164d547831776a6cb177be622d425b6549b6",
+          "RGBA_SHA256": "c3c6c560ec30de1621308adb3b7405d3778fad058601bf27ff7557e9119285c3"
+        },
+        "ground": {
+          "path": "ground/W.png",
+          "SHA256": "e549c5a47dac08341d3f798c0986ab441495fb339c3c7a95b202814493e99bf2",
+          "RGBA_SHA256": "6972d587bff57adf602b7402b9d03477c91566ffd09efce4ad87c738d5e34735"
+        },
+        "raised": {
+          "path": "raised/W.png",
+          "SHA256": "bcd8dbbaeb9635a78c7c0408a1fa074e86058f1a5955339ce4c5890f0eaab606",
+          "RGBA_SHA256": "24f63a926160f6f7a93750050080f9be6f3692144f5e1990023184289f54e664"
+        },
+        "shadow": {
+          "path": "shadow/W.png",
+          "SHA256": "b680d8075477b8370248039fdc6d1dd9513799f158b2c8734212727e1b451f06",
+          "RGBA_SHA256": "15fddf7aa67dbf12d7aeda0457cf95fc30a4df71958008c9f2367182f2148eb6"
+        }
+      },
+      "sourceRect": {
+        "x": 132,
+        "y": 0,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "outer-NW",
+      "role": "outer-NW",
+      "ports": {
+        "E": "N",
+        "S": "W"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/outer-NW.png",
+          "SHA256": "8cfbd24d45851f528931f393d57c6366ae25fc47cf157c228669403a82d24366",
+          "RGBA_SHA256": "222d2749fb22eab5bc3e3041a2c3c6a5d4ce2ac9fe7d8a285864ced6623934e5"
+        },
+        "ground": {
+          "path": "ground/outer-NW.png",
+          "SHA256": "c4b5dd0417a44e537671614f019093190566f53c63c2f999799f16d2e2aecf4d",
+          "RGBA_SHA256": "9bb77dd791de8cef4f9129951a2d05c9355458663fc05bc196d6e76d831f40fc"
+        },
+        "raised": {
+          "path": "raised/outer-NW.png",
+          "SHA256": "c789c91fc0765f6f30dc5d6f6bcc8a0af25d3fb7cbfd43f486552cb483e7f443",
+          "RGBA_SHA256": "da6e4694be7e363633e7853052130b55e0842ff5d21400c032fee9bbb988219a"
+        },
+        "shadow": {
+          "path": "shadow/outer-NW.png",
+          "SHA256": "4bef7c94ce5b68913c1576a16eb4e6c6e058ecb80d6e4df07344761aac905ee7",
+          "RGBA_SHA256": "7f306e06370e92141b787e4778a7af60538bb6cc80a57f5ce6a1590d550839bf"
+        }
+      },
+      "sourceRect": {
+        "x": 176,
+        "y": 0,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "outer-NE",
+      "role": "outer-NE",
+      "ports": {
+        "W": "N",
+        "S": "E"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/outer-NE.png",
+          "SHA256": "a478a6b42dbd2b097adcc8d8fbe3471d3535d1d2dbca50ab0611d9e767091b2e",
+          "RGBA_SHA256": "66a1d384f4dd64034726badbbf6f24725824e0793595c47079495a3106616957"
+        },
+        "ground": {
+          "path": "ground/outer-NE.png",
+          "SHA256": "201c287ce5cf148ffd177feb1c12677ca5a554ed553dad666abd143dafea2224",
+          "RGBA_SHA256": "5215db97c61184a1c46932edb04c4f6782b35d843e5b511a6fcf02f65f9c7e10"
+        },
+        "raised": {
+          "path": "raised/outer-NE.png",
+          "SHA256": "b8d6beb9c4a2e3b3227bceb444c7c865f5df50950a4d5efbc90e63d897ee7d6f",
+          "RGBA_SHA256": "c0b875ac83e4ee5a9aa6c6180964a043fc7ec14370924dc38bc36f9e86175ce0"
+        },
+        "shadow": {
+          "path": "shadow/outer-NE.png",
+          "SHA256": "36214056f41c03083c18479f053a747ace0f6d65993920be0f8bb46f388981fe",
+          "RGBA_SHA256": "d6c029c9b5045a2b7eae29b9bf9369e0062773ff6a60850f82101c61c4598440"
+        }
+      },
+      "sourceRect": {
+        "x": 0,
+        "y": 70,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "outer-SE",
+      "role": "outer-SE",
+      "ports": {
+        "W": "S",
+        "N": "E"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/outer-SE.png",
+          "SHA256": "6602ca2321633dc5972fbe8a74a409b0aa0eae858fdb21c2e6cf45a5b8c4c601",
+          "RGBA_SHA256": "8bca7b093132c5999b0b317f941cb83c72bb657791eff3bfe866054ded3f79a4"
+        },
+        "ground": {
+          "path": "ground/outer-SE.png",
+          "SHA256": "c1e6a58fed563415031546f13cba86394e1e6179ef95564872bb7885dd5992c0",
+          "RGBA_SHA256": "d61c170c0bb8964419ce30ed42c6bb3eb30ef5a89cd97840c0c9efeec7f78f3d"
+        },
+        "raised": {
+          "path": "raised/outer-SE.png",
+          "SHA256": "cba49a349384cb78ae1b0b3c080667a465054c17d3a2e2b984b5c63a34a7d45b",
+          "RGBA_SHA256": "d48a547b74ec59376d5844e1a47d54dae83dade0d66764828b7af4acf09fc1a1"
+        },
+        "shadow": {
+          "path": "shadow/outer-SE.png",
+          "SHA256": "7e860bbef085eaf92515800f2131ee8c7eea626e2745cb1a7f85422cfbd0e038",
+          "RGBA_SHA256": "b38a3af201a844089ed30327c90477112ff082335b0f1e4650dd6fc88310dd29"
+        }
+      },
+      "sourceRect": {
+        "x": 44,
+        "y": 70,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "outer-SW",
+      "role": "outer-SW",
+      "ports": {
+        "E": "S",
+        "N": "W"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/outer-SW.png",
+          "SHA256": "177ca327b0b78eaa4380cfb438b78b785d334693047d271e65942823e7702e5e",
+          "RGBA_SHA256": "5a5354a48f37949fe43372118387f2ac4e178239a8cf6d150cde83f24f22c328"
+        },
+        "ground": {
+          "path": "ground/outer-SW.png",
+          "SHA256": "5dd36bf91b15481cab4600eae767720ea753d82e8f8274e94e1a1dc6ac6fba05",
+          "RGBA_SHA256": "e39e8fd1826464edd944c1b50c5e12e1247f85a5b27d8bf0f9df78073d59b043"
+        },
+        "raised": {
+          "path": "raised/outer-SW.png",
+          "SHA256": "69ca4d42ec7cdb07085c4907cb6bb2cbce444100ff27373b717378d0a8ef4eb9",
+          "RGBA_SHA256": "77e3661a49a7fe889eb2ecdb323b3d2a5628363cc79536c0a042adbf313fdfe8"
+        },
+        "shadow": {
+          "path": "shadow/outer-SW.png",
+          "SHA256": "6d0095e6b3bfd18913964a5f9d98c090aecacab99d63e62e68bf58c2eea7c6f0",
+          "RGBA_SHA256": "4b8919783ffe697286b3050db40906152d8ce3b6ab4bc7e9f58a88f31a3d74f1"
+        }
+      },
+      "sourceRect": {
+        "x": 88,
+        "y": 70,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "inner-NW",
+      "role": "inner-NW",
+      "ports": {
+        "W": "N",
+        "N": "W"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/inner-NW.png",
+          "SHA256": "dedb9f4611503643bc59a45f8512f845f613c0f7d6fdd22d6b7b4fa1209d8b15",
+          "RGBA_SHA256": "100ea7e4cc1a65a4cd8f8799cc9237fe6232de01e96e75f7059c7d752d95956d"
+        },
+        "ground": {
+          "path": "ground/inner-NW.png",
+          "SHA256": "429d8ccd89897a6fb5abf88052396fb18a1e2ed045f4d46d6d089346b49e26f8",
+          "RGBA_SHA256": "7e2a84244213fc0940b0f1614a79d07ee36e4c2d34c73632135d0c00f01f189c"
+        },
+        "raised": {
+          "path": "raised/inner-NW.png",
+          "SHA256": "64bda8d97a31a162c0665cb2880576d8e19824d160242488b53b4d99bd513cb3",
+          "RGBA_SHA256": "bbce26a7a06a590f42ebd649c14567036ac8f9b0b92d7bd8c9dd90359e7785fa"
+        },
+        "shadow": {
+          "path": "shadow/inner-NW.png",
+          "SHA256": "7e860bbef085eaf92515800f2131ee8c7eea626e2745cb1a7f85422cfbd0e038",
+          "RGBA_SHA256": "b38a3af201a844089ed30327c90477112ff082335b0f1e4650dd6fc88310dd29"
+        }
+      },
+      "sourceRect": {
+        "x": 132,
+        "y": 70,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "inner-NE",
+      "role": "inner-NE",
+      "ports": {
+        "E": "N",
+        "N": "E"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/inner-NE.png",
+          "SHA256": "fc026e1647df3cdc6d95467562365ee3ffd26e1176804b1a7007c13552d8ce5a",
+          "RGBA_SHA256": "79641af0ea6e1675e042d94d1e118ab2d15e66985033c21d6c2b87c29667a89d"
+        },
+        "ground": {
+          "path": "ground/inner-NE.png",
+          "SHA256": "2348909cad9f78e74a1d8d6e70e092a000c3f33b89d6e8cd02310e7d51b8ccde",
+          "RGBA_SHA256": "5164fccd0b1ffdf8dacede3a23ac29bae589c1c550815002162812dec9be086a"
+        },
+        "raised": {
+          "path": "raised/inner-NE.png",
+          "SHA256": "a4edf41f3175c0f4bc1b56c0498fc103bd5b2816247a54e437615a48da412345",
+          "RGBA_SHA256": "5a69f9869c3b5324f9dab94cd24797096b57ffcf5d77257acf1f32d3403c5bcb"
+        },
+        "shadow": {
+          "path": "shadow/inner-NE.png",
+          "SHA256": "6d0095e6b3bfd18913964a5f9d98c090aecacab99d63e62e68bf58c2eea7c6f0",
+          "RGBA_SHA256": "4b8919783ffe697286b3050db40906152d8ce3b6ab4bc7e9f58a88f31a3d74f1"
+        }
+      },
+      "sourceRect": {
+        "x": 176,
+        "y": 70,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "inner-SE",
+      "role": "inner-SE",
+      "ports": {
+        "E": "S",
+        "S": "E"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/inner-SE.png",
+          "SHA256": "4fd54c250cc4676dd33541e4241f68524e437018c09c7d4c528a6d70bdbedf27",
+          "RGBA_SHA256": "6311f1750cd2cf87129c9a15b88904461c4064794c86227e555c36caee541ba6"
+        },
+        "ground": {
+          "path": "ground/inner-SE.png",
+          "SHA256": "4e112c6b42a410ada8853de9b987d3ca9c3fcf7f75c54c2a4ba2575e0c05f0b0",
+          "RGBA_SHA256": "d1b4f582e5e70a0e3bbb6bbb18046bbd6e88358a9959a823bead209ab70ac35b"
+        },
+        "raised": {
+          "path": "raised/inner-SE.png",
+          "SHA256": "110059d1157670cc9460f49311d338808e5c1dbb64c77ff5f1f8321864e1566d",
+          "RGBA_SHA256": "34a395e5a15e524c0211925c6f04126872412b384b5879df0acf182166d830eb"
+        },
+        "shadow": {
+          "path": "shadow/inner-SE.png",
+          "SHA256": "4bef7c94ce5b68913c1576a16eb4e6c6e058ecb80d6e4df07344761aac905ee7",
+          "RGBA_SHA256": "7f306e06370e92141b787e4778a7af60538bb6cc80a57f5ce6a1590d550839bf"
+        }
+      },
+      "sourceRect": {
+        "x": 0,
+        "y": 140,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "inner-SW",
+      "role": "inner-SW",
+      "ports": {
+        "W": "S",
+        "S": "W"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/inner-SW.png",
+          "SHA256": "1adb36229034a1f0b9a9993710ab980b0a0ae42ca58b155a5c82c2d7f07c4dc9",
+          "RGBA_SHA256": "be5ba1c201659cf4c4d81265632353cf6fd5b0ca52bfd757c7e651ee2021412c"
+        },
+        "ground": {
+          "path": "ground/inner-SW.png",
+          "SHA256": "f46f53f266c23723deadff22a2ed58316d87716881eb403ecdfec4121540bc58",
+          "RGBA_SHA256": "24b0e80e2fc57ba114cc7608c47962fe4cb7b50607b6416a101a840691cfec06"
+        },
+        "raised": {
+          "path": "raised/inner-SW.png",
+          "SHA256": "0ce74dbb598bdcb60b0a2794d2a6058a64fdb78acd1debedb52b73874fe7bd81",
+          "RGBA_SHA256": "d4a9c4becb1d59f1c6b0fcc0b16c2d1fb21a82c19481492e8607422657a829e8"
+        },
+        "shadow": {
+          "path": "shadow/inner-SW.png",
+          "SHA256": "36214056f41c03083c18479f053a747ace0f6d65993920be0f8bb46f388981fe",
+          "RGBA_SHA256": "d6c029c9b5045a2b7eae29b9bf9369e0062773ff6a60850f82101c61c4598440"
+        }
+      },
+      "sourceRect": {
+        "x": 44,
+        "y": 140,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-N",
+      "role": "cap-N",
+      "ports": {
+        "S": "E"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-N.png",
+          "SHA256": "e4698878b59a62b7874b8efa9ddfba3559ab510d6073bb95a2472702d71179f7",
+          "RGBA_SHA256": "7f1f86d677318abf871d14d7c580bd6f590d292e00f2b437cf4d7296a5b42a59"
+        },
+        "ground": {
+          "path": "ground/cap-N.png",
+          "SHA256": "2435c8f7caf24442b3824812ed748aa030dff7f9a7152c771d8c9f139ebbfcc3",
+          "RGBA_SHA256": "768c25b2c6e9b4d93166cd4e25b715a248dccc73e42965476fb4521c7dbe8746"
+        },
+        "raised": {
+          "path": "raised/cap-N.png",
+          "SHA256": "ebba0779451b6bd03f193ce1bc66b415e689d681f34747b90bdc0a0d71b1eab6",
+          "RGBA_SHA256": "bab2d78fc5c449c446e1bb2c395aade05333a37e896bb204a15a7c6dc26e1ebe"
+        },
+        "shadow": {
+          "path": "shadow/cap-N.png",
+          "SHA256": "880400f5e446bbd8eb942deb7ff3e82f099dc979f1b2fce0237ab0146fb12839",
+          "RGBA_SHA256": "d261b3e65d679533d7007679a9eb6d92d13edede75af3b5394ad17afa8e17e7d"
+        }
+      },
+      "sourceRect": {
+        "x": 88,
+        "y": 140,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-E",
+      "role": "cap-E",
+      "ports": {
+        "W": "N"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-E.png",
+          "SHA256": "30bbb9920cbee44cca328c459c9f0f23a1f63bd08cfdd611ce7f9649122b2bed",
+          "RGBA_SHA256": "56b9c3eb80136d909304f6148caafb446214817b96303beccb28dd4e914eb182"
+        },
+        "ground": {
+          "path": "ground/cap-E.png",
+          "SHA256": "d0077cf44d8c022b1501e124e849f4db322b945ac1bc1cd3dfdbf2ffb0232f85",
+          "RGBA_SHA256": "89ca2deaf5bc1644c462bdfd6306d142c050ff4a7eaff43dcad4cd6b6039ee14"
+        },
+        "raised": {
+          "path": "raised/cap-E.png",
+          "SHA256": "e81cfdd594b546bfd76681c060fac228914a9de82617e48be3bca32a33d33392",
+          "RGBA_SHA256": "5316a05ca59c96f3f6b9fb7fbae2754339563fbe2f95096dfd5ae7d6205e143a"
+        },
+        "shadow": {
+          "path": "shadow/cap-E.png",
+          "SHA256": "cd8aa1551f197d03e36fc89b2c2288f9c48ff83e99988397f599ff08aed04415",
+          "RGBA_SHA256": "21983a660c3b2bd5da9db46c2904177120acefb5bead3a6083f063412dcb6e8c"
+        }
+      },
+      "sourceRect": {
+        "x": 132,
+        "y": 140,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-S",
+      "role": "cap-S",
+      "ports": {
+        "N": "E"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "E",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-S.png",
+          "SHA256": "28fb4a41c61285d9dab5c290ad8931f36ddf9fc742038f8d0f4246ee2b8d22e3",
+          "RGBA_SHA256": "2cff9df945a2a8d2f48b2c2072267975899fa8c7fc92ca61f5fe067ad29a113c"
+        },
+        "ground": {
+          "path": "ground/cap-S.png",
+          "SHA256": "f99e86782244e704a237ccbc68f8ea4bec2c3a888c36dde0b1ae5e3be8b92a41",
+          "RGBA_SHA256": "9f10621c6dc833014c8e84ba60ae310aba91448b3e618df41cd0b4e552f6e99b"
+        },
+        "raised": {
+          "path": "raised/cap-S.png",
+          "SHA256": "c9218f9c4fc32d3cb3d26f5ce480ac7ac50afe949c6a46adc9fb23364de34874",
+          "RGBA_SHA256": "c2958db814a53a651d5169b7a54f8c1a49e0777e0f1f179ab03994de52c27311"
+        },
+        "shadow": {
+          "path": "shadow/cap-S.png",
+          "SHA256": "28d97fbb32839961d374b383708c549029e7f35acbed6165e36b4bb2d1ea58c1",
+          "RGBA_SHA256": "66fa3a3dea1dcc0649b486766c0166b8f410449633212d22f4cb248372b5de9b"
+        }
+      },
+      "sourceRect": {
+        "x": 176,
+        "y": 140,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-W",
+      "role": "cap-W",
+      "ports": {
+        "E": "N"
+      },
+      "horizontalNormal": "N",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-W.png",
+          "SHA256": "ca19423effdd3e5ee88d569b56068fdc024184089d0442af3e92154df86ff710",
+          "RGBA_SHA256": "19a638f795594f308769525608d678af25cf5927fde8245512fde631a7058c08"
+        },
+        "ground": {
+          "path": "ground/cap-W.png",
+          "SHA256": "6ef1656488fc9541201911f7962a7f00809420f52957183a9bdda35d1aebe9d9",
+          "RGBA_SHA256": "c8651bd9baeecc2abf8150d0a3c74b1cea482fcdf6add5d050c31ca25113351d"
+        },
+        "raised": {
+          "path": "raised/cap-W.png",
+          "SHA256": "6a3b672858b30977bd0e9adbb37d73152d0253fe60623a7268c177738f603b25",
+          "RGBA_SHA256": "a54d3bee837807b6dd14d1c6324575f58b5d16a4a9d35c53f96869913671523e"
+        },
+        "shadow": {
+          "path": "shadow/cap-W.png",
+          "SHA256": "61e3f2478a8fb3af4dfb5422ddb8ca0618c583aff6a092bc35175ab51dc12cc1",
+          "RGBA_SHA256": "97649bb06efb5f35a767acdf50d61e768c748e38222abc04a8caff644d44116a"
+        }
+      },
+      "sourceRect": {
+        "x": 0,
+        "y": 210,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "post-N",
+      "role": "post-N",
+      "ports": {},
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        26
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -6
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "postHeight": 26,
+      "postWidth": 5,
+      "postPitch": 80,
+      "independentPost": true,
+      "files": {
+        "body": {
+          "path": "body/post-N.png",
+          "SHA256": "5ce63fa59262a81dd622464beff6137e08b8a6e68d4b97b8b7c04a592cb679cd",
+          "RGBA_SHA256": "d38d8412a72b2b5da0c6fdc9003b9efb80114117e26fa7b29d9d456b1298fcb0"
+        },
+        "ground": {
+          "path": "ground/post-N.png",
+          "SHA256": "f189536069f9293cf88ffbb7cd188f7f18c4a53c4dec522b43b0d1a442bc3e88",
+          "RGBA_SHA256": "d5d23dec8b8a3e89a3b08e3f7e70e0a6be1a292a9bd6cf39ebc5527de122d0e1"
+        },
+        "raised": {
+          "path": "raised/post-N.png",
+          "SHA256": "5ce63fa59262a81dd622464beff6137e08b8a6e68d4b97b8b7c04a592cb679cd",
+          "RGBA_SHA256": "d38d8412a72b2b5da0c6fdc9003b9efb80114117e26fa7b29d9d456b1298fcb0"
+        },
+        "shadow": {
+          "path": "shadow/post-N.png",
+          "SHA256": "4287fdb8e889f10d47db969055493652b4d473b9acc33b8fd3eeece6f48474da",
+          "RGBA_SHA256": "1ada84b2aa6e00f716e9da5fbd6e1843bab6a58a587f56aa2f20334b590b4729"
+        }
+      },
+      "sourceRect": {
+        "x": 44,
+        "y": 210,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "post-E",
+      "role": "post-E",
+      "ports": {},
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        26
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -6
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "postHeight": 26,
+      "postWidth": 5,
+      "postPitch": 80,
+      "independentPost": true,
+      "files": {
+        "body": {
+          "path": "body/post-E.png",
+          "SHA256": "df9331dc0a6ba17bc99769055131aa013466516ace796d926b79c756c7ce129e",
+          "RGBA_SHA256": "8db0edd25222d9705560a6aed43b9c4e832cd158bbade89a2da7e82a53c2686a"
+        },
+        "ground": {
+          "path": "ground/post-E.png",
+          "SHA256": "f189536069f9293cf88ffbb7cd188f7f18c4a53c4dec522b43b0d1a442bc3e88",
+          "RGBA_SHA256": "d5d23dec8b8a3e89a3b08e3f7e70e0a6be1a292a9bd6cf39ebc5527de122d0e1"
+        },
+        "raised": {
+          "path": "raised/post-E.png",
+          "SHA256": "df9331dc0a6ba17bc99769055131aa013466516ace796d926b79c756c7ce129e",
+          "RGBA_SHA256": "8db0edd25222d9705560a6aed43b9c4e832cd158bbade89a2da7e82a53c2686a"
+        },
+        "shadow": {
+          "path": "shadow/post-E.png",
+          "SHA256": "4287fdb8e889f10d47db969055493652b4d473b9acc33b8fd3eeece6f48474da",
+          "RGBA_SHA256": "1ada84b2aa6e00f716e9da5fbd6e1843bab6a58a587f56aa2f20334b590b4729"
+        }
+      },
+      "sourceRect": {
+        "x": 88,
+        "y": 210,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "post-S",
+      "role": "post-S",
+      "ports": {},
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        26
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -6
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "postHeight": 26,
+      "postWidth": 5,
+      "postPitch": 80,
+      "independentPost": true,
+      "files": {
+        "body": {
+          "path": "body/post-S.png",
+          "SHA256": "118b2d1b95ac8d1e2ac8ce05e80127cf893db9baa2143ee0fa070029ff45211a",
+          "RGBA_SHA256": "51b64ce68900ef246a5c39bca07c5e1683e95a8d832672f99a4ddeec5c982d3b"
+        },
+        "ground": {
+          "path": "ground/post-S.png",
+          "SHA256": "f189536069f9293cf88ffbb7cd188f7f18c4a53c4dec522b43b0d1a442bc3e88",
+          "RGBA_SHA256": "d5d23dec8b8a3e89a3b08e3f7e70e0a6be1a292a9bd6cf39ebc5527de122d0e1"
+        },
+        "raised": {
+          "path": "raised/post-S.png",
+          "SHA256": "118b2d1b95ac8d1e2ac8ce05e80127cf893db9baa2143ee0fa070029ff45211a",
+          "RGBA_SHA256": "51b64ce68900ef246a5c39bca07c5e1683e95a8d832672f99a4ddeec5c982d3b"
+        },
+        "shadow": {
+          "path": "shadow/post-S.png",
+          "SHA256": "4287fdb8e889f10d47db969055493652b4d473b9acc33b8fd3eeece6f48474da",
+          "RGBA_SHA256": "1ada84b2aa6e00f716e9da5fbd6e1843bab6a58a587f56aa2f20334b590b4729"
+        }
+      },
+      "sourceRect": {
+        "x": 132,
+        "y": 210,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "post-W",
+      "role": "post-W",
+      "ports": {},
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        26
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -6
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "postHeight": 26,
+      "postWidth": 5,
+      "postPitch": 80,
+      "independentPost": true,
+      "files": {
+        "body": {
+          "path": "body/post-W.png",
+          "SHA256": "38164290b4bbf9ee5d73cbb8e4473dcb7cb4840a93431174ff6a6281330da6c5",
+          "RGBA_SHA256": "eb9a4f4b4de5e8f9ee4a8ddfab43873ccd7217a74a527eb50c7d84a7ad16480a"
+        },
+        "ground": {
+          "path": "ground/post-W.png",
+          "SHA256": "f189536069f9293cf88ffbb7cd188f7f18c4a53c4dec522b43b0d1a442bc3e88",
+          "RGBA_SHA256": "d5d23dec8b8a3e89a3b08e3f7e70e0a6be1a292a9bd6cf39ebc5527de122d0e1"
+        },
+        "raised": {
+          "path": "raised/post-W.png",
+          "SHA256": "38164290b4bbf9ee5d73cbb8e4473dcb7cb4840a93431174ff6a6281330da6c5",
+          "RGBA_SHA256": "eb9a4f4b4de5e8f9ee4a8ddfab43873ccd7217a74a527eb50c7d84a7ad16480a"
+        },
+        "shadow": {
+          "path": "shadow/post-W.png",
+          "SHA256": "4287fdb8e889f10d47db969055493652b4d473b9acc33b8fd3eeece6f48474da",
+          "RGBA_SHA256": "1ada84b2aa6e00f716e9da5fbd6e1843bab6a58a587f56aa2f20334b590b4729"
+        }
+      },
+      "sourceRect": {
+        "x": 176,
+        "y": 210,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-N--W",
+      "role": "cap-N",
+      "ports": {
+        "S": "W"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-N--W.png",
+          "SHA256": "d4f3c8c995af31e83628ff69636527004eccc037fce12bdc9a49d9622b0f2e4c",
+          "RGBA_SHA256": "a224ae39821ce143d1fbce8dd54d5c76802a2804acd1c0a4188326a4a380a0f0"
+        },
+        "ground": {
+          "path": "ground/cap-N--W.png",
+          "SHA256": "6f7e904bf9fc4bb22694f329f565747d406c461eb7a2e08851fe346355df5604",
+          "RGBA_SHA256": "439240089854d65b75efdba0faa0447f80aa3611da75ebd93aac1fcdc7123eed"
+        },
+        "raised": {
+          "path": "raised/cap-N--W.png",
+          "SHA256": "f325bb4b4efa5e7f61884b5d96dee738dbc9f91e068d81bdf0712c84c41356a1",
+          "RGBA_SHA256": "8eb36532f8e7f53ed971f7a0897520f077ffbf03a1eeb591b2645b3c4404e48b"
+        },
+        "shadow": {
+          "path": "shadow/cap-N--W.png",
+          "SHA256": "880400f5e446bbd8eb942deb7ff3e82f099dc979f1b2fce0237ab0146fb12839",
+          "RGBA_SHA256": "d261b3e65d679533d7007679a9eb6d92d13edede75af3b5394ad17afa8e17e7d"
+        }
+      },
+      "sourceRect": {
+        "x": 0,
+        "y": 280,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-S--W",
+      "role": "cap-S",
+      "ports": {
+        "N": "W"
+      },
+      "horizontalNormal": null,
+      "verticalNormal": "W",
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-S--W.png",
+          "SHA256": "3a4ba290c042e99015944715d0ad3176b6d4c0443e39833eabf23d480ac1bf16",
+          "RGBA_SHA256": "03984cf6f05ee695c19ce013ca0529999e3e520081a70d86a844e265bbf1cddc"
+        },
+        "ground": {
+          "path": "ground/cap-S--W.png",
+          "SHA256": "789d0908aae178850637e209ce13bbd84c7e026454be0635a5f79c9b48138eec",
+          "RGBA_SHA256": "fbad444903c62daec4f9ef60e080b608de97c7514a2498696bf7c06917fa9b49"
+        },
+        "raised": {
+          "path": "raised/cap-S--W.png",
+          "SHA256": "c9986846efb1b5c663f0e9a4076f9eed933d700405cd73b584cad43c92177ef7",
+          "RGBA_SHA256": "e5b259297cf746e42f224e738e3306e2bc6baa3203d9707488e33b842de50403"
+        },
+        "shadow": {
+          "path": "shadow/cap-S--W.png",
+          "SHA256": "28d97fbb32839961d374b383708c549029e7f35acbed6165e36b4bb2d1ea58c1",
+          "RGBA_SHA256": "66fa3a3dea1dcc0649b486766c0166b8f410449633212d22f4cb248372b5de9b"
+        }
+      },
+      "sourceRect": {
+        "x": 44,
+        "y": 280,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-E--S",
+      "role": "cap-E",
+      "ports": {
+        "W": "S"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-E--S.png",
+          "SHA256": "acc705d62bfb40688efbd48a26ad0e3bc25adbfeb068ffe62e681fe080a5b2ee",
+          "RGBA_SHA256": "30c64f453d7f28f8c2b37f22e9137d2e51fce7fa594d36cd9fcf535b8790c07c"
+        },
+        "ground": {
+          "path": "ground/cap-E--S.png",
+          "SHA256": "ce53a5ac672631828588e34d9a3b4bb91f257804acc78c5fc3e85d1841ea7e1c",
+          "RGBA_SHA256": "473fb97b1df6ff13767dfd8ae05561c7f3f2e95db53e5dd7094fe7127df6d6a1"
+        },
+        "raised": {
+          "path": "raised/cap-E--S.png",
+          "SHA256": "81820b2acc8d2b7ea17cda90977a56f5fa4447e85aa4b7244db2d45a9e35405f",
+          "RGBA_SHA256": "e404ec9e7a289c638795ed51853118f34e8c15818935da3e7f777048794a7497"
+        },
+        "shadow": {
+          "path": "shadow/cap-E--S.png",
+          "SHA256": "cd8aa1551f197d03e36fc89b2c2288f9c48ff83e99988397f599ff08aed04415",
+          "RGBA_SHA256": "21983a660c3b2bd5da9db46c2904177120acefb5bead3a6083f063412dcb6e8c"
+        }
+      },
+      "sourceRect": {
+        "x": 88,
+        "y": 280,
+        "w": 44,
+        "h": 70
+      }
+    },
+    {
+      "name": "cap-W--S",
+      "role": "cap-W",
+      "ports": {
+        "E": "S"
+      },
+      "horizontalNormal": "S",
+      "verticalNormal": null,
+      "logicalCell": [
+        40,
+        40
+      ],
+      "packedFrame": [
+        44,
+        70
+      ],
+      "bodyFootRoot": [
+        20,
+        46
+      ],
+      "logicalFootRoot": [
+        20,
+        20
+      ],
+      "bodyOffset": [
+        0,
+        -26
+      ],
+      "groundOffset": [
+        0,
+        -26
+      ],
+      "shadowOffset": [
+        0,
+        -26
+      ],
+      "groundBeamWidth": 8,
+      "topRailElevation": 22,
+      "topRailThickness": 3,
+      "bakedPosts": 0,
+      "files": {
+        "body": {
+          "path": "body/cap-W--S.png",
+          "SHA256": "a5ca5866a2c30178714a167c18fc499af037ad5e055c4db0421a1793e16db427",
+          "RGBA_SHA256": "8337e471cb102b0a31efb8eff7e110fa5a18b592362f287c4d17b9fddb01ba66"
+        },
+        "ground": {
+          "path": "ground/cap-W--S.png",
+          "SHA256": "70588cfa593858d03dd92739cee5284ee926eb0395582040b88b147871d1d356",
+          "RGBA_SHA256": "437c53c36062206b8a1da9e7266d59566d31eca7f4db3e22b80c6ff8f482148d"
+        },
+        "raised": {
+          "path": "raised/cap-W--S.png",
+          "SHA256": "b8ac4bde8e3a2707baf12e1629b128a3456df66642435d6b910af8f4f1aaf531",
+          "RGBA_SHA256": "604e8102afd985fedf89173b572f7e4d64c5a08fc2906d714b52ee67eecab262"
+        },
+        "shadow": {
+          "path": "shadow/cap-W--S.png",
+          "SHA256": "61e3f2478a8fb3af4dfb5422ddb8ca0618c583aff6a092bc35175ab51dc12cc1",
+          "RGBA_SHA256": "97649bb06efb5f35a767acdf50d61e768c748e38222abc04a8caff644d44116a"
+        }
+      },
+      "sourceRect": {
+        "x": 132,
+        "y": 280,
+        "w": 44,
+        "h": 70
+      }
+    }
+  ],
+  "worldUnitsPerPixel": 1,
+  "scaleMode": "nearest",
+  "logicalGrid": [
+    40,
+    40
+  ],
+  "packedAtlas": [
+    220,
+    350
+  ],
+  "primary20LayoutColumns": 5,
+  "primary20LayoutRows": 4,
+  "packing": "Padded44x70 renderframes include raisedoverhang andgroundcastshadow; notdrop-in200x160 pixels. Logical40px rolegrid unchanged.",
+  "shadowProjection": "Groundplane: beamoffset(1,1)alpha32; upperrail z22 projects(4,4)alpha64; postz0..26 projectsround(z*4/22) towardright/down. UnionbyMAX alpha oncebeforeground/raised renders, not repeatedalpha-composite overlays.",
+  "shadowRGB": [
+    58,
+    46,
+    32
+  ],
+  "fixedLight": "upper-left",
+  "depthRule": "Raisedrail andposts sameactor EventLayer:worldfootroot depth;1x1 throughhitbox eventy=depth-1 andframecompensation+1. Ground/shadow remainfloorlayers.",
+  "newModelRequests": 0,
+  "productionAdmissions": 0,
+  "formalGamePublish": false,
+  "fullNativeAndSceneReview": "pending"
+}

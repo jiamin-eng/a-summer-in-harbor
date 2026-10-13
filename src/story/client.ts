@@ -1,3 +1,4 @@
+import {entrySpan} from '../account-link/entry-timing';
 import {rememberReply,draftKey} from './dialogue-reading';
 import {getGameApiBase} from '../game-id';import type {Save,Action} from './state';import type {Locale} from '../world/data';
 import {identitySnapshot,identityFetch,enableAccountMode} from '../account-link/transport';
@@ -30,8 +31,8 @@ function requireBound(head:Save,s:Scope){s.assert();if(bound?.scope!==s.scope||b
 export function assertCurrentJourney(head:Save){requireBound(head,identitySnapshot())}
 export async function readEntryDirectory():Promise<JourneyChoice>{
  const s=identitySnapshot();
- const boot=await request('/bootstrap',{},s);enableAccountMode(boot.mode);s.assert();
- const journeys=await request('/sessions',undefined,s),data={journeys,legacy:[]};
+ const boot=await entrySpan('bootstrap',()=>request('/bootstrap',{},s));enableAccountMode(boot.mode);s.assert();
+ const journeys=await entrySpan('session-directory',()=>request('/sessions',undefined,s)),data={journeys,legacy:[]};
  s.assert();choice={scope:s.scope,data};return data;
 }
 export async function connect(locale:Locale,selectedId?:string):Promise<Save>{
@@ -45,7 +46,7 @@ export async function connect(locale:Locale,selectedId?:string):Promise<Save>{
  // Preserve historical pending envelopes by journey; never submit one as another account.
  const oldKey=key('harbor-pending-v1',s),old=storage().getItem(oldKey);if(old&&JSON.parse(old).id===id&&!storage().getItem(pendingKey(s,id!))){storage().setItem(pendingKey(s,id!),old);storage().removeItem(oldKey)}
  const pending=storage().getItem(pendingKey(s,id!));if(pending){const p=JSON.parse(pending);if(p.id===id){try{const recovered=await request('/sessions/'+id+(p.channel==='motion'?'/motion':p.channel==='active-play'?'/active-play':'/action'),p.action,s);if(p.channel==='motion')confirmMotion(recovered,id!,p.action);if(p.channel==='active-play')confirmActivePlay(recovered,id!,p.action);const entry=recovered.head?.history.find((h:{id:string})=>h.id===p.action.action_id);if(entry){rememberReply(storage(),recovered.head,entry,locale);if(entry.person&&entry.question&&storage().getItem(draftKey(id!,entry.person))?.trim()===entry.question)storage().removeItem(draftKey(id!,entry.person))};s.assert();storage().removeItem(pendingKey(s,id!))}catch(e:any){s.assert();if(['motion','active-play'].includes(p.channel)?resolvedMotionFailure(e):resolvedFailure(e))storage().removeItem(pendingKey(s,id!));else throw e}}}
- return bind(s,await request('/sessions/'+id,undefined,s));
+ return bind(s,await entrySpan('session-get',()=>request('/sessions/'+id,undefined,s)));
 }
 export async function chooseJourney(locale:Locale,option:{kind:'existing'|'claim'|'new';id?:string;confirmed?:boolean}):Promise<Save>{
  const s=identitySnapshot(),c=connectionChoice();
@@ -66,7 +67,7 @@ export async function chooseJourney(locale:Locale,option:{kind:'existing'|'claim
 /** Explicit normal-play entry. A directory read neither claims nor creates a journey. */
 export async function readJourneyDirectory(head:Save):Promise<JourneyChoice>{
  const s=identitySnapshot();requireBound(head,s);if(hasPendingAction())throw Error('PENDING_ACTION');
- const journeys=await request('/sessions',undefined,s),legacy:JourneyChoice['legacy']=[];
+ const journeys=await entrySpan('session-directory',()=>request('/sessions',undefined,s)),legacy:JourneyChoice['legacy']=[];
  requireBound(head,s);const data={journeys,legacy};choice={scope:s.scope,data,management:true};return data;
 }
 export async function send(head:Save,a:Action):Promise<{head:Save;text:[string,string]}>{

@@ -23,7 +23,7 @@ const sample=async(s:AnimalLifeSave)=>(await assembled.runtime.prepare(s,command
 
 test('formal public life factory exposes both pinned crops and existing seven animals; closed starts preserve reads',()=>{
  const s=placed(),before=structuredClone(s),view=assembled.lifeProject(s);
- assert.equal(Object.keys(people).length,22);assert.equal(acceptedAnimals.length,7);
+ assert.equal(Object.keys(people).length,23);assert.equal(acceptedAnimals.length,7);
  assert.equal(view.plants!.ref.revision,2);assert.equal(view.animals.commissions.length,2);
  assert.equal(createHarborLife(createRuntime(),false).lifeProject(s).plants!.newStarts,false);
  assert.deepEqual(s,before);assert.equal(modelCalls,0);

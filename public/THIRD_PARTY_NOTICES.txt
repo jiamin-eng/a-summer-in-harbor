@@ -2,6 +2,13 @@ A Summer in Harbor — third-party notices
 Generated art and music: AlterU platform media service. Request provenance is in doc/art and doc/audio.
 Game authored for this project. Runtime dependencies and notices follow.
 
+Outdoor terrain tiles: Outdoor tiles, again — Michele "Buch" Bucelli.
+Source: https://opengameart.org/content/outdoor-tiles-again
+License: Creative Commons Attribution 3.0 — https://creativecommons.org/licenses/by/3.0/
+The game's map layout and terrain placement adapt these tiles; related Tiled example
+selection and terrain labels come from the official orthogonal-outside.tmx example.
+Related tiles were sponsored by Abram Connelly.
+
 
 @barvynkoa/particle-emitter @ 0.0.1
 Source: https://github.com/andriibarvynko/particle-emitter

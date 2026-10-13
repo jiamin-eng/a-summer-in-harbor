@@ -23,7 +23,7 @@ const observed=(s:Save,id='harbor-cat-1')=>createAnimalRuntime(acceptedAnimals).
 const command=(s:Save,verb='animal-pet'):Action=>{const a=observed(s);return {action_id:randomUUID(),expected_version:s.version,scene:s.scene,position:{x:a.foot.x-8,y:a.foot.y+34},target:a.id,action:verb,actorPosition:a.foot}};
 const stable=(s:Save)=>{const copy:any=structuredClone(s);for(const k of ['animalsV1','version','cursor','position','history'])delete copy[k];return copy};
 test('current configuration is 22 identities including Mira, pending nomads, and seven animal objects',()=>{
- assert.equal(Object.keys(people).length,22);assert.equal(Object.keys(residentRoutes).length,22);assert.equal(acceptedAnimals.length,7);
+ assert.equal(Object.keys(people).length,23);assert.equal(Object.keys(residentRoutes).length,23);assert.equal(acceptedAnimals.length,7);
  for(const minute of [540,780,1080])assert.ok(animalPeople({townMinutes:minute,flags:[]}).mira);
  assert.deepEqual(acceptedAnimals.map(d=>d.species).sort(),['cat','cat','cat','gull','gull','gull','gull']);
  for(const r of Object.values(rooms))for(const e of r.entities.filter(e=>e.animalId)){assert.equal(e.kind,'object');assert.equal(e.person,undefined);assert.ok(!people[e.id])}

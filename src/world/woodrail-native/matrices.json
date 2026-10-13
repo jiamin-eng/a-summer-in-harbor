@@ -1,0 +1,2308 @@
+{
+  "cases": [
+    {
+      "name": "U",
+      "pieces": [
+        {
+          "name": "outer-NW",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "N",
+          "x": 40,
+          "y": 0
+        },
+        {
+          "name": "outer-NE",
+          "x": 80,
+          "y": 0
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 80,
+          "y": 40
+        },
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 80
+        },
+        {
+          "name": "cap-S",
+          "x": 80,
+          "y": 80
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        124,
+        150
+      ],
+      "placements": [
+        {
+          "name": "outer-NW",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "N",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "outer-NE",
+          "x": 80,
+          "y": 0,
+          "worldFoot": [
+            100,
+            20
+          ],
+          "raisedAt": [
+            80,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 80,
+          "y": 40,
+          "worldFoot": [
+            100,
+            60
+          ],
+          "raisedAt": [
+            80,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 80,
+          "worldFoot": [
+            20,
+            100
+          ],
+          "raisedAt": [
+            0,
+            80
+          ],
+          "eventDepth": 100
+        },
+        {
+          "name": "cap-S",
+          "x": 80,
+          "y": 80,
+          "worldFoot": [
+            100,
+            100
+          ],
+          "raisedAt": [
+            80,
+            80
+          ],
+          "eventDepth": 100
+        }
+      ],
+      "sourceSHA256": "ddf906b08fd2353cba8344ae01bb12972a1c5a8403521462a0a1693d2c11f64d",
+      "compositeFile": "U-composite.png"
+    },
+    {
+      "name": "L-outer-NW",
+      "pieces": [
+        {
+          "name": "outer-NW",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 40
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 80
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        124,
+        150
+      ],
+      "placements": [
+        {
+          "name": "outer-NW",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 40,
+          "worldFoot": [
+            100,
+            60
+          ],
+          "raisedAt": [
+            80,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 80,
+          "worldFoot": [
+            60,
+            100
+          ],
+          "raisedAt": [
+            40,
+            80
+          ],
+          "eventDepth": 100
+        }
+      ],
+      "sourceSHA256": "7efb4a67f02c5e3187436837b5a2009942c948475e7914c688130c3732e2f62b",
+      "compositeFile": "L-outer-NW-composite.png"
+    },
+    {
+      "name": "L-outer-NE",
+      "pieces": [
+        {
+          "name": "outer-NE",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "N",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 80
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        84,
+        150
+      ],
+      "placements": [
+        {
+          "name": "outer-NE",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "N",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 80,
+          "worldFoot": [
+            60,
+            100
+          ],
+          "raisedAt": [
+            40,
+            80
+          ],
+          "eventDepth": 100
+        }
+      ],
+      "sourceSHA256": "2cfcf1c5031fa601354fe8d525b6424ce649cd43e17086ddc2d75dedb3d0e895",
+      "compositeFile": "L-outer-NE-composite.png"
+    },
+    {
+      "name": "L-outer-SE",
+      "pieces": [
+        {
+          "name": "outer-SE",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "S",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        84,
+        110
+      ],
+      "placements": [
+        {
+          "name": "outer-SE",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "S",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "5a0ae90b8348c65af92b4949344d4920ec632af8d344443c1faf7b76fea8a72d",
+      "compositeFile": "L-outer-SE-composite.png"
+    },
+    {
+      "name": "L-outer-SW",
+      "pieces": [
+        {
+          "name": "outer-SW",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 40
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        124,
+        110
+      ],
+      "placements": [
+        {
+          "name": "outer-SW",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 40,
+          "worldFoot": [
+            100,
+            60
+          ],
+          "raisedAt": [
+            80,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "94b4fd7487ebb9234a333686b9cc3705d63360f119a387cae28a27fd76d9dfb3",
+      "compositeFile": "L-outer-SW-composite.png"
+    },
+    {
+      "name": "L-inner-NW",
+      "pieces": [
+        {
+          "name": "inner-NW",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "N",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        84,
+        110
+      ],
+      "placements": [
+        {
+          "name": "inner-NW",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "N",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "905152b5a55eb66e94be6855a85264ec7ea140319d50292bb8c4664043357a43",
+      "compositeFile": "L-inner-NW-composite.png"
+    },
+    {
+      "name": "L-inner-NE",
+      "pieces": [
+        {
+          "name": "inner-NE",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        124,
+        110
+      ],
+      "placements": [
+        {
+          "name": "inner-NE",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 40,
+          "worldFoot": [
+            100,
+            60
+          ],
+          "raisedAt": [
+            80,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "224987d2ca57db47828910d5b0ae527cb8bef196727b09dd876f86152e9dd625",
+      "compositeFile": "L-inner-NE-composite.png"
+    },
+    {
+      "name": "L-inner-SE",
+      "pieces": [
+        {
+          "name": "inner-SE",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 80
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        124,
+        150
+      ],
+      "placements": [
+        {
+          "name": "inner-SE",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 40,
+          "worldFoot": [
+            100,
+            60
+          ],
+          "raisedAt": [
+            80,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 40,
+          "y": 80,
+          "worldFoot": [
+            60,
+            100
+          ],
+          "raisedAt": [
+            40,
+            80
+          ],
+          "eventDepth": 100
+        }
+      ],
+      "sourceSHA256": "d5661348ea20e651620c993532d60aea9edb14d970793bbf2cc3de7a5fd0de1e",
+      "compositeFile": "L-inner-SE-composite.png"
+    },
+    {
+      "name": "L-inner-SW",
+      "pieces": [
+        {
+          "name": "inner-SW",
+          "x": 40,
+          "y": 40
+        },
+        {
+          "name": "S",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 80
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        84,
+        150
+      ],
+      "placements": [
+        {
+          "name": "inner-SW",
+          "x": 40,
+          "y": 40,
+          "worldFoot": [
+            60,
+            60
+          ],
+          "raisedAt": [
+            40,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "S",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "W",
+          "x": 40,
+          "y": 80,
+          "worldFoot": [
+            60,
+            100
+          ],
+          "raisedAt": [
+            40,
+            80
+          ],
+          "eventDepth": 100
+        }
+      ],
+      "sourceSHA256": "e50e27b7f2700569c7e045022ed014a434cf0b251e296e5916b7fc48809f658c",
+      "compositeFile": "L-inner-SW-composite.png"
+    },
+    {
+      "name": "two80-repeat-caps-N",
+      "pieces": [
+        {
+          "name": "cap-W",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "N",
+          "x": 40,
+          "y": 0
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 0
+        },
+        {
+          "name": "N",
+          "x": 120,
+          "y": 0
+        },
+        {
+          "name": "N",
+          "x": 160,
+          "y": 0
+        },
+        {
+          "name": "cap-E",
+          "x": 200,
+          "y": 0
+        }
+      ],
+      "posts": [
+        {
+          "name": "post-N",
+          "x": 40,
+          "y": 0
+        },
+        {
+          "name": "post-N",
+          "x": 120,
+          "y": 0
+        },
+        {
+          "name": "post-N",
+          "x": 200,
+          "y": 0
+        }
+      ],
+      "nativeSize": [
+        244,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "N",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "N",
+          "x": 80,
+          "y": 0,
+          "worldFoot": [
+            100,
+            20
+          ],
+          "raisedAt": [
+            80,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "N",
+          "x": 120,
+          "y": 0,
+          "worldFoot": [
+            140,
+            20
+          ],
+          "raisedAt": [
+            120,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "N",
+          "x": 160,
+          "y": 0,
+          "worldFoot": [
+            180,
+            20
+          ],
+          "raisedAt": [
+            160,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "cap-E",
+          "x": 200,
+          "y": 0,
+          "worldFoot": [
+            220,
+            20
+          ],
+          "raisedAt": [
+            200,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-N",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            20
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-N",
+          "x": 120,
+          "y": 0,
+          "worldFoot": [
+            140,
+            20
+          ],
+          "raisedAt": [
+            120,
+            20
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-N",
+          "x": 200,
+          "y": 0,
+          "worldFoot": [
+            220,
+            20
+          ],
+          "raisedAt": [
+            200,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "a520a6f47d08192d475c6962196dd0576230d3dee7a42cbd1b0e8a9e48ab9bfd",
+      "compositeFile": "two80-repeat-caps-N-composite.png"
+    },
+    {
+      "name": "two80-repeat-caps-S",
+      "pieces": [
+        {
+          "name": "cap-W--S",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "S",
+          "x": 40,
+          "y": 0
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 0
+        },
+        {
+          "name": "S",
+          "x": 120,
+          "y": 0
+        },
+        {
+          "name": "S",
+          "x": 160,
+          "y": 0
+        },
+        {
+          "name": "cap-E--S",
+          "x": 200,
+          "y": 0
+        }
+      ],
+      "posts": [
+        {
+          "name": "post-S",
+          "x": 40,
+          "y": 0
+        },
+        {
+          "name": "post-S",
+          "x": 120,
+          "y": 0
+        },
+        {
+          "name": "post-S",
+          "x": 200,
+          "y": 0
+        }
+      ],
+      "nativeSize": [
+        244,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-W--S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "S",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "S",
+          "x": 80,
+          "y": 0,
+          "worldFoot": [
+            100,
+            20
+          ],
+          "raisedAt": [
+            80,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "S",
+          "x": 120,
+          "y": 0,
+          "worldFoot": [
+            140,
+            20
+          ],
+          "raisedAt": [
+            120,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "S",
+          "x": 160,
+          "y": 0,
+          "worldFoot": [
+            180,
+            20
+          ],
+          "raisedAt": [
+            160,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "cap-E--S",
+          "x": 200,
+          "y": 0,
+          "worldFoot": [
+            220,
+            20
+          ],
+          "raisedAt": [
+            200,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-S",
+          "x": 40,
+          "y": 0,
+          "worldFoot": [
+            60,
+            20
+          ],
+          "raisedAt": [
+            40,
+            20
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-S",
+          "x": 120,
+          "y": 0,
+          "worldFoot": [
+            140,
+            20
+          ],
+          "raisedAt": [
+            120,
+            20
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "post-S",
+          "x": 200,
+          "y": 0,
+          "worldFoot": [
+            220,
+            20
+          ],
+          "raisedAt": [
+            200,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "a75c30669e9a4772eedd0c013722b363e7d9a8c62fb9296891593344a1a6c29f",
+      "compositeFile": "two80-repeat-caps-S-composite.png"
+    },
+    {
+      "name": "two80-repeat-caps-E",
+      "pieces": [
+        {
+          "name": "cap-N",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 80
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 120
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 160
+        },
+        {
+          "name": "cap-S",
+          "x": 0,
+          "y": 200
+        }
+      ],
+      "posts": [
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 120
+        },
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 200
+        }
+      ],
+      "nativeSize": [
+        44,
+        270
+      ],
+      "placements": [
+        {
+          "name": "cap-N",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 80,
+          "worldFoot": [
+            20,
+            100
+          ],
+          "raisedAt": [
+            0,
+            80
+          ],
+          "eventDepth": 100
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 120,
+          "worldFoot": [
+            20,
+            140
+          ],
+          "raisedAt": [
+            0,
+            120
+          ],
+          "eventDepth": 140
+        },
+        {
+          "name": "E",
+          "x": 0,
+          "y": 160,
+          "worldFoot": [
+            20,
+            180
+          ],
+          "raisedAt": [
+            0,
+            160
+          ],
+          "eventDepth": 180
+        },
+        {
+          "name": "cap-S",
+          "x": 0,
+          "y": 200,
+          "worldFoot": [
+            20,
+            220
+          ],
+          "raisedAt": [
+            0,
+            200
+          ],
+          "eventDepth": 220
+        },
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            60
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 120,
+          "worldFoot": [
+            20,
+            140
+          ],
+          "raisedAt": [
+            0,
+            140
+          ],
+          "eventDepth": 140
+        },
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 200,
+          "worldFoot": [
+            20,
+            220
+          ],
+          "raisedAt": [
+            0,
+            220
+          ],
+          "eventDepth": 220
+        }
+      ],
+      "sourceSHA256": "8aca93b21e3d43e41fa700a4dd1a64af70ddef121feb700a63202c4f6d55dd4d",
+      "compositeFile": "two80-repeat-caps-E-composite.png"
+    },
+    {
+      "name": "two80-repeat-caps-W",
+      "pieces": [
+        {
+          "name": "cap-N--W",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 80
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 120
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 160
+        },
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 200
+        }
+      ],
+      "posts": [
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 40
+        },
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 120
+        },
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 200
+        }
+      ],
+      "nativeSize": [
+        44,
+        270
+      ],
+      "placements": [
+        {
+          "name": "cap-N--W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            40
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 80,
+          "worldFoot": [
+            20,
+            100
+          ],
+          "raisedAt": [
+            0,
+            80
+          ],
+          "eventDepth": 100
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 120,
+          "worldFoot": [
+            20,
+            140
+          ],
+          "raisedAt": [
+            0,
+            120
+          ],
+          "eventDepth": 140
+        },
+        {
+          "name": "W",
+          "x": 0,
+          "y": 160,
+          "worldFoot": [
+            20,
+            180
+          ],
+          "raisedAt": [
+            0,
+            160
+          ],
+          "eventDepth": 180
+        },
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 200,
+          "worldFoot": [
+            20,
+            220
+          ],
+          "raisedAt": [
+            0,
+            200
+          ],
+          "eventDepth": 220
+        },
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 40,
+          "worldFoot": [
+            20,
+            60
+          ],
+          "raisedAt": [
+            0,
+            60
+          ],
+          "eventDepth": 60
+        },
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 120,
+          "worldFoot": [
+            20,
+            140
+          ],
+          "raisedAt": [
+            0,
+            140
+          ],
+          "eventDepth": 140
+        },
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 200,
+          "worldFoot": [
+            20,
+            220
+          ],
+          "raisedAt": [
+            0,
+            220
+          ],
+          "eventDepth": 220
+        }
+      ],
+      "sourceSHA256": "a7a5055898633572b88f677ac437fe8fc47c163c86655aaddf35f6afd0842419",
+      "compositeFile": "two80-repeat-caps-W-composite.png"
+    },
+    {
+      "name": "opening180",
+      "pieces": [
+        {
+          "name": "cap-E",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "name": "cap-W",
+          "x": 188,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        232,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-E",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        },
+        {
+          "name": "cap-W",
+          "x": 188,
+          "y": 0,
+          "worldFoot": [
+            208,
+            20
+          ],
+          "raisedAt": [
+            188,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "938fba1654ba6166266b8c716a18284b5418d221294eaf549a8adc32b794d9ae",
+      "compositeFile": "opening180-composite.png"
+    },
+    {
+      "name": "part-N",
+      "pieces": [
+        {
+          "name": "N",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "N",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "46b2368212a71895e71eff0f75001cc7629a1d66904cd04958f48e0314c130a8",
+      "compositeFile": "part-N-composite.png"
+    },
+    {
+      "name": "part-E",
+      "pieces": [
+        {
+          "name": "E",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "E",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "34f460bc4ba7f553b6fffa59670e522b49eb132923c9d37a1d35090f7d5d8769",
+      "compositeFile": "part-E-composite.png"
+    },
+    {
+      "name": "part-S",
+      "pieces": [
+        {
+          "name": "S",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "2845fb79d08807c85efe2ce5b50f74c5a0cee1e3a70fdeb840eac022486bbbe7",
+      "compositeFile": "part-S-composite.png"
+    },
+    {
+      "name": "part-W",
+      "pieces": [
+        {
+          "name": "W",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "d68c080b3a81ed22e2c8bbb91211c1a3a86425b8a04daad23f97d5a3ff578ae5",
+      "compositeFile": "part-W-composite.png"
+    },
+    {
+      "name": "part-outer-NW",
+      "pieces": [
+        {
+          "name": "outer-NW",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "outer-NW",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "09d4acba7edafa592833124c88defd41ce713069383217dd46587157809a36a6",
+      "compositeFile": "part-outer-NW-composite.png"
+    },
+    {
+      "name": "part-outer-NE",
+      "pieces": [
+        {
+          "name": "outer-NE",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "outer-NE",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "3dcc692eb67426f73530421b3230ad6ead55eb9d4cfa6f8a5de5f18092634071",
+      "compositeFile": "part-outer-NE-composite.png"
+    },
+    {
+      "name": "part-outer-SE",
+      "pieces": [
+        {
+          "name": "outer-SE",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "outer-SE",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "331eb1369efe2cf3c37c8fb32efdb3cd6ac58f1294b2eae7041d0a4f07fdcc41",
+      "compositeFile": "part-outer-SE-composite.png"
+    },
+    {
+      "name": "part-outer-SW",
+      "pieces": [
+        {
+          "name": "outer-SW",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "outer-SW",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "5736beea0db4ef04374a30e49e6fadfd0bc377f9d4f92f400c47ae61cd97da4f",
+      "compositeFile": "part-outer-SW-composite.png"
+    },
+    {
+      "name": "part-inner-NW",
+      "pieces": [
+        {
+          "name": "inner-NW",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "inner-NW",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "bd3a3008bed35dc7de7b597bbd37258c46433194c1838ad2366f1e2d272229c2",
+      "compositeFile": "part-inner-NW-composite.png"
+    },
+    {
+      "name": "part-inner-NE",
+      "pieces": [
+        {
+          "name": "inner-NE",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "inner-NE",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "102d57203f4880c8f500010b1c6bdf84d88cc9f1002e98e099a54585078b2b9d",
+      "compositeFile": "part-inner-NE-composite.png"
+    },
+    {
+      "name": "part-inner-SE",
+      "pieces": [
+        {
+          "name": "inner-SE",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "inner-SE",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "c36db90c549f134ec165d4487487d2b068bb6986e4cb89e5ae12d07f13e6f1fb",
+      "compositeFile": "part-inner-SE-composite.png"
+    },
+    {
+      "name": "part-inner-SW",
+      "pieces": [
+        {
+          "name": "inner-SW",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "inner-SW",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "88642e158684cbabad3becf5058cca0d86ec66e8a03e36502d046b4369114cd5",
+      "compositeFile": "part-inner-SW-composite.png"
+    },
+    {
+      "name": "part-cap-N",
+      "pieces": [
+        {
+          "name": "cap-N",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-N",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "50991e5d9e13e9e94e229cdbc1d9aadc9f6f06a0efa12c33e179b3c4001d1fbc",
+      "compositeFile": "part-cap-N-composite.png"
+    },
+    {
+      "name": "part-cap-E",
+      "pieces": [
+        {
+          "name": "cap-E",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-E",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "d2fa3dae1c88400ee3f2f1a1a03e1bf4300d0438c3d5a45ae8010b1c92160d05",
+      "compositeFile": "part-cap-E-composite.png"
+    },
+    {
+      "name": "part-cap-S",
+      "pieces": [
+        {
+          "name": "cap-S",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "c88c82f4b56d842f1194826a49fa4b2f37636dd1d249b7b7c5fb5cda7d096911",
+      "compositeFile": "part-cap-S-composite.png"
+    },
+    {
+      "name": "part-cap-W",
+      "pieces": [
+        {
+          "name": "cap-W",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "cc95420036934deb5628cc5fb7382da03140bc11aa3ef548624c7b583aa12da9",
+      "compositeFile": "part-cap-W-composite.png"
+    },
+    {
+      "name": "part-post-N",
+      "pieces": [
+        {
+          "name": "post-N",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "post-N",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "3b3d610da2ca6974a5284528514ab26a08330f4cb04bb7611b25919a69dca643",
+      "compositeFile": "part-post-N-composite.png"
+    },
+    {
+      "name": "part-post-E",
+      "pieces": [
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "post-E",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "fa042cfff808df33e77c60359cea92eedc619d3bdb93afa0d2ccb8695724c203",
+      "compositeFile": "part-post-E-composite.png"
+    },
+    {
+      "name": "part-post-S",
+      "pieces": [
+        {
+          "name": "post-S",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "post-S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "e35e0c4d14e18c388354046094fb7ab862994e579b2cd00f7f37381b7a74aa66",
+      "compositeFile": "part-post-S-composite.png"
+    },
+    {
+      "name": "part-post-W",
+      "pieces": [
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "post-W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            20
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "d06f8b567d57ee22107e3286b5d8d0368352888981d0d7b19ea4a44c354016ff",
+      "compositeFile": "part-post-W-composite.png"
+    },
+    {
+      "name": "part-cap-N--W",
+      "pieces": [
+        {
+          "name": "cap-N--W",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-N--W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "f69a0241b5d1e8f67f76cc77d1353051d3d1d082d431a1a88b5ad4b5f6cfcffa",
+      "compositeFile": "part-cap-N--W-composite.png"
+    },
+    {
+      "name": "part-cap-S--W",
+      "pieces": [
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-S--W",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "271c26e8293408ffbd732c375cc4afecd0657e0759ce5ddc722422434df17a65",
+      "compositeFile": "part-cap-S--W-composite.png"
+    },
+    {
+      "name": "part-cap-E--S",
+      "pieces": [
+        {
+          "name": "cap-E--S",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-E--S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "dcf29ce1c6eb3f7ad68b9ba4a751ba40b1b72376fdc7f5d8c71105e743f6c2f4",
+      "compositeFile": "part-cap-E--S-composite.png"
+    },
+    {
+      "name": "part-cap-W--S",
+      "pieces": [
+        {
+          "name": "cap-W--S",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "posts": [],
+      "nativeSize": [
+        44,
+        70
+      ],
+      "placements": [
+        {
+          "name": "cap-W--S",
+          "x": 0,
+          "y": 0,
+          "worldFoot": [
+            20,
+            20
+          ],
+          "raisedAt": [
+            0,
+            0
+          ],
+          "eventDepth": 20
+        }
+      ],
+      "sourceSHA256": "bd0b9fcc758bcc2a99768ee924e7a64862959ad65ea02abb2ccbb3a5f4d7f8e3",
+      "compositeFile": "part-cap-W--S-composite.png"
+    }
+  ],
+  "count": 38
+}

@@ -45,8 +45,9 @@ export function nativeCrabEngine(s:Pick<Save,'scene'|'townMinutes'|'flags'|'land
  return {runtime,context:ctx,old,definitionLane:lane};
 }
 export function nativeCrabFrame(s:Pick<Save,'scene'|'townMinutes'|'flags'|'landV1'|'nativeCrabV1'>,p:Point,paused=false){
- const e=nativeCrabEngine(s,p,paused),n=s.nativeCrabV1;
- if(n&&n.minute===minute(s)&&n.scene===s.scene){try{e.runtime.restore([n.frame],e.context)}catch{throw Error('UNSUPPORTED_NATIVE_CRAB')}}
+ const e=nativeCrabEngine(s,p,paused),n=s.nativeCrabV1,m=minute(s);
+ const consecutive=n&&n.minute+1===m&&periodAt(n.minute)===periodAt(m)&&n.frame.scene===s.scene&&!!e.definitionLane&&JSON.stringify(n.frame.lane)===JSON.stringify(e.definitionLane);
+ if(n&&n.scene===s.scene&&(n.minute===m||consecutive)){try{e.runtime.restore([n.frame],e.context)}catch{throw Error('UNSUPPORTED_NATIVE_CRAB')}}
  return {engine:e,frame:e.runtime.tick(0,e.context)[0]};
 }
 /** Shape/pins are strict; a valid archived pose may be older than the current
@@ -69,10 +70,13 @@ export function advanceNativeCrab(s:Save,seconds:number,enabled:boolean){
  let current=frame,remaining=seconds;
  while(remaining>1e-9){const dt=Math.min(.04,remaining);current=engine.runtime.tick(dt,engine.context)[0];remaining-=dt}
  s.nativeCrabV1={...(old??{}),schema:1,pin:{...nativeCrabPin},minute:minute(s),scene:s.scene,frame:current};
- if(seconds>0||!old||JSON.stringify(old.frame)!==JSON.stringify(current))delete s.nativeCrabV1.sample;
+ if(seconds>0||!old||old.minute!==minute(s)||JSON.stringify(old.frame)!==JSON.stringify(current))delete s.nativeCrabV1.sample;
  assertNativeCrab(s);
 }
 export function nativeCrabCollision(s:Pick<Save,'nativeCrabV1'|'scene'|'townMinutes'>):Rect[]{const n=s.nativeCrabV1;return n&&n.minute===minute(s)&&n.scene===s.scene&&n.frame.visible&&n.frame.scene===s.scene?[nativeCrabBody(pixel(n.frame.foot),n.frame.direction)]:[]}
 export function currentNativeSample(s:Save,p=s.position){const q=s.nativeCrabV1?.sample;return q&&q.version===s.version&&q.minute===minute(s)&&q.scene===s.scene&&Math.hypot(p.x-q.player.x,p.y-q.player.y)<=2?q:undefined}
-export function nativeCrabTargets(frame:CrabFrame,scene:string,world:World){const approach=chooseNativePlayerStart(pixel(frame.foot),frame.direction,world,scene);return frame.visible&&frame.scene===scene&&approach?[{id:frame.id,animalId:frame.id,kind:'object' as const,label:['岸边的蟹','Shore crab'] as [string,string],at:pixel(frame.foot),approach,actions:[] as string[]}]:[]}
+// Standing beside the crab keeps it in view above the existing mobile controls.
+// Reuse the admitted nearby-ground search and its safe fallbacks; body facing is
+// unchanged, and the target remains read-only at the actual rendered foot.
+export function nativeCrabTargets(frame:CrabFrame,scene:string,world:World){const approach=chooseNativePlayerStart(pixel(frame.foot),'left',world,scene);return frame.visible&&frame.scene===scene&&approach?[{id:frame.id,animalId:frame.id,kind:'object' as const,label:['岸边的蟹','Shore crab'] as [string,string],at:pixel(frame.foot),approach,actions:[] as string[]}]:[]}
 export const nativeQuietSeconds=nativeCrabProfile.quietTime;

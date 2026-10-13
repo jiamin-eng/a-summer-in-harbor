@@ -5,7 +5,7 @@ import{AsyncSessionAuthority,openAsyncSqliteAuthorityStore}from'../vendor/dynami
 const command=(s:Save,p:string,action:string)=>({action_id:randomUUID(),expected_version:s.version,scene:s.scene,position:entityAt(s.scene,p)!.approach,target:p,action});
 const visit=(s:Save,p:string):Save=>({...s,scene:residentRoutes[p][0].scene,townMinutes:540,position:entityAt(residentRoutes[p][0].scene,p)!.approach});
 test('six prior occupations, 22 configured identities, no unseen spoilers; all offline outcomes preserve mainline and wallet',()=>{
- assert.equal(Object.keys(people).length,22);assert.equal(new Set(nextResidents.map(p=>p.role[1])).size,6);
+ assert.equal(Object.keys(people).length,23);assert.equal(new Set(nextResidents.map(p=>p.role[1])).size,6);
  for(const p of nextResidents)for(const choice of ['n2-choice-a','n2-choice-b']){
  let s=visit(initial('en','next-six'),p.id);const run=(person:string,act:string)=>s=applyAction(s,command(s,person,act)).head;
  assert.equal(nextStoryLeads(s).length,0);assert.equal(availableTopics(s,p.id).length,0);run(p.id,'introduce');assert.ok(availableTopics(s,p.id).some(t=>t.id==='n2-start'));assert.ok(!availableTopics(s,p.id).some(t=>t.id===choice));run(p.id,'talk:n2-start');

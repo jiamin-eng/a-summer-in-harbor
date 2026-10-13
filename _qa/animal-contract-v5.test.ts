@@ -36,7 +36,11 @@ test('one executable schema supplies the prompt field guide, legal example and e
  assert.deepEqual(inspectAnimalChoice(example,known).issues,[]);compileAnimalStoryChoice(example,known);
  assert.deepEqual(animalChoiceFieldGuide.slice(0,describeContractFields(animalChoiceSchema).length),describeContractFields(animalChoiceSchema));
  assert.deepEqual(animalReviewFieldGuide.slice(0,describeContractFields(animalBoundReviewSchema).length),describeContractFields(animalBoundReviewSchema));
- for(const n of [2,3,4])assert.deepEqual(inspectAnimalChoice({...choice,observations:choice.observations.slice(0,n)},known).issues,[]);
+ for(const n of [2,3,4]){
+  const observations=n===2?example.observations:choice.observations.slice(0,n);
+  assert.deepEqual(inspectAnimalChoice({...choice,observations},known).issues,[]);
+ }
+ assert.ok(inspectAnimalChoice({...choice,observations:choice.observations.slice(0,2)},known).issues.some(i=>i.ruleId==='ANIMAL_COSMETIC_DUPLICATE'));
  for(const n of [0,1,5]){
   const observations=n===5?[...choice.observations,{animal:'harbor-gull-3',behavior:'shore-space',period:'afternoon',scene:'dock'}]:choice.observations.slice(0,n);
   assert.ok(inspectAnimalChoice({...choice,observations},known).issues.some(i=>i.ruleId==='ANIMAL_OBSERVATION_COUNT'));

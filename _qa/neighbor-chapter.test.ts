@@ -18,7 +18,7 @@ test('four introductions, three unique public visits, existing familiar stages a
  for(const bad of [{...s,known:['mara','avery','samira'],history:s.history.filter(h=>h.person!=='theo')},{...s,visited:['station','station','cafe','home']},{...s,relationshipsV1:undefined}])assert.equal(neighborProgress(bad).firstReady,false);
  assert.equal(neighborActionAvailable(s,'neighbor-start'),true);assert.equal(neighborActionAvailable(initial('en','new'),'neighbor-start'),false);
  const unknown=neighborDescription({...s,known:[]},'neighbor-gathering')!;assert.doesNotMatch(unknown[1],/Mara|Avery|Samira/);
- assert.equal(Object.keys(people).length,22);
+ assert.equal(Object.keys(people).length,23);
 });
 test('both meeting places and all guest approaches are reachable without new obstacles or blocked public routes',()=>{
  for(const scene of ['coast','chapel'])for(const e of rooms[scene].entities.filter(e=>e.gatheringRole||e.id==='neighbor-gathering')){
@@ -56,6 +56,11 @@ test('old loads remain byte-identical; original 22-person completion is fixed an
  for(let i=0;i<10;i++){assert.ok(neighborProgress(s).allKnown);relationshipStory(s);neighborDescription(s,'neighbor-gathering')}assert.equal(JSON.stringify(s),frozen);
  const next=neighborStep(s,'neighbor-gathering','neighbor-start');assert.equal(next.neighborChapterV1!.roster,'harbor22-v1');assert.equal(next.neighborChapterV1!.allKnownAt,townMinutes(s));assert.ok(validNeighborChapter(next));
  const future={...next,neighborChapterV1:{...next.neighborChapterV1!,roster:'harbor23-priest-v2' as const}};assert.ok(neighborProgress(future).allKnown);assert.ok(future.flags.includes('bag-returned'));
+});
+test('new 23-person roster requires meeting Gabriel while old 22-person completions stay pinned',()=>{
+ const s=neighborReady();assert.equal(s.neighborChapterV1?.roster,'harbor23-priest-v2');
+ s.known=[...originalNeighborRoster];assert.equal(neighborProgress(s).allKnown,false);
+ s.known.push('gabriel');assert.equal(neighborProgress(s).allKnown,true);
 });
 test('malformed memories, unknown invitees, duplicate guests, future times and AI-selected explicit effects are rejected',()=>{
  const s=begin();for(const mutate of [(x:any)=>x.neighborChapterV1.schema=2,(x:any)=>x.neighborChapterV1.party=null,(x:any)=>x.neighborChapterV1.party.people=['mara','mara'],(x:any)=>x.neighborChapterV1.party.chatted=['samira'],(x:any)=>x.neighborChapterV1.party.startedAt=999999,(x:any)=>x.neighborChapterV1.invited=['other'],(x:any)=>x.neighborChapterV1.lastParty=0]){const bad=structuredClone(s);mutate(bad);assert.equal(validNeighborChapter(bad),false);assert.throws(()=>createRuntime().assertReadable(bad),/UNSUPPORTED_SAVE/)}

@@ -42,7 +42,7 @@ for(const locale of ['en','zh'])test('B2+22 actual existing PG '+locale+': persi
   const legacy=new AsyncSessionAuthority(first,{...base,initial:oldSeed}),owner='synthetic-b222-'+locale;
   let s:any=await legacy.create(owner,randomUUID(),locale);const old=structuredClone(s);assert.equal(s.lifeV1,undefined);assert.equal(s.landV1,undefined);
   const a=assembled();let aa=new AsyncSessionAuthority(first,a.runtime),bb=new AsyncSessionAuthority(second,a.runtime);
-  assert.equal(Object.keys(people).length,22);assert.equal(acceptedAnimals.length,7);
+  assert.equal(Object.keys(people).length,23);assert.equal(acceptedAnimals.length,7);
   const invariant=(h:any)=>({nomads:h.techNomadsV1,animals:h.animalsV1,news:h.newsEdition,relations:h.relations,known:h.known,flags:h.flags,oldPlots:h.plots});
   const unchanged=structuredClone(invariant(old));
   const before=await fingerprint();a.runtime.assertReadable(s);a.lifeProject(s);assert.throws(()=>a.landProject(s,new URLSearchParams({region:'courtyard-common',x:'288',y:'604'})),/LAND_SCENE/);a.newsProject!(s);assert.deepEqual(await bb.get(owner,s.id),old);assert.deepEqual(await fingerprint(),before);

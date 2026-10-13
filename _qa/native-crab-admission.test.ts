@@ -11,7 +11,7 @@ test('native geometry pin, four-direction ground reflection, complete consumer s
  assert.equal(nativeCrabProfile.ground.right.x,-nativeCrabProfile.ground.left.x-nativeCrabProfile.ground.left.w);for(const d of directions)for(const p of ['stand','walkA','walkB'])assert.ok(nativeCrabSheet().textures[p+'-'+d]);
 });
 test('latest formal world all shore maps/4 directions/4 periods with dynamic original animals and all 22 configured residents',()=>{
- assert.equal(Object.keys(people).length,22);for(const minute of [540,780,1080,1300]){
+ assert.equal(Object.keys(people).length,23);for(const minute of [540,780,1080,1300]){
   Object.keys(animalPeople({townMinutes:minute,flags:['key','unpacked','route-open','market-open']})).forEach(id=>metrics.actorIDs.add(id));
   for(const scene of ['coast','beach','dock'] as const)for(const direction of directions){
    const at=preferred[scene],save={...initial('en','qa-old-native'),scene,townMinutes:minute,position:{x:at.x-8,y:at.y-116},flags:['key','unpacked','route-open','market-open']},world=landWorld(dynamicWorld(save.flags,false),save.landV1),ctx=gameAnimalContext(save,save.position,{world}),animals=createAnimalRuntime(acceptedAnimals);let states=animals.tick(0,ctx);
@@ -20,7 +20,7 @@ test('latest formal world all shore maps/4 directions/4 periods with dynamic ori
    let maximumDistance=0;for(let i=0;i<360;i++){states=animals.tick(1/60,ctx);const reserved=states.filter(a=>a.visible&&a.scene===scene).map(a=>bodyAt(a.foot,profiles[a.species])),f=engine.tick(1/60,ctx,reserved)[0];maximumDistance=Math.max(maximumDistance,f.distance);if(f.visible){assert.ok(nativeCrabClear(f.foot,direction,scene,lane.region,ctx,reserved));assert.ok(previewClear({x:Math.round(f.foot.x),y:Math.round(f.foot.y)},scene,lane.region,relative,{context:ctx,states,geometry}));assert.equal(f.foot[direction==='down'||direction==='up'?'y':'x'],lane.ends[0][direction==='down'||direction==='up'?'y':'x']);metrics.groundAndVisualFrames++}}
    assert.ok(maximumDistance>8,`${scene}/${direction}/${minute}: real stride progress ${JSON.stringify({maximumDistance,lane,frame:engine.snapshot()[0]})}`);assert.equal(contentHash(save),original);metrics.scenarios++;
   }
- }assert.equal(metrics.scenarios,48);assert.ok(metrics.groundAndVisualFrames>12000);assert.equal(metrics.actorIDs.size,22);
+ }assert.equal(metrics.scenarios,48);assert.ok(metrics.groundAndVisualFrames>12000);assert.equal(metrics.actorIDs.size,23);
 });
 test('native body prevents planted/swing footprint crossing for water, props, player, people and existing animals; old overlap hides only crab',()=>{
  for(const direction of directions){const scene='coast',region={x:0,y:0,w:500,h:500},lane={scene,region,facing:direction,ends:[{x:200,y:240},{x:direction==='down'||direction==='up'?264:200,y:direction==='down'||direction==='up'?240:304}]} as const,ctx:Context={world:{width:500,height:500,step:4,actor:{w:16,h:12},scenes:{coast:{interior:region,spawn:{x:10,y:10},obstacles:[]}}},scene,townMinutes:540,player:{x:10,y:10,w:16,h:12},people:{},forbidden:{coast:[]},paused:false},body=nativeCrabBody(lane.ends[0],direction);
