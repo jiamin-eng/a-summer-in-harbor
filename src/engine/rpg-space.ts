@@ -91,7 +91,7 @@ function createRawRpgSpace(options:SpaceOptions){
    const sprite=new Sprite(texture),mask=new Graphics();if(layer.polygon)mask.poly(layer.polygon.flatMap(p=>[p.x,p.y]));else mask.rect(layer.clip.x,layer.clip.y,layer.clip.w,layer.clip.h);mask.fill(0xffffff);sprite.position.set(layer.at.x,layer.at.y);sprite.mask=mask;container.addChild(sprite,mask);
   }
   return{container,cuts,reusable:layers.some(layer=>layer.nativeTerrain)};
- },entry=>{entry.container.parent?.removeChild(entry.container)},entry=>{if(!entry.container.destroyed)entry.container.destroy({children:true});for(const cut of entry.cuts)if(!cut.destroyed)cut.destroy(false)},entry=>!entry.container.destroyed);
+ },entry=>{entry.container.parent?.removeChild(entry.container)},entry=>{if(!entry.container.destroyed)entry.container.destroy({children:true,context:true});for(const cut of entry.cuts)if(!cut.destroyed)cut.destroy(false)},entry=>!entry.container.destroyed);
  const configureCamera=()=>{
   if(changing)return;
   const view=viewport();if(!view)return;
