@@ -67,6 +67,10 @@ button,input,textarea,select{font-family:var(--font-ui);font-weight:400}strong,b
 
 /* Exploration keeps its original scale; geometry follows measured HUD content. */
 .harbor-app{--harbor-header-bottom:80px;--harbor-location-bottom:127px;--harbor-safe-top:env(safe-area-inset-top,0px);--harbor-safe-bottom:env(safe-area-inset-bottom,0px)}
+.harbor-app{--harbor-host-top:0px;margin-top:var(--harbor-host-top);height:calc(100dvh - var(--harbor-host-top))}
+.harbor-entry{height:100%}
+.harbor-panel{max-height:calc(100dvh - var(--harbor-host-top) - 48px - var(--harbor-safe-top) - var(--harbor-safe-bottom))}
+@media(max-width:360px){.harbor-panel{max-height:calc(100dvh - var(--harbor-host-top) - 28px - var(--harbor-safe-top) - var(--harbor-safe-bottom))}}
 .harbor-header{padding-top:calc(10px + var(--harbor-safe-top))}
 .harbor-world{top:var(--harbor-header-bottom)}
 /* Day-to-day weather: bounded CSS layers, no canvas filter or new clock. */

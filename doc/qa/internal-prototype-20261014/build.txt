@@ -1,0 +1,31 @@
+
+> a-summer-in-harbor@0.1.0 build
+> tsc --noEmit && vite build --configLoader runner
+
+vite v8.0.16 building client environment for production...
+[2Ktransforming...<script src="./alteru-storage-scope.js"> in "/index.html" can't be bundled without type="module" attribute
+✓ 1288 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                        1.15 kB │ gzip:   0.59 kB
+dist/assets/raised-atlas-BQzyWcXG.png                                  4.32 kB
+dist/assets/ground-atlas-DVPbH9bJ.png                                  4.62 kB
+dist/assets/buch-outdoor-CENp-vnW.png                                 16.54 kB
+dist/assets/road-soil-atlas-BFXgCAOO.png                              55.87 kB
+dist/assets/road-stone-atlas-iT24uOQb.png                             61.75 kB
+dist/assets/Jersey15-Regular-ucpvyccX.ttf                            104.23 kB
+dist/assets/fusion-pixel-12px-proportional-zh_hans-CSKZaGU7.woff2    662.04 kB
+dist/assets/harbor-base-7586-CFvm_yQ3.png                          1,360.09 kB
+dist/assets/floor-water-Z_U24KMk.png                               1,525.57 kB
+dist/assets/index-BLHwiML-.css                                        61.74 kB │ gzip:  12.67 kB
+dist/assets/pixi-CgMFohuz.js                                           0.27 kB │ gzip:   0.19 kB
+dist/assets/rolldown-runtime-QTnfLwEv.js                               0.69 kB │ gzip:   0.42 kB
+dist/assets/canvasengine-0CSEwukW.js                               1,505.89 kB │ gzip: 449.28 kB
+dist/assets/index-Bi8YrzvD.js                                      2,066.05 kB │ gzip: 639.47 kB
+
+✓ built in 752ms
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

@@ -1,0 +1,86 @@
+TAP version 13
+# Subtest: account adapter is disabled by default and never calls trusted dependency
+ok 1 - account adapter is disabled by default and never calls trusted dependency
+  ---
+  duration_ms: 13.333542
+  type: 'test'
+  ...
+# Subtest: adapter requires trusted context each request; stable same account, scoped different account, no body identity fallback
+ok 2 - adapter requires trusted context each request; stable same account, scoped different account, no body identity fallback
+  ---
+  duration_ms: 4.905041
+  type: 'test'
+  ...
+# Subtest: default client candidate goes directly to authority with cloud hint omitted
+ok 3 - default client candidate goes directly to authority with cloud hint omitted
+  ---
+  duration_ms: 0.336333
+  type: 'test'
+  ...
+# Subtest: opt-in only; live switch aborts old work, ABA cannot revive a snapshot, logout becomes browser
+ok 4 - opt-in only; live switch aborts old work, ABA cannot revive a snapshot, logout becomes browser
+  ---
+  duration_ms: 1.722291
+  type: 'test'
+  ...
+# Subtest: observe notifies once per actual identity transition; same account does not cancel
+ok 5 - observe notifies once per actual identity transition; same account does not cancel
+  ---
+  duration_ms: 0.332792
+  type: 'test'
+  ...
+# Subtest: native live injection, logout, delayed callback and concurrent login use canonical WK transport
+ok 6 - native live injection, logout, delayed callback and concurrent login use canonical WK transport
+  ---
+  duration_ms: 166.109917
+  type: 'test'
+  ...
+# (node:31510) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: formal account-only HTTP gate rejects browser writes, closes claims and preserves existing legacy bindings
+ok 7 - formal account-only HTTP gate rejects browser writes, closes claims and preserves existing legacy bindings
+  ---
+  duration_ms: 54.763417
+  type: 'test'
+  ...
+# Subtest: existing platform transport open/cancel and success consume only live IDs, with one concurrent login request
+ok 8 - existing platform transport open/cancel and success consume only live IDs, with one concurrent login request
+  ---
+  duration_ms: 106.424041
+  type: 'test'
+  ...
+# Subtest: committed account-A action reply after logout/switch cannot bind B; returning A retries its identical pending once
+ok 9 - committed account-A action reply after logout/switch cannot bind B; returning A retries its identical pending once
+  ---
+  duration_ms: 48.625334
+  type: 'test'
+  ...
+# (node:31511) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual gateway and account transport: no-cookie saves, old owner scope, account switch and missing identity
+ok 10 - actual gateway and account transport: no-cookie saves, old owner scope, account switch and missing identity
+  ---
+  duration_ms: 52.15325
+  type: 'test'
+  ...
+# Subtest: public gateway: signed cookie, no caller owner, cross-origin/expired/missing-cookie guards
+ok 11 - public gateway: signed cookie, no caller owner, cross-origin/expired/missing-cookie guards
+  ---
+  duration_ms: 21.983291
+  type: 'test'
+  ...
+# Subtest: internal prototype forwards unverified ID without cookies; normal mode retains cookie boundary
+ok 12 - internal prototype forwards unverified ID without cookies; normal mode retains cookie boundary
+  ---
+  duration_ms: 3.561917
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 447.781167

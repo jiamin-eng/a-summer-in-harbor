@@ -17,14 +17,15 @@ test('public gateway: signed cookie, no caller owner, cross-origin/expired/missi
   assert.throws(()=>verifiedEdgeOwner({headers:{'x-harbor-edge':'bad','x-harbor-owner':identity,'x-harbor-game':GAME_UUID,origin}} as any,{expiresAt:Date.now()+60000,publicOrigin:origin},token),/EDGE_IDENTITY_REQUIRED/);
  }finally{globalThis.fetch=old}
 });
-test('temporary demo explicitly forwards unverified ID through original signed-cookie edge; normal mode strips it',async()=>{
+test('internal prototype forwards unverified ID without cookies; normal mode retains cookie boundary',async()=>{
  const token=randomBytes(32).toString('hex'),origin='https://game.aiwaves.tech',base='/'+GAME_UUID;const env={HARBOR_PUBLIC_ORIGIN:origin,HARBOR_GAME_BASE:base,HARBOR_UPSTREAM_ORIGIN:'https://harbor.example.test',HARBOR_EDGE_TOKEN:token,HARBOR_EXPIRES_AT:Date.now()+60000,HARBOR_IDENTITY_MODE:'temporary-unverified'};
  const old=globalThis.fetch,seen:any[]=[];globalThis.fetch=async(input:any,init:any)=>{seen.push({input,init});return Response.json({mode:'temporary-unverified'})};
  const req=(path:string,method='GET',cookie?:string,id='700001')=>new Request(origin+path,{method,headers:{Origin:origin,'X-Harbor-Telegram-Id':id,'X-Harbor-Identity-Mode':'temporary-unverified','X-Harbor-Owner':'forged',...(cookie?{Cookie:cookie}:{}),...(method==='POST'?{'Content-Type':'application/json'}:{})},...(method==='POST'?{body:'{}'}:{})});
- try{const r=await handleApi(req('/api/bootstrap','POST'),env),cookie=r.headers.get('Set-Cookie')!.split(';')[0];assert.equal(r.status,200);assert.equal(seen.at(-1).init.headers.get('X-Harbor-Telegram-Id'),'700001');assert.notEqual(seen.at(-1).init.headers.get('X-Harbor-Owner'),'forged');
+ try{const r=await handleApi(req('/api/bootstrap','POST'),env),cookie=undefined;assert.equal(r.status,200);assert.equal(r.headers.get('Set-Cookie'),null);assert.equal(seen.at(-1).init.headers.get('X-Harbor-Telegram-Id'),'700001');assert.notEqual(seen.at(-1).init.headers.get('X-Harbor-Owner'),'forged');
  assert.equal((await handleApi(req('/api/account/legacy','GET',cookie),env)).status,200);assert.equal((await handleApi(req('/api/account/claim','POST',cookie),env)).status,200);
  assert.equal((await handleApi(req('/api/sessions','GET',cookie,'not-an-id'),env)).status,400);
- await handleApi(req('/api/sessions','GET',cookie),{...env,HARBOR_IDENTITY_MODE:'browser-capability-v1'});assert.equal(seen.at(-1).init.headers.get('X-Harbor-Telegram-Id'),null);
+ assert.equal((await handleApi(req('/api/sessions','GET',cookie),{...env,HARBOR_IDENTITY_MODE:'browser-capability-v1'})).status,401);
+ const normal=await handleApi(req('/api/bootstrap','POST'),{...env,HARBOR_IDENTITY_MODE:'browser-capability-v1'});assert.ok(normal.headers.get('Set-Cookie'));assert.equal(seen.at(-1).init.headers.get('X-Harbor-Telegram-Id'),null);
  assert.equal((await handleApi(req('/api/account/legacy','GET',cookie),{...env,HARBOR_IDENTITY_MODE:'browser-capability-v1'})).status,404);
  }finally{globalThis.fetch=old}
 });

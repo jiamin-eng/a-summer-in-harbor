@@ -2,16 +2,19 @@ import {motionProjection} from '../src/candidate/render-adapter';
 import {Assets} from 'pixi.js';
 import {createRpgSpace,type Space} from '../src/engine/rpg-space';
 import {world,rooms} from '../src/world/data';
+import {outdoorBuildingReveals} from '../src/world/outdoor-building-reveal';
+import mapDimensions from '../src/world/map-dimensions.json';
 import {heroSheet,sheets,propId} from '../src/world/sheets';
 import {globalPoint,localPoint} from '../src/candidate/continuity';
 import type {Point} from '../src/engine/world';
 const w=window as any;let space:Space,busy=false,autoWalk:any;
-const spots:Record<string,Point>={hill:{x:650,y:500},station:{x:400,y:395},harbor:{x:805,y:730},coast:{x:1100,y:560},beach:{x:740,y:151},path:{x:460,y:540}};
-const selected=sheets.filter(s=>!s.id.startsWith('base-')&&!s.id.startsWith('front-')&&!s.id.startsWith('npc-'));
+const spots:Record<string,Point>={hill:{x:650,y:500},market:{x:1082,y:347},station:{x:400,y:395},harbor:{x:805,y:730},coast:{x:1100,y:560},beach:{x:740,y:151},path:{x:460,y:540}};
+const selected=sheets.filter(s=>!s.id.startsWith('front-')&&!s.id.startsWith('npc-'));
 const event=(id:string,x:number,y:number,graphic:string)=>({id,x,y,event:{onInit(this:any){this.setHitbox(1,1);this.through=true;this.animationFixed=true;this.setGraphic(graphic);this.animationName.set('stand');this.syncChanges()}}});
 function status(){if(!space)return;const p=space.position();document.querySelector('#status')!.textContent=space.scene()+' '+Math.round(p.x)+','+Math.round(p.y)}
 space=createRpgSpace({world,host:document.querySelector('#rpg')!,scene:'hill',position:spots.hill,speed:112,stride:48,sheet:heroSheet,spritesheets:selected,
- mapEvents:id=>rooms[id].props.filter(p=>!p.floorDecoration&&!p.visibleWhen).map(p=>event(propId(id,p),p.at.x,p.at.y,propId(id,p))),
+ foregroundReveal:outdoorBuildingReveals(),
+ mapEvents:id=>{const d=mapDimensions[(id+'-base') as keyof typeof mapDimensions];return [...(d.empty?[]:[event('base-'+id,d.x,d.y,'base-'+id)]),...rooms[id].props.filter(p=>!p.floorDecoration&&!p.visibleWhen).map(p=>event(propId(id,p),p.at.x,p.at.y+(p.depthOffset??0),propId(id,p)))];},
  prepareScene:async id=>{await Assets.load(heroSheet.image);await Promise.all(selected.filter(s=>s.id.endsWith('-'+id)||s.id.startsWith('prop-'+id+'-')).map(s=>Assets.load(s.image)))},
  controlsBlocked:()=>busy,onPosition:()=>status(),onDestination:target=>{if(autoWalk)autoWalk.destination=target},onFrame:(_dt,p,scene)=>{
   // This renderer-only harness has no authority. Consume the actual walked

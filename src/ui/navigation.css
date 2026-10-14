@@ -8,5 +8,6 @@
 .harbor-bag__category{display:flex;align-items:center;gap:12px;padding:12px 0;font-size:16px}.harbor-bag__category select{flex:1;min-width:0;min-height:44px;font-size:16px;padding:6px 12px;color:var(--ink);border:2px solid var(--line);background:var(--paper-light)}.harbor-bag__filters{display:none}@media(min-width:800px){.harbor-bag__category{display:none}.harbor-bag__filters{display:flex}}
 
 .harbor-bag__list button,.harbor-mainnav button,.harbor-subnav button,.harbor-header nav button{transition:transform .1s}.harbor-bag__list button[aria-pressed=true]{background:#315e54;color:#fffbee;border-color:#24473f}
+.harbor-journeys__footer{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;min-width:0}.harbor-journeys__footer small{min-width:0;overflow-wrap:anywhere}.harbor-journeys__footer button{min-height:44px;margin-left:auto;flex:0 1 auto}
 
 .harbor-rel__growth summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:16px;border-bottom:2px solid var(--line)}.harbor-bag__detail .harbor-error{margin:8px 0}
