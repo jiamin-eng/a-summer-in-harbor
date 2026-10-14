@@ -24,7 +24,7 @@ dist/assets/canvasengine-0CSEwukW.js                               1,505.89 kB �
 dist/assets/index-Bi8YrzvD.js                                      2,066.05 kB │ gzip: 639.47 kB
 
 ✓ built in 752ms
-[plugin builtin:vite-reporter] 
+[plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
