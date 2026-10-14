@@ -15,7 +15,7 @@ import {outdoors,passages,waterBarriers} from './outdoors';
 import type {Point,Rect,World} from '../engine/world';
 export type Words=[string,string];export type Locale='zh'|'en';
 export const tx=(w:Words,locale:Locale)=>w[locale==='zh'?0:1];
-export type Prop={id:string;art:string;at:Point;width:number;footprint?:Rect;floorDecoration?:boolean;foreground?:boolean;state?:{flag:string;art:string};visibleWhen?:string};
+export type Prop={id:string;art:string;at:Point;width:number;footprint?:Rect;floorDecoration?:boolean;foreground?:boolean;depthOffset?:number;state?:{flag:string;art:string};visibleWhen?:string};
 export type Entity={gatheringRole?:'guest'|'routine';landRegion?:string;landAt?:Point;landPlot?:boolean;id:string;label:Words;kind:'person'|'portal'|'object';at:Point;approach:Point;person?:string;animalId?:string;dogRoutine?:import('../animals/native-dog-observation').NativeDogRoutine;destination?:string;actions?:string[];passage?:{side:'N'|'S'|'E'|'W';sign:Point}};
 export const entityLabel=(e:Entity,flags:string[]):Words=>e.id==='bridge'&&flags.includes('bridge-fixed')?['修好的小桥','Repaired footbridge']:e.id==='terrace'&&flags.includes('terrace-fixed')?['露台灯','Terrace lantern']:e.label;
 export type Room={id:string;title:Words;area:string;outdoor:boolean;spawn:Point;interior:Rect;props:Prop[];entities:Entity[];neighbors:string[];map:Point};
@@ -103,7 +103,7 @@ const landlord=rooms.station.entities.find(e=>e.id==='mara')!;landlord.at={x:565
 // match outdoor barriers; foliage blocks only its trunk, never the entire canopy.
 rooms.station.props.push(
  {id:'rental',art:'house-rental',at:{x:247,y:350},width:270},
- {id:'cafe-building',art:'house-cafe',at:{x:920,y:320},width:300},
+ {id:'cafe-building',art:'house-cafe',at:{x:920,y:320},width:300,depthOffset:-15},
  {id:'grocer-building',art:'house-grocery',at:{x:1080,y:880},width:250},
  {id:'bench-square',art:'bench',at:{x:805,y:665},width:68,footprint:{x:775,y:649,w:60,h:14}},
  {id:'arrival-bench',art:'bench',at:{x:675,y:775},width:68,footprint:{x:645,y:759,w:60,h:14}},
@@ -114,8 +114,11 @@ rooms.station.props.push(
  {id:'tree-garden',art:'canopy-tree',at:{x:1040,y:705},width:165,footprint:{x:1029,y:687,w:22,h:18}}
 );
 // Large outdoor districts are composed around landmarks and crossing routes.
-rooms.harbor.props.push({id:'workshop-front',art:'house-workshop',at:{x:300,y:290},width:270},{id:'club-front',art:'house-gym',at:{x:802,y:305},width:280});
-rooms.market.props.push({id:'old-shop',art:'house-rental',at:{x:232,y:350},width:250},{id:'courtyard-house',art:'house-grocery',at:{x:1100,y:355},width:280});
+rooms.harbor.props.push({id:'workshop-front',art:'house-workshop',at:{x:300,y:290},width:270,depthOffset:-15},{id:'club-front',art:'house-gym',at:{x:802,y:305},width:280,depthOffset:-15});
+// The bakery's walk boundary ends at y=335. Sort its facade at that contact
+// line while keeping the illustration anchored at y=355, so the player remains
+// visible when standing directly in front of the blue door.
+rooms.market.props.push({id:'old-shop',art:'house-rental',at:{x:232,y:350},width:250,depthOffset:-20},{id:'courtyard-house',art:'house-grocery',at:{x:1100,y:355},width:280,depthOffset:-20});
 furnish('market','stall-west','market-stall',360,595,125,104,40);
 furnish('market','stall-east','market-stall',935,690,130,110,42);
 furnish('market','square-bench','bench',650,720,68,58,14);
