@@ -9,6 +9,7 @@ import {createActivePlayBudget} from './active-play-budget';
 import {flushMotionTrace} from './motion-flush';
 import {consumeTrace,traceLength} from './motion-outbox';
 import {resolvedMotionFailure} from './motion-errors';
+import {recoverRejectedPath} from './recover-rejected-path';
 const block=(v:boolean)=>{motionProjection.networkBlocked=v;motionProjection.block?.(v)};
 /** One queue arbitrates two protocols. Heartbeats use elapsed server time, never rAF distance. */
 export function useActivePlayClock(save:Save|null,paused:boolean,ready:boolean,onHead:(s:Save)=>void,onError:()=>void){
@@ -32,7 +33,7 @@ export function useActivePlayClock(save:Save|null,paused:boolean,ready:boolean,o
    const previous=points.at(-1)??(isCluster(head.scene)?globalPoint(head.scene,head.position):head.position);
    if(Math.hypot(previous.x-tail.x,previous.y-tail.y)>.01)points.push({...tail});
    const limit=business?140:Math.min(140,Math.max(1,112*Math.min(1250,performance.now()-motionAt)/1000));
-   await flushMotionTrace({head,points,force,renew:performance.now()-motionAt>2500,limit,maxBatches:business?Infinity:1,
+   try{await flushMotionTrace({head,points,force,renew:performance.now()-motionAt>2500,limit,maxBatches:business?Infinity:1,
     send:async(s,action,position,payload)=>{const started=performance.now(),l=s.activePlayClock?.lease,combined=!business&&playing()&&l?.client===client;
      const activeMs=combined?budget.take(started):0;
      try{const result=await candidateMotion(s,action,position,{...(payload as object),...(combined?{foreground:{client,lease:l.id,sequence:l.sequence+1,activeMs}}:{})});latency(started);motionAt=started;if(combined)playAt=started;return result}
@@ -40,7 +41,14 @@ export function useActivePlayClock(save:Save|null,paused:boolean,ready:boolean,o
     },
     wait:ms=>new Promise(resolve=>setTimeout(resolve,ms)),isCurrent:()=>live&&latest.current.save?.id===head.id,
     confirmed:(s,_remaining,accepted)=>{motionProjection.points=consumeTrace(motionProjection.traceStart,motionProjection.points,accepted);motionProjection.traceStart=globalPoint(s.scene,s.position);publish(s)},
-   });
+   });}catch(e:any){
+    block(true);
+    const recovered=await recoverRejectedPath(e,head,motionProjection,async()=>{
+     const result=await candidateMotion(head,'candidate-motion-open',head.position,{});
+     motionAt=performance.now();publish(result.head);return result.head;
+    },()=>live&&latest.current.save?.id===head.id);
+    if(!recovered)throw e;
+   }
   };
   const work=async(business=false):Promise<Save|undefined>=>{
    const current=latest.current;if(!current.ready||!current.save||current.save.id!==head.id)return head;
