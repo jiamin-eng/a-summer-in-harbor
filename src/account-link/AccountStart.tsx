@@ -14,6 +14,7 @@ export function AccountStart({account,directory,locale,busy,error,onLogin,onCont
  </>:error&&<button className="harbor-primary" disabled={busy} onClick={onRetry}>{tx(['重新读取旅程','Read journeys again'],locale)}</button>}
  </div>
  <div className="harbor-entry__feedback" aria-live="polite">
+ {account&&<p>{tx(['内部原型：宿主身份未验证。','Internal prototype: host identity is unverified.'],locale)}</p>}
  {busy&&<p role="status">{tx(account?['正在读取你的旅程…','Finding your journeys…']:['请在登录窗口中继续。','Continue in the sign-in window.'],locale)}</p>}
  {!busy&&error&&<p className="harbor-error" role="alert">{tx(error,locale)}</p>}
  {full&&<p>{tx(['已保留100段旅程。继续游戏后，可在系统里切换旧档。','You have 100 saved journeys. Continue, then switch journeys in System.'],locale)}</p>}

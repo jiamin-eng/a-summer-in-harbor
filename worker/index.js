@@ -24,8 +24,16 @@ export async function handleApi(request,env){
  const name='__Secure-harbor-'+base.slice(1),cookies=(request.headers.get('Cookie')??'').split(';').map(x=>x.trim()).filter(x=>x.startsWith(name+'='));
  let owner=path==='/api/health'?'0'.repeat(64):null,setCookie;
  if(cookies.length===1){const [id,signature,...extra]=cookies[0].slice(name.length+1).split('.');if(!extra.length&&/^[a-f0-9]{64}$/.test(id??'')&&/^[a-f0-9]{64}$/.test(signature??'')&&equal(signature,await mac(token,'harbor-v1:'+base+':'+id)))owner=id;}
+ // Internal prototype: the live host ID selects the existing unverified account scope.
+ // This is not browser possession or platform authentication; retain the private edge boundary.
+ if(demo&&path!=='/api/health'){
+  const id=request.headers.get('X-Harbor-Telegram-Id');
+  if(id===null)return fail('PLATFORM_LOGIN_REQUIRED',401);
+  if(!/^[1-9][0-9]{0,19}$/.test(id)||request.headers.get('X-Harbor-Identity-Mode')!=='temporary-unverified')return fail('INVALID_DEMO_IDENTITY',400);
+  owner=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(JSON.stringify(['harbor-owner-v1',base.slice(1),'telegram-unverified-v1',id])))));
+ }
  if(!owner){if(path!=='/api/bootstrap'||request.method!=='POST')return fail('PLAYER_SESSION_REQUIRED',401);owner=hex(crypto.getRandomValues(new Uint8Array(32)));}
- if(path==='/api/bootstrap'&&request.method==='POST')setCookie=name+'='+owner+'.'+await mac(token,'harbor-v1:'+base+':'+owner)+'; Path='+base+'/; Secure; HttpOnly; SameSite=Strict; Max-Age='+(budgetOnly?2592000:Math.min(31536000,Math.floor((expires-Date.now())/1000)));
+ if(!demo&&path==='/api/bootstrap'&&request.method==='POST')setCookie=name+'='+owner+'.'+await mac(token,'harbor-v1:'+base+':'+owner)+'; Path='+base+'/; Secure; HttpOnly; SameSite=Strict; Max-Age='+(budgetOnly?2592000:Math.min(31536000,Math.floor((expires-Date.now())/1000)));
  const bodyLimit=clockWrite||path.includes('/assets/')?16384:1500000;
  let body;
  if(request.method==='POST'){

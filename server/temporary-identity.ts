@@ -3,7 +3,8 @@ export const TEMPORARY_IDENTITY_MODE='temporary-unverified';
 export function validTelegramId(value:unknown):value is string{return typeof value==='string'&&/^[1-9][0-9]{0,19}$/.test(value)}
 const fail=(code:string,status=400)=>{throw Object.assign(Error(code),{code,status})};
 /** Explicit internal-demo policy. Syntax checking is NOT authentication.
- * The caller must first establish the existing edge/browser possession boundary.
+ * The caller must first establish the private edge boundary. In the approved
+ * internal prototype, a host ID does not require browser Cookie possession.
  * An attacker who supplies another Telegram ID can impersonate that account. */
 export function temporaryActor(req:IncomingMessage,res:ServerResponse,{mode,gameId,browserOwner}:{mode:string;gameId:string;browserOwner:string}){
  if(mode!==TEMPORARY_IDENTITY_MODE)fail('TEMPORARY_IDENTITY_DISABLED',503);
