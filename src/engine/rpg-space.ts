@@ -53,7 +53,7 @@ export function createRpgSpace(options:SpaceOptions){
 }
 function createRawRpgSpace(options:SpaceOptions){
  if(options.host.id!=='rpg')throw new Error('RPG_MOUNT_ID_REQUIRED');
- const trace=(stage:string)=>{if(new URLSearchParams(location.search).has('debug'))console.warn('HBQA-LOAD '+JSON.stringify({stage,scene:options.scene}))};
+ const trace=(stage:string,details?:Record<string,unknown>)=>{if(new URLSearchParams(location.search).has('debug'))console.warn('HBQA-LOAD '+JSON.stringify({stage,scene:options.scene,...details}))};
  const {world,host}=options,ids=Object.keys(world.scenes);
  const reveals=(options.foregroundReveal??[]).map(createForegroundReveal);
  const debug=new URLSearchParams(location.search).has('debug');
@@ -173,8 +173,8 @@ function createRawRpgSpace(options:SpaceOptions){
   // startup failure is safer than leaving a broken renderer running.
   provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1,preference:['webgl','webgpu']}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
-  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){trace('map-after-loading');cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){trace('engine-start');if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
- ]}).catch(error=>{trace('start-game-error');if(!disposed)options.onError(error)});
+  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){trace('map-after-loading');cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){trace('engine-start');if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);trace('engine-before-resize');resize();trace('engine-after-resize');setTimeout(()=>trace('engine-later', {ready:(engine as any).clientReadyForMapChanges,pending:(engine as any).pendingMapChanges?.length,room:(engine as any).activeRoom?.()}),1000)}}}]),provideRpg(server)
+ ]}).then(()=>trace('start-game-resolved')).catch(error=>{trace('start-game-error', {message:String(error)});if(!disposed)options.onError(error)});
  const advancePlayer=(time:number,blocked:boolean,dt:number)=>{
   if(player&&!blocked){
    const slices=candidateEnabled()?elapsed.consume(time):[{ms:dt*1000,input:input()}];
