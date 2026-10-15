@@ -458,3 +458,10 @@ _qa/land-worker-chain.ts 执行真实 handleApi、verifiedEdgeOwner、账号 HTT
 两个历史 signed-cookie 网关测试误设 temporary-unverified，却仍要求 bootstrap 签发浏览器 cookie；原 e1 同样失败。仅将这两个 fixture 的身份模式改为原有 browser-capability-v1，与测试目的匹配；不改变产品策略。新增链路测试使用正式当前的 temporary-unverified 模式。
 
 独立候选与原始反例的清单、进程状态、回归日志及尚待 QA 的真实按钮/刷新验收见外层 QA-HANDOFF.md。官方 Chrome 启动与回环 listen 在当前沙箱均受阻，未提权、安装或接管用户窗口；HBQA-LAND-006 尚待独立浏览器 QA 关闭，HBQA-LOAD-005 由其原 owner 处理。
+
+## 2026-10-15 Owen关系后续切片（本地候选）
+
+1. 技术栈：沿用React/TypeScript/Vite与原Story Session权威事务，Node24合成SQLite测试；无依赖安装、模型调用或新后台。
+2. 目录结构：`src/story/relationship-expansion-profiles.ts`仅Owen作者profile；`relationship-growth.ts`复用原阶段、动作、问候、约定与记忆投影，按居民路由存储；`_qa/relationship-expansion-fixture.ts`为合成分钟与正常reducer路径；`.test.ts`覆盖规则/原子/旧版本/组合；`.mjs`只生成实际React组件的离线内容评审，不启浏览器或HTTP端口。
+3. 核心模块：三位原试点仍用`relationshipsV1` schema1 / relationships-v1.0，旧数值、动作、规则和根字段保留；Owen用可选`relationshipExpansionV1` schema1 / relationship-expansion-v1.0，严格名单仅owen，独立migratedAt。旧known/数值/鸟声话题读取不迁移，不补过去日期，不按高分晋级；第一次合法介绍/成长互动在同一CAS/receipt事务添加根。回滚4451不认识此字段，但实际冻结源码的reader/upgrade/原动作已测试保留它，新版再加载可继续，不恢复旧DB。lifeSnapshotKey与lifeProjectionKey都含扩展根；异步身份/旅程与内容失配仍禁用操作。自然时间由原exploration assembly先结算，关系只读提交分钟，沿原第四options参数合同，不加计时器。AI句子上下文使用本人的rules版本，仍不能选rg-*动作或修改阶段/奖励。
+4. 扩展点：后续居民仍需独立作者profile、现有日程/真实物件与完整回归；此版本不称作用户批准的后续名单。加入其它居民时须明示新规则/兼容转换方案，不把Dani等名字静默塞入本版本存档名单。旧4451对该根是保留而不展示；它不提供新阶段操作。详细范围与测试状态见本任务目录HANDOFF，扩大回归的基线失败不在此补丁顺带修改。真实renderer 320/390、Telegram/实机与理解待现有QA窗口结束后验收。
