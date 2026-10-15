@@ -2627,7 +2627,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-Fonts distributed in A Summer in Harbor: Jersey15-Regular.ttf and fusion-pixel-12px-proportional-zh_hans.woff2. Both unmodified.
+Fonts distributed in A Summer in Harbor: Jersey10-Regular.ttf, Jersey15-Regular.ttf and fusion-pixel-12px-proportional-zh_hans.woff2. All unmodified.
 
 Jersey 10 / Jersey 15 — The Soft Type Project Authors
 Source: https://github.com/scfried/soft-type-jersey

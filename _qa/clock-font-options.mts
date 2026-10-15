@@ -1,3 +1,4 @@
+// @ts-nocheck -- browser fixture uses a local runtime hook exposed by compiled RPGJS.
 // Four font comparisons on the compiled, unchanged 71c3d8d game UI.
 import assert from 'node:assert/strict';
 import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync} from 'node:fs';
