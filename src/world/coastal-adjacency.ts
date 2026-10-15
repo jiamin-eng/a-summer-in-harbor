@@ -51,7 +51,9 @@ export function createCoastalComposer(o:Options){
    if(k===1){const d=nearby(x,y,0,8);if(d<8){changed=true;const wet=o.wetSand?pixel(o.wetSand,gx,gy):c.map((v,j)=>j===3?255:Math.round(v*.79));const weight=d<=5?1:(8-d)/3;c=c.map((v,j)=>j===3?255:Math.round(v*(1-weight)+wet[j]*weight))}}
    if(k===0){const d=nearby(x,y,1,3);if(d<=3){changed=true;
     let support=0;for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++)if(field[(y+8+b)*stride+x+8+a]===0)support++;
-    const crest=mod(gx+gy*3,11)<8&&support>=15;
+    // Supplied art already encodes sparse flecks in alpha. Do not thin it a
+    // second time with the procedural fallback's unrelated 11px gate.
+    const crest=support>=15&&(!!o.foam||mod(gx+gy*3,11)<8);
     if(d<=1.5&&crest){const foam=o.foam?pixel(o.foam,gx,gy):[202,225,207,255],alpha=.78*foam[3]/255;c=c.map((v,j)=>j===3?255:Math.round(v*(1-alpha)+foam[j]*alpha))}
     else c=[...c.slice(0,3).map((v,j)=>Math.round(v*.8+[103,160,157][j]*.2)),255];
    }}if(changed)out.set(c,i);
