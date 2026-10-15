@@ -53,6 +53,7 @@ export function createRpgSpace(options:SpaceOptions){
 }
 function createRawRpgSpace(options:SpaceOptions){
  if(options.host.id!=='rpg')throw new Error('RPG_MOUNT_ID_REQUIRED');
+ const trace=(stage:string)=>{if(new URLSearchParams(location.search).has('debug'))console.warn('HBQA-LOAD '+JSON.stringify({stage,scene:options.scene}))};
  const {world,host}=options,ids=Object.keys(world.scenes);
  const reveals=(options.foregroundReveal??[]).map(createForegroundReveal);
  const debug=new URLSearchParams(location.search).has('debug');
@@ -162,8 +163,8 @@ function createRawRpgSpace(options:SpaceOptions){
  // an origin far from the player; point-based MMORPG chunk streaming would
  // remove their entire floor texture even while that texture fills the screen.
  const server=createServer({providers:[tiledServer({basePath:'./map',streaming:false}),provideServerModules([{player:{
-  onJoinMap(instance,map){if(disposed)return;player=instance;instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');joined=map.id.replace(/^map-/,'');checks.forEach(fn=>fn())},
-  async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
+  onJoinMap(instance,map){trace('join-map');if(disposed)return;player=instance;instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');joined=map.id.replace(/^map-/,'');checks.forEach(fn=>fn())},
+  async onConnected(instance){trace('connected-enter');if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);trace('connected-prepared');const changed=instance.changeMap(scene,pos);trace('change-map-invoked');await changed;trace('change-map-returned');void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){trace('connected-error');if(!disposed)options.onError(error)}}
  },maps:ids.map(id=>({id,events:staticSprites.mapEvents(id)}))}]) ]});
  startGame({providers:[
   // RPGJS mounts CanvasEngine layout nodes. Its Yoga system is registered only
@@ -172,8 +173,8 @@ function createRawRpgSpace(options:SpaceOptions){
   // startup failure is safer than leaving a broken renderer running.
   provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1,preference:['webgl','webgpu']}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
-  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
- ]}).catch(error=>{if(!disposed)options.onError(error)});
+  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){trace('map-after-loading');cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){trace('engine-start');if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
+ ]}).catch(error=>{trace('start-game-error');if(!disposed)options.onError(error)});
  const advancePlayer=(time:number,blocked:boolean,dt:number)=>{
   if(player&&!blocked){
    const slices=candidateEnabled()?elapsed.consume(time):[{ms:dt*1000,input:input()}];
