@@ -67,6 +67,7 @@ export function View({neighborChapterV1,weatherV1,weatherEcologyV1,weather='clea
  useEffect(()=>{const light=createDaylightTransition(host.current!);daylight.current=light;light.update(townMinutes,rooms[scene].outdoor,scene);return()=>light.dispose()},[]);
  useEffect(()=>{daylight.current?.update(townMinutes,rooms[scene].outdoor,scene)},[townMinutes,scene]);
  useEffect(()=>{
+  if(new URLSearchParams(location.search).has('debug'))console.warn('HBQA-LOAD '+JSON.stringify({stage:'view-mount',scene}));
   const mount=host.current!.querySelector<HTMLElement>('#rpg')!;
   const layout=explorationLayout(host.current!);
   const nativeSheet=nativeCrabSheet();
