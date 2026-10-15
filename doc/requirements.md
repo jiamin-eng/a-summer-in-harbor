@@ -375,3 +375,27 @@ Audience and location remain the existing international coastal town; paired Eng
 - Dani describes the checked financial note and $3 reserve only for the pinned finance edition. Old hours stories retain their hours note. Dates/sources never advance because of this copy fix.
 
 Focused acceptance: old raw/pinned reads unchanged; old-standing/new-planted crops; exact mixed batch accounting across sale, both orders and seed; reuse one saved packet in another lifecycle; malformed provenance; SQLite close/reopen, CAS, original-ID replay and owner isolation; real current Bag list/detail in 320×568/390×844 English/Chinese. Mechanical paths and visual readability can pass locally; fresh-player comprehension and real signed platform/device QA remain unverified.
+
+# 2026-10-15 植物阶段二最小完整切片（编码前）
+
+## 1. Overview
+面向国际玩家的虚构北美海湾持续生活，美元经济、英文/中文同一世界保持。单次可选址、照料或安排收成，许可、菜畦、植株、采收记录与种子跨次保留。目标是山坡/庭院两地可选，先两畦，再有条件扩为全镇四畦；三块花园固定畦另计。回访是照料与分配自己的收成，没有新增限时登录任务。
+
+## 2. Visual Design
+沿现有镜头、昼夜、天气、SVG、土地轮廓、土畦与脆荚阶段图；不新增美术。地图点选只预览，接近后明确确认。许可面板说明当前容量和扩地条件，空畦允许明确收回后改选。中英320×568与390×844应能看见成本、拒绝原因与下一步。
+
+## 3. Game Mechanics
+原两处土地许可免费，旧两畦/旧植株/旧库存保持。开好两畦并取得山坡、庭院两地许可后，可在任一许可牌旁扩地：现金$0、4精力、20游戏分钟，另计既有疲劳；最大容量从2变4，一次完成不会重复扣费。每块新畦仍需单独选址与确认，成本$0、4精力、20分钟。原48×24落地占位、4单位选址格、12单位相邻留距与道路/居民/动物/玩家/出入口可达保护保持。预览、拒绝和取消不消耗，不更改旧位置。
+
+空畦可先查看移除成本，再明确确认收回：$0、2精力、10分钟，许可及容量保留，不退旧开垦精力；已有植株禁止收回，必须收成后处理。重新开畦照原成本，旧采收记录和种子不受影响。第三、四畦具备与前两畦相同的播种、浇水、采收、保存与碰撞。每次播种/浇水/采收各2精力、10分钟，脆荚种子$6、720湿润分钟成熟、产出3份、每份售价$4。沿已有真实采收来源：每株用1份留1包种，余2份可售$8或交货；用该包重种后是新的一株，可以再留1包。旧合并库存和旧站立植株按原规则，不追溯配额。
+
+不增加死亡、腐败或季节；干燥暂停，浇水恢复，既有雨水规则保持。自然时间先结算，再验证与提交；失败不写时间、土地或物品。可停止新扩地及额外菜畦投放，保留新版本读取和已有植株照料/收获/留种。
+
+## 4. Controls
+沿原方向键/WASD、摇杆、地图点击与接近行动键。土地轮廓内点击只选位置，明确确认才开垦；空畦收回需成本说明及第二次确认。滚动内容按钮onClick、44px触控目标，不自动传送、自动播种或自动消费。
+
+## 5. Win / Lose Conditions
+无总胜负、GameOver或新增结算。开畦/收成/留种为可见局部进展。被保护位置、重叠、资源不足、未获许可、陈旧版本、满四畦或有植株时明确拒绝；旧物保留，可改选、休息、先收成或下次回来。三问：为自己布局并自给；选址/种植/浇水/分配收成；确认有成本，收成与一包种是真进展，错选空畦可收回改选。新玩家理解仍comprehension unverified。
+
+## 6. Sound Effects
+沿已有progress事件音和行动反馈，扩地、开畦、收回和真实留种成功播放一次；预览/拒绝不播放成功音。没有新音频、生成或费用。
