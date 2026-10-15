@@ -137,8 +137,9 @@ function createRawRpgSpace(options:SpaceOptions){
   scale=height/engineHeight;leftInset=(width-engineWidth*scale)/2;
   host.style.width=`${engineWidth}px`;host.style.height=`${engineHeight}px`;host.style.left='50%';host.style.top='0';host.style.transformOrigin='top center';host.style.transform=`translateX(-50%) scale(${scale})`;
   const resolution=Math.min(3,Math.max(1,Math.ceil(scale*(devicePixelRatio||1)*4)/4));
-  trace('resize-before-renderer',{hasRenderer:!!client?.renderer,width:engineWidth,height:engineHeight});
-  if(client?.renderer){client.renderer.resize(engineWidth,engineHeight,resolution);trace('resize-after-renderer');client.width.set(String(engineWidth));trace('resize-after-width');client.height.set(String(engineHeight));trace('resize-after-height');configureCamera();trace('resize-after-camera')}
+  const rendererSize=client?.renderer?.screen;
+  trace('resize-before-renderer',{hasRenderer:!!client?.renderer,width:engineWidth,height:engineHeight,screenWidth:rendererSize?.width,screenHeight:rendererSize?.height});
+  if(client?.renderer){if(Math.round(rendererSize!.width)!==Math.round(engineWidth)||Math.round(rendererSize!.height)!==Math.round(engineHeight)){client.renderer.resize(engineWidth,engineHeight,resolution);trace('resize-after-renderer')}else trace('resize-skipped-matched');client.width.set(String(engineWidth));trace('resize-after-width');client.height.set(String(engineHeight));trace('resize-after-height');configureCamera();trace('resize-after-camera')}
   trace('resize-exit');
  };
  // The embedded RPGJS sync/physics tick may apply an older local ACK after
