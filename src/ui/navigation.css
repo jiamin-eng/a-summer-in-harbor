@@ -22,9 +22,6 @@
 .harbor-location__details{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;min-width:0;line-height:1.35}
 .harbor-location__details>span{overflow-wrap:anywhere}
 .harbor-location__details small{letter-spacing:0}
-.harbor-location .harbor-sound{width:44px;height:44px;min-height:44px;padding:11px;flex:none;justify-self:end;border:0;background:transparent;color:var(--paper-light);box-shadow:none}
-.harbor-location .harbor-sound svg{width:20px;height:20px}
-.harbor-location .harbor-sound:active{background:#ffffff25}
 .harbor-controls{align-items:flex-end;gap:12px;pointer-events:auto}
 .harbor-controls .harbor-stick{width:94px;height:94px;background:transparent;border:0;box-shadow:none}
 .harbor-controls .harbor-stick::before{content:'';position:absolute;inset:10px;border:2px solid #f6e7bf;border-radius:50%;background:#264f46eb;box-shadow:0 0 0 2px var(--edge),0 3px var(--shadow)}
@@ -47,8 +44,27 @@
 @media(min-width:800px){.harbor-header{min-height:64px;padding-top:8px;padding-bottom:8px}}
 
 /* The heading uses live town data; all three lines fit beside the existing 44px entries. */
-.harbor-heading--clock{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;min-width:0}
+.harbor-heading--clock{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;min-width:0}
 .harbor-heading--clock>*{display:block;max-width:100%;margin:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .harbor-heading--clock .harbor-heading__meta{display:block;font-family:var(--font-ui);font-size:10px;line-height:11px;color:var(--text-muted);letter-spacing:0}
 .harbor-heading--clock .harbor-heading__time{width:5ch;font-family:'Harbor Clock',var(--font-display);font-size:34px;font-weight:400;line-height:26px;font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1;letter-spacing:0;text-shadow:none;font-synthesis:none;color:var(--ink)}
 .harbor-heading--clock .harbor-heading__place,.harbor-app:lang(en) .harbor-heading--clock .harbor-heading__place{font-family:var(--font-ui);font-size:11px;font-weight:700;line-height:11px;color:var(--ink)}
+.harbor-heading--clock .harbor-sound{position:absolute;left:70px;top:8px;z-index:1;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-height:44px;padding:11px;border:0;background:transparent;color:var(--ink);box-shadow:none}
+.harbor-heading--clock .harbor-sound svg{width:20px;height:20px}
+.harbor-heading--clock .harbor-sound:active{background:#315e5422;box-shadow:none}
+
+/* The green HUD holds the real objective and the current nearby action. */
+.harbor-next-step{display:grid;grid-template-columns:minmax(0,1fr);width:min(450px,calc(100% - 20px))}
+.harbor-next-step.has-action{grid-template-columns:minmax(0,1fr) 44px}
+.harbor-next-step .harbor-location__details{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;line-height:1.3}
+.harbor-next-step .harbor-location__details>span{font-size:10px;opacity:.85}
+.harbor-next-step .harbor-next-step__objective{display:block;width:100%;min-height:44px;padding:3px 0;border:0;background:transparent;color:var(--paper-light);box-shadow:none;text-align:left;font-size:13px;font-weight:400;line-height:1.3;white-space:normal;overflow-wrap:anywhere}
+.harbor-next-step .harbor-location__details>small{font-size:11px;opacity:.85;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.harbor-next-step>button{width:44px;height:44px;min-height:44px;padding:11px;border:0;background:transparent;color:var(--paper-light);box-shadow:none}
+.harbor-next-step>button svg{width:20px;height:20px}
+
+/* Reuse the former white objective position for the existing person dialogue. */
+.harbor-backdrop--conversation{align-items:flex-start;justify-content:flex-start;padding-top:calc(var(--harbor-location-bottom) + 12px)}
+.harbor-panel--conversation{width:min(450px,100%);max-height:calc(100dvh - var(--harbor-location-bottom) - 24px - var(--harbor-safe-bottom));border:2px solid var(--line);box-shadow:inset 0 2px var(--paper-light),0 3px var(--edge)}
+.harbor-panel--conversation>header{background:var(--paper)}
+.harbor-panel--conversation .harbor-panel__body{overflow:auto;overscroll-behavior:contain;touch-action:pan-y pinch-zoom}
