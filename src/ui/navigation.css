@@ -11,3 +11,37 @@
 .harbor-journeys__footer{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;min-width:0}.harbor-journeys__footer small{min-width:0;overflow-wrap:anywhere}.harbor-journeys__footer button{min-height:44px;margin-left:auto;flex:0 1 auto}
 
 .harbor-rel__growth summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:16px;border-bottom:2px solid var(--line)}.harbor-bag__detail .harbor-error{margin:8px 0}
+
+/* Compact exploration HUD: keep every main entry at a 44px touch target. */
+.harbor-title-short{display:none}
+.harbor-header nav{display:flex;width:auto;gap:4px}
+.harbor-header nav button{width:44px;min-width:44px;height:44px;min-height:44px;padding:8px}
+.harbor-header nav button svg{width:22px;height:22px}
+.harbor-header nav button span{display:none}
+.harbor-location{display:grid;grid-template-columns:minmax(0,1fr) 44px;width:max-content;min-width:min(230px,calc(100% - 24px));max-width:calc(100% - 24px);padding:2px 2px 2px 9px;gap:4px}
+.harbor-location__details{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;min-width:0;line-height:1.35}
+.harbor-location__details>span{overflow-wrap:anywhere}
+.harbor-location__details small{letter-spacing:0}
+.harbor-location .harbor-sound{width:44px;height:44px;min-height:44px;padding:11px;flex:none;justify-self:end;border:0;background:transparent;color:var(--paper-light);box-shadow:none}
+.harbor-location .harbor-sound svg{width:20px;height:20px}
+.harbor-location .harbor-sound:active{background:#ffffff25}
+.harbor-controls{align-items:flex-end;gap:12px;pointer-events:auto}
+.harbor-controls .harbor-stick{width:94px;height:94px;background:transparent;border:0;box-shadow:none}
+.harbor-controls .harbor-stick::before{content:'';position:absolute;inset:10px;border:2px solid #f6e7bf;border-radius:50%;background:#264f46eb;box-shadow:0 0 0 2px var(--edge),0 3px var(--shadow)}
+.harbor-controls .harbor-stick__ring{inset:20px}
+.harbor-controls .harbor-stick__knob{inset:29px}
+.harbor-interaction-hint{pointer-events:none;margin:0 0 4px auto;padding:6px 9px;max-width:178px;background:#244940bf;color:var(--paper-light);border:1px solid #b2c3a299;font-size:12px;line-height:1.35;text-align:right}
+.harbor-controls .harbor-action{min-height:60px;max-width:240px;padding:6px 9px;gap:1px 7px;overflow-wrap:anywhere}
+.harbor-controls .harbor-action span{font-size:12px;line-height:1.2}
+.harbor-controls .harbor-action strong{font-size:17px;line-height:1.2}
+.harbor-controls .harbor-action svg{width:20px;height:20px}
+@media(max-width:799px){
+ .harbor-header{flex-wrap:nowrap;min-height:56px;padding:calc(6px + var(--harbor-safe-top)) 8px 6px;gap:4px}
+ .harbor-heading{flex:1;min-width:0}
+ .harbor-heading small,.harbor-title-long{display:none}
+ .harbor-title-short{display:inline}
+ .harbor-heading h1,.harbor-app:lang(en) .harbor-heading h1{font-size:20px;line-height:1.1;white-space:nowrap}
+ .harbor-controls{left:10px;right:10px}
+ .harbor-location{left:10px;max-width:calc(100% - 20px)}
+}
+@media(min-width:800px){.harbor-header{min-height:64px;padding-top:8px;padding-bottom:8px}}
