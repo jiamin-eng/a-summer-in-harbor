@@ -53,7 +53,6 @@ export function createRpgSpace(options:SpaceOptions){
 }
 function createRawRpgSpace(options:SpaceOptions){
  if(options.host.id!=='rpg')throw new Error('RPG_MOUNT_ID_REQUIRED');
- const trace=(stage:string,details?:Record<string,unknown>)=>{if(new URLSearchParams(location.search).has('debug'))console.warn('HBQA-LOAD '+JSON.stringify({stage,scene:options.scene,...details}))};
  const {world,host}=options,ids=Object.keys(world.scenes);
  const reveals=(options.foregroundReveal??[]).map(createForegroundReveal);
  const debug=new URLSearchParams(location.search).has('debug');
@@ -130,17 +129,19 @@ function createRawRpgSpace(options:SpaceOptions){
  const screen=(point:Point)=>{const q=viewport()?.toScreen(point.x,point.y)??point;return {x:leftInset+q.x*scale,y:q.y*scale}};
  const unproject=(point:Point)=>{const q={x:(point.x-leftInset)/scale,y:point.y/scale};const p=viewport()?.toWorld(q.x,q.y)??q;return {x:p.x,y:p.y}};
  const resize=()=>{
-  trace('resize-enter');
   const box=host.parentElement!,width=box.clientWidth,height=box.clientHeight;
   engineHeight=Math.max(220,height/1.3); // Keep actor scale stable when HUD frees more vertical space.
   engineWidth=width/Math.max(1,height)*engineHeight;
   scale=height/engineHeight;leftInset=(width-engineWidth*scale)/2;
   host.style.width=`${engineWidth}px`;host.style.height=`${engineHeight}px`;host.style.left='50%';host.style.top='0';host.style.transformOrigin='top center';host.style.transform=`translateX(-50%) scale(${scale})`;
   const resolution=Math.min(3,Math.max(1,Math.ceil(scale*(devicePixelRatio||1)*4)/4));
-  const rendererSize=client?.renderer?.screen;
-  trace('resize-before-renderer',{hasRenderer:!!client?.renderer,width:engineWidth,height:engineHeight,screenWidth:rendererSize?.width,screenHeight:rendererSize?.height});
-  if(client?.renderer){if(Math.round(rendererSize!.width)!==Math.round(engineWidth)||Math.round(rendererSize!.height)!==Math.round(engineHeight)){client.renderer.resize(engineWidth,engineHeight,resolution);trace('resize-after-renderer')}else trace('resize-skipped-matched');client.width.set(String(engineWidth));trace('resize-after-width');client.height.set(String(engineHeight));trace('resize-after-height');configureCamera();trace('resize-after-camera')}
-  trace('resize-exit');
+  if(client?.renderer){
+   // CanvasEngine already sizes the initial Pixi surface. Resizing it again
+   // during a fresh scene mount can stall the next map load after an error.
+   const screen=client.renderer.screen;
+   if(Math.round(screen.width)!==Math.round(engineWidth)||Math.round(screen.height)!==Math.round(engineHeight))client.renderer.resize(engineWidth,engineHeight,resolution);
+   client.width.set(String(engineWidth));client.height.set(String(engineHeight));configureCamera();
+  }
  };
  // The embedded RPGJS sync/physics tick may apply an older local ACK after
  // Harbor's rAF projection. Commit the same swept pose and camera together at
@@ -167,8 +168,8 @@ function createRawRpgSpace(options:SpaceOptions){
  // an origin far from the player; point-based MMORPG chunk streaming would
  // remove their entire floor texture even while that texture fills the screen.
  const server=createServer({providers:[tiledServer({basePath:'./map',streaming:false}),provideServerModules([{player:{
-  onJoinMap(instance,map){trace('join-map');if(disposed)return;player=instance;instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');joined=map.id.replace(/^map-/,'');checks.forEach(fn=>fn())},
-  async onConnected(instance){trace('connected-enter');if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);trace('connected-prepared');const changed=instance.changeMap(scene,pos);trace('change-map-invoked');await changed;trace('change-map-returned');void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){trace('connected-error');if(!disposed)options.onError(error)}}
+  onJoinMap(instance,map){if(disposed)return;player=instance;instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');joined=map.id.replace(/^map-/,'');checks.forEach(fn=>fn())},
+  async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
  },maps:ids.map(id=>({id,events:staticSprites.mapEvents(id)}))}]) ]});
  startGame({providers:[
   // RPGJS mounts CanvasEngine layout nodes. Its Yoga system is registered only
@@ -177,8 +178,8 @@ function createRawRpgSpace(options:SpaceOptions){
   // startup failure is safer than leaving a broken renderer running.
   provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1,preference:['webgl','webgpu']}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
-  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){trace('map-after-loading');cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){trace('engine-start');if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);trace('engine-before-resize');resize();trace('engine-after-resize');setTimeout(()=>trace('engine-later', {ready:(engine as any).clientReadyForMapChanges,pending:(engine as any).pendingMapChanges?.length,room:(engine as any).activeRoom?.()}),1000)}}}]),provideRpg(server)
- ]}).then(()=>trace('start-game-resolved')).catch(error=>{trace('start-game-error', {message:String(error)});if(!disposed)options.onError(error)});
+  provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
+ ]}).catch(error=>{if(!disposed)options.onError(error)});
  const advancePlayer=(time:number,blocked:boolean,dt:number)=>{
   if(player&&!blocked){
    const slices=candidateEnabled()?elapsed.consume(time):[{ms:dt*1000,input:input()}];
