@@ -9,19 +9,19 @@ import {useView} from './PlantUsesPanel';
 import {fernDescription} from '../world/residents';
 import {Icon} from './icons';
 const labels:Record<StoryLead['state'],Words>={active:['进行中','In progress'],done:['已发生','Completed'],upcoming:['已约好','Planned'],available:['可以赴约','Time to meet'],'return-later':['改日也可以','Another day is fine']};
-export type MatterOption={id:string;title:Words;detail:Words;place?:string;person?:string};
+export type MatterOption={id:string;title:Words;detail:Words;preview?:Words;place?:string;person?:string};
 /** Read-only shortcuts to entries already shown by Matters. Selection never changes Save. */
 export function matterOptions(save:Save,view:LifeView|null):MatterOption[]{
  const options:MatterOption[]=[],add=(option:MatterOption)=>{if(!options.some(x=>x.id===option.id))options.push(option)};
  const destination=objectivePlace(save),model=relationshipStory(save),plants=useView(view);
  if(destination)add({id:'journey',title:['旅程线索','Journey thread'],detail:objective(save),place:destination.scene});
- for(const lead of model.leads)if(lead.state!=='done'&&lead.place)add({id:'story:'+lead.id,title:lead.title,detail:lead.next??lead.summary,place:lead.place});
+ for(const lead of model.leads)if(lead.state!=='done'&&lead.place){const detail=lead.next??lead.summary;add({id:'story:'+lead.id,title:lead.title,detail,preview:lead.id==='neighbor-chapter'&&detail[1].startsWith('Say hello to someone new')?[detail[0].split('，')[0],detail[1].split(',')[0]]:undefined,place:lead.place})}
  for(const person of model.people)if(relationshipProfiles[person.id]){const next=relationshipNext(save,person.id);if(next?.place)add({id:'relationship:'+person.id,title:person.name,detail:next.text,place:next.place})}
  if(save.turnBattle?.phase==='paused')add({id:'paused-bout',title:['暂停的对练','Paused bout'],detail:['回拳馆找伊德里斯，06:00–17:00可继续。','Return to Idris at the gym, 06:00–17:00, to resume.'],place:'gym'});
  if(view?.order)add({id:'snap-pea-order',title:['西奥的脆荚订单','Theo’s snap pea order'],detail:['去咖啡馆当面交货','Find the café for delivery'],place:'cafe'});
  if(plants?.order)add({id:'basil-order',title:['厨房的罗勒订单','Basil for the kitchen'],detail:['去咖啡馆当面交货','Find the café for delivery'],place:'cafe'});
  for(const commission of view?.animals?.commissions??[])if(commission.active&&save.known.includes(commission.definition.resident))add({id:'animal:'+commission.ref.id,title:commission.definition.title,detail:['记录仍保留，分享需要在对方身边。','Your records remain; share when you meet the neighbor.'],person:commission.definition.resident});
- if(has(save,'unpacked'))add({id:'garden-crops',title:['花园里的作物','Crops in the garden'],detail:['查看花园','Find the garden'],place:'garden'});
+ if(has(save,'unpacked'))add({id:'garden-crops',title:['花园里的作物','Crops in the garden'],detail:['查看山坡花园里的作物','See the crops in Hillside Garden'],place:'garden'});
  for(const bed of view?.plants?.plots??[])add({id:'bed:'+bed.id,title:[rooms[bed.scene].title[0]+' · 新菜畦',rooms[bed.scene].title[1]+' · New bed'],detail:bed.status?bed.status.name:['空畦','Empty bed'],place:bed.scene});
  for(const room of save.fieldNotes?.rooms??[])add({id:'notes:'+room.id,title:room.title,detail:[`已查看${room.observations.filter(o=>o.read).length}/${room.observations.length}条线索。`,`Clues read: ${room.observations.filter(o=>o.read).length}/${room.observations.length}.`],place:room.id});
  return options;

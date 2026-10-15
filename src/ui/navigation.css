@@ -53,18 +53,21 @@
 .harbor-heading--clock .harbor-sound svg{width:20px;height:20px}
 .harbor-heading--clock .harbor-sound:active{background:#315e5422;box-shadow:none}
 
-/* Keep the objective compact; nearby interaction remains in the bottom controls. */
-.harbor-next-step{display:grid;grid-template-columns:minmax(0,1fr);width:min(450px,calc(100% - 20px));padding:4px 8px}
+/* Each known matter uses one short page; the full list remains in People → Matters. */
+.harbor-next-step{display:grid;grid-template-columns:minmax(0,1fr);width:min(450px,calc(100% - 20px));padding:2px 6px;gap:4px}
 .harbor-next-step.has-action{grid-template-columns:minmax(0,1fr) 44px}
 .harbor-next-step .harbor-location__details{display:flex;flex-direction:column;align-items:stretch;gap:0;min-width:0;line-height:1.25}
-.harbor-next-step .harbor-next-step__heading{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;font-size:10px;line-height:12px;opacity:.9}
-.harbor-next-step .harbor-next-step__heading strong{font-size:11px;font-weight:700}
-.harbor-next-step .harbor-next-step__heading small{font-size:10px;white-space:nowrap;opacity:.85}
-.harbor-next-step .harbor-next-step__objective{display:flex;align-items:center;width:100%;min-width:0;min-height:44px;padding:0;border:0;background:transparent;color:var(--paper-light);box-shadow:none;text-align:left;font-size:13px;font-weight:400;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+.harbor-next-step .harbor-next-step__heading{display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%;height:21px;min-width:0;line-height:1}
+.harbor-next-step .harbor-next-step__heading strong{font-size:10px;font-weight:700;white-space:nowrap;opacity:.9}
+.harbor-next-step .harbor-next-step__pager{display:inline-flex;align-items:center;justify-content:center;gap:1px;flex:none;min-width:46px;width:46px;height:24px;min-height:24px;padding:0 3px;border:0;background:#527e6b;color:#f4f3d9;box-shadow:inset 0 1px #8fb39a;font-size:10px;line-height:1;font-variant-numeric:tabular-nums}
+.harbor-next-step .harbor-next-step__pager svg{width:10px;height:10px}
+.harbor-next-step .harbor-next-step__pager:active:not(:disabled){background:#315b4e;box-shadow:inset 0 2px #224a40}
+.harbor-next-step .harbor-next-step__pager:disabled{opacity:.55}
+.harbor-next-step .harbor-next-step__objective{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;min-height:28px;padding:0;border:0;background:transparent;color:var(--paper-light);box-shadow:none;text-align:left;font-size:12px;font-weight:400;line-height:15px;white-space:normal;overflow-wrap:anywhere}
 .harbor-next-step>button{width:44px;height:44px;min-height:44px;padding:11px;border:0;background:transparent;color:var(--paper-light);box-shadow:none}
 .harbor-next-step>button svg{width:20px;height:20px}
-.harbor-next-step>button.harbor-next-step__go{align-self:center;padding:10px;border:2px solid #a8bfa6;background:#3b6858;color:var(--paper-light);box-shadow:inset 0 2px #5a8270,0 2px #193c34}
-.harbor-next-step>button.harbor-next-step__go:active{background:#294f45;box-shadow:inset 0 2px #173b33;transform:translateY(1px)}
+.harbor-next-step>button.harbor-next-step__go{align-self:center;padding:10px;border:2px solid #a4c4a6;background:#578572;color:#fbf6df;box-shadow:inset 0 2px #83a992,0 2px #244e42}
+.harbor-next-step>button.harbor-next-step__go:active{background:#386b59;box-shadow:inset 0 2px #285142;transform:translateY(1px)}
 .harbor-matter-picker{padding:4px 0 14px;border-bottom:2px solid var(--line)}
 .harbor-matter-picker h3{margin:4px 0}
 .harbor-matter-picker p{margin:4px 0 10px;font-size:13px}
