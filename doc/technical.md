@@ -415,3 +415,8 @@ prepareAfterRainDialogue是默认关闭的localFixture-only dry adapter。调用
 ## 2026-10-10 天气四五期 owner 整合候选
 
 客户端weather/storm.ts以有效原pin和townMinutes导出rainProfileForSave，不新增保存字段；weather/scene-masks.ts仅投影美术排除区。现有后台、package/lock/public、业务规则保持391字节。完整合同见weather-owner-391/INTEGRATION.md；本轮尚未发布。
+
+
+## 2026-10-15 Gabriel R2 消费锁（本地未发布）
+
+从4451隔离接入4份既有PNG，固定character-family__gabriel/revision2/record44125733-66b7-4952-9f6a-a508a926ae30。只更新avatar crop、portraitShape与contain、provenance/artStatus及真实Gabriel十二帧视觉reservation；后者曾误指Arthur，保留原alpha>200/root64,122/scale56÷108公式。狗蟹及其余geometry逐字段不变，ground collision、日程、NPC动画、authority和Save schema不改。消费锁更正R2辅助镜像6项旧SHA；实际像素和整格镜像有效，canonical record本轮未改。28项相关测试、构建和8组实际本地Main/64受控frame核验通过；未写私库、未调用生成、未部署/推送。完整证据边界与复跑命令见doc/qa/gabriel-r2-integration-20261015/README.md。

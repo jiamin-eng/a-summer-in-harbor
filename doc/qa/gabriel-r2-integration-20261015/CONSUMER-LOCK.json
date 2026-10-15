@@ -1,0 +1,143 @@
+{
+  "format": "harbor-gabriel-r2-consumer-lock-v1",
+  "baseProductCommit": "4451b92cf901fe877988e4a37363dfd3266cb942",
+  "personId": "gabriel",
+  "graphicId": "npc-gabriel",
+  "library": {
+    "assetId": "character-family__gabriel",
+    "revision": 2,
+    "recordId": "44125733-66b7-4952-9f6a-a508a926ae30",
+    "canonicalMetadataSHA256": "85e5b524bbd7dd61d45bac0c6a73a5483e823daeb579d6511410aec2b955402c",
+    "canonicalRecordModified": false
+  },
+  "files": [
+    {
+      "path": "public/art/npc-gabriel.png",
+      "sha256": "190e58e02560858d0a1c5c70b3397d010e957771bf1ea46ffb75619e5df91e4f",
+      "bytes": 143493,
+      "dimensions": [
+        384,
+        512
+      ]
+    },
+    {
+      "path": "public/art/gabriel-avatar.png",
+      "sha256": "f6e4ae15123b335221a438864275ad29195882b838895a414840b777e996e353",
+      "bytes": 33802,
+      "dimensions": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "public/art/people-avatars/gabriel.png",
+      "sha256": "f6e4ae15123b335221a438864275ad29195882b838895a414840b777e996e353",
+      "bytes": 33802,
+      "dimensions": [
+        256,
+        256
+      ]
+    },
+    {
+      "path": "public/art/gabriel-root-v2.png",
+      "sha256": "17f75d76727ddf146030d2922b51b06515d3c23805571a6bde08882e4175732d",
+      "bytes": 90587,
+      "dimensions": [
+        256,
+        320
+      ]
+    }
+  ],
+  "atlas": {
+    "cell": [
+      128,
+      128
+    ],
+    "rows": [
+      "down",
+      "up",
+      "left",
+      "right"
+    ],
+    "columns": [
+      "A",
+      "stand",
+      "B"
+    ],
+    "cycle": [
+      "A",
+      "stand",
+      "B",
+      "stand"
+    ],
+    "anchor": [
+      0.5,
+      0.953125
+    ],
+    "scale": [
+      0.5185185185185185,
+      0.5185185185185185
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "avatarCropOn256": [
+    0,
+    0,
+    256,
+    256
+  ],
+  "portraitAspectRatio": [
+    4,
+    5
+  ],
+  "mirrorHashCorrection": {
+    "reason": "Published R2 nativeKit.mirrors retained six R1 SHA values. This candidate pins actual R2 native files and pixels; private canonical record is unchanged.",
+    "sourceAssemblyManifestSHA256": "81a1e2ec253d20101d3e37662ecd95bfcf537f77e3cdf48822b47f871fbe6da2",
+    "mirrors": [
+      {
+        "left": "left-A",
+        "right": "right-A",
+        "actualLeftFileSHA256": "d3a29d298416638657121a15efd94ab71dc00ff73eb909ca6e0076a1aadc391c",
+        "actualRightFileSHA256": "2ebaf0d4e23e4fb0887e486f4d80dd58af8eff9906a1585041f8094c9cd925cb",
+        "actualLeftRGBA_SHA256": "ccaaa0ce39eb1de56a8c6aff71c5bfccfa00862362c909d83d2cf4dc6678c359",
+        "actualRightRGBA_SHA256": "a9da6e284f05cf5eda8e34e6e9b6a8db02b8c96d5887c0cae9b927e0155cbe51",
+        "publishedR2DeclaredLeftFileSHA256": "c1ae2f15d826342cf3d44f0cf66b692ae70f368827dc7746989c71f8829ffa21",
+        "publishedR2DeclaredRightFileSHA256": "0c35f93ddf01ca3a6559e48f97673a1e7a643ba8e9cbf0e86261a23d87d6543a",
+        "publishedMetadataMatchesActual": false,
+        "actualWholeCellMirrorPASS": true
+      },
+      {
+        "left": "left-stand",
+        "right": "right-stand",
+        "actualLeftFileSHA256": "0109549d43d0584dbfabbcaf0fd9bb210f101715c7573ecace72ec425a64fb51",
+        "actualRightFileSHA256": "264678c3f1a8c72ff66916f831c21e03a6c8d21eeea83f9a9fe4e08d17c0373f",
+        "actualLeftRGBA_SHA256": "a547bb9e80b6a1723fab88a4ea2441edc605b4cec12af98208a2b419c2aaf4a3",
+        "actualRightRGBA_SHA256": "1f7c2cc0fd890208b76a1c4fd37a640b41ebc5930ebe76d1ee9c5eafca91d492",
+        "publishedR2DeclaredLeftFileSHA256": "72167407b650024c6efea412de8c21df4c3f34c1180f2a321f4c921948602760",
+        "publishedR2DeclaredRightFileSHA256": "099f344810eaed15422a93c385ce33b15076b6621b7572961eeeec49d8043c3f",
+        "publishedMetadataMatchesActual": false,
+        "actualWholeCellMirrorPASS": true
+      },
+      {
+        "left": "left-B",
+        "right": "right-B",
+        "actualLeftFileSHA256": "6715a9e94bcbd40addd704c46a32f9b48c813ed984b8bed326f52fb59721c4fe",
+        "actualRightFileSHA256": "56a09eec1fcb4594113524869d505ca261fed1efe649befa5eefd98ac9207b90",
+        "actualLeftRGBA_SHA256": "b5891e9ce52ebcf2273c62d88d903b493763f667fd4f0a66c4008e1ecada4a5f",
+        "actualRightRGBA_SHA256": "8f9ea406cff207ac8d44a3a996e49cdf6b2ccd1a4f38e9757e9f11aadbe87a8e",
+        "publishedR2DeclaredLeftFileSHA256": "e52fbac044add332b419c15b979990de565929fb58efc76cdc55f0c4c603fdb2",
+        "publishedR2DeclaredRightFileSHA256": "bd5e3168663da6c33aded18e96f1a398f1d203e30e2a71f0f9a17aefc794c1c3",
+        "publishedMetadataMatchesActual": false,
+        "actualWholeCellMirrorPASS": true
+      }
+    ]
+  },
+  "scope": {
+    "localCandidateOnly": true,
+    "newImageRequests": 0,
+    "formalReleaseApprovedByThisRecord": false
+  }
+}
