@@ -54,13 +54,24 @@
 .harbor-heading--clock .harbor-sound:active{background:#315e5422;box-shadow:none}
 
 /* Keep the objective compact; nearby interaction remains in the bottom controls. */
-.harbor-next-step{display:grid;grid-template-columns:minmax(0,1fr);width:min(450px,calc(100% - 20px));padding:2px 8px}
+.harbor-next-step{display:grid;grid-template-columns:minmax(0,1fr);width:min(450px,calc(100% - 20px));padding:4px 8px}
 .harbor-next-step.has-action{grid-template-columns:minmax(0,1fr) 44px}
-.harbor-next-step .harbor-location__details{display:flex;align-items:center;gap:7px;min-width:0;line-height:1.25}
-.harbor-next-step .harbor-location__details>span{flex:none;font-size:10px;opacity:.85}
-.harbor-next-step .harbor-next-step__objective{display:flex;align-items:center;flex:1;min-width:0;min-height:44px;padding:0;border:0;background:transparent;color:var(--paper-light);box-shadow:none;text-align:left;font-size:13px;font-weight:400;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+.harbor-next-step .harbor-location__details{display:flex;flex-direction:column;align-items:stretch;gap:0;min-width:0;line-height:1.25}
+.harbor-next-step .harbor-next-step__heading{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;font-size:10px;line-height:12px;opacity:.9}
+.harbor-next-step .harbor-next-step__heading strong{font-size:11px;font-weight:700}
+.harbor-next-step .harbor-next-step__heading small{font-size:10px;white-space:nowrap;opacity:.85}
+.harbor-next-step .harbor-next-step__objective{display:flex;align-items:center;width:100%;min-width:0;min-height:44px;padding:0;border:0;background:transparent;color:var(--paper-light);box-shadow:none;text-align:left;font-size:13px;font-weight:400;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
 .harbor-next-step>button{width:44px;height:44px;min-height:44px;padding:11px;border:0;background:transparent;color:var(--paper-light);box-shadow:none}
 .harbor-next-step>button svg{width:20px;height:20px}
+.harbor-next-step>button.harbor-next-step__go{align-self:center;padding:10px;border:2px solid #a8bfa6;background:#3b6858;color:var(--paper-light);box-shadow:inset 0 2px #5a8270,0 2px #193c34}
+.harbor-next-step>button.harbor-next-step__go:active{background:#294f45;box-shadow:inset 0 2px #173b33;transform:translateY(1px)}
+.harbor-matter-picker{padding:4px 0 14px;border-bottom:2px solid var(--line)}
+.harbor-matter-picker h3{margin:4px 0}
+.harbor-matter-picker p{margin:4px 0 10px;font-size:13px}
+.harbor-matter-picker>div{display:grid;gap:7px}
+.harbor-matter-picker button{display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:44px;padding:8px 10px;text-align:left;line-height:1.3}
+.harbor-matter-picker button small{font-size:12px;opacity:.8;text-align:left}
+.harbor-matter-picker button[aria-pressed=true]{background:#dce6cb;border-color:#77927b;box-shadow:inset 0 2px #f4f5db,0 2px #305047}
 
 /* Reuse the former white objective position for the existing person dialogue. */
 .harbor-backdrop--conversation{align-items:flex-start;justify-content:flex-start;padding-top:calc(var(--harbor-location-bottom) + 12px)}
