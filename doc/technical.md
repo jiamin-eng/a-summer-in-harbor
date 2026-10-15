@@ -446,3 +446,15 @@ createLifeB2第五参数options.expansionStarts=false停止新扩容和编号3/4
 容量/稳定ID只在land-contract调，新增土地需独立几何及真实renderer验收；新物种仍走原不可变registry及资产准入，不由本包开放AI自动加机制。新增动作要同时维护parse/host/rules/错误/投影/UI与回执测试。前后端迁移以4451前端、9585后端逐文件对照补丁为依据；不能整份覆盖owner后续文件。schema2产生后保留新reader，优先止新和前向修复，不整库回档。
 
 本地可评审，尚未实际浏览器/Telegram/手机/PG验证或部署：普通回环listen为EPERM，Chromium启动探针提前退出；依本任务不新增权限/安装，未升级。纯规则/进程内HTTP/SSR/构建结果不能改标为真实运行画面通过。
+
+## 2026-10-15 HBQA-LAND-006 独立增量修复
+
+独立 QA 在 e1d222c 的实际浏览器 → Worker → 合成后端路径发现：client.ts 已发送 X-Harbor-Land:2，但 worker/index.js 重建白名单请求头时未转发，扩地与已扩 schema2 的重新读取均返回409 CLIENT_REFRESH_REQUIRED。直接后端200不能作为入口通过证据，原反例继续有效。
+
+本修复只让 Worker 转发精确值2；缺失、未知或合并值仍不转发。不自动给旧客户端补能力、不修改身份/来源/私有边界、不删除 server/http.ts 的兼容读取保护，也不在写入前加数据库读或改变原 CAS/回执。公开格式能力声明与身份认证无关。Worker 和具备 schema2 reader 的后端须一起保留；不能在已产生 schema2 后回退到不能读取它的旧后端。
+
+_qa/land-worker-chain.ts 执行真实 handleApi、verifiedEdgeOwner、账号 HTTP、正式 exploration assembly 与合成 SQLite；仅将上游网络传输接为进程内 Readable/Response，原 Worker 产生的头和 body 原样进入后端。fixture 默认不注入能力头。测试涵盖两/四畦读、显式扩地、同 ID 重放、不同 ID 竞争、提交后丢回包、SQLite 关闭重开、三/四槽收成留种和清空、缺头保护及跨账号隔离；另以实际 story/client.ts 在 Node 的合成宿主中检验 pending 保留、重连与投影。这是完整业务代理链证据，未覆盖浏览器渲染、TCP/TLS 或部署环境。
+
+两个历史 signed-cookie 网关测试误设 temporary-unverified，却仍要求 bootstrap 签发浏览器 cookie；原 e1 同样失败。仅将这两个 fixture 的身份模式改为原有 browser-capability-v1，与测试目的匹配；不改变产品策略。新增链路测试使用正式当前的 temporary-unverified 模式。
+
+独立候选与原始反例的清单、进程状态、回归日志及尚待 QA 的真实按钮/刷新验收见外层 QA-HANDOFF.md。官方 Chrome 启动与回环 listen 在当前沙箱均受阻，未提权、安装或接管用户窗口；HBQA-LAND-006 尚待独立浏览器 QA 关闭，HBQA-LOAD-005 由其原 owner 处理。

@@ -44,6 +44,9 @@ export async function handleApi(request,env){
  }
  const headers=new Headers({'X-Harbor-Edge':token,'X-Harbor-Owner':owner,'Origin':origin,'X-Harbor-Game':base.slice(1)});if(body)headers.set('Content-Type','application/json');
  if(request.headers.get('X-Harbor-Dynamic-Assets')==='1')headers.set('X-Harbor-Dynamic-Assets','1');
+ // Public save-format capability, not identity or permission. Do not upgrade
+ // clients that omitted it or forward unknown/combined header values.
+ if(request.headers.get('X-Harbor-Land')==='2')headers.set('X-Harbor-Land','2');
  if(demo){const id=request.headers.get('X-Harbor-Telegram-Id');if(id!==null){if(!/^[1-9][0-9]{0,19}$/.test(id)||request.headers.get('X-Harbor-Identity-Mode')!=='temporary-unverified')return fail('INVALID_DEMO_IDENTITY',400);headers.set('X-Harbor-Telegram-Id',id);headers.set('X-Harbor-Identity-Mode','temporary-unverified')}}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);
  try{const r=await fetch(upstream+base+path+url.search,{method:request.method,headers,body,redirect:'manual',signal:AbortSignal.any([controller.signal,request.signal])});if(r.status>=300&&r.status<400)return fail('UPSTREAM_REDIRECT_REFUSED',502);const out=new Headers({'Content-Type':r.headers.get('Content-Type')??'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});if(r.headers.get('X-Consumer-Grant'))out.set('X-Consumer-Grant',r.headers.get('X-Consumer-Grant'));if(setCookie&&r.ok)out.set('Set-Cookie',setCookie);return new Response(r.body,{status:r.status,headers:out})}catch{return fail('SERVICE_UNAVAILABLE',503)}finally{clearTimeout(timer)}
