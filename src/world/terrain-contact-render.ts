@@ -3,6 +3,9 @@ import atlasURL from './tiled-native/buch-outdoor.png';
 import rules from './tiled-native/terrain-rules.json';
 import type {TerrainContact} from './terrain-contacts';
 import type {TerrainPatch} from './outdoors';
+import {coastalMaterialAt} from './coastal-material-field';
+import {coastalSurfaceAssets} from './coastal-surface-assets';
+import {createCoastalComposer,type PixelTile} from './coastal-adjacency';
 
 type Material=TerrainPatch['material'];
 const images=new Map<string,Promise<HTMLImageElement>>();
@@ -10,7 +13,7 @@ const pixels=new Map<Material,ImageData>();
 const textures=new Map<string,Texture>();
 const source=(url:string)=>{let task=images.get(url);if(!task){task=(async()=>{const image=new Image();image.src=url;await image.decode();return image})();images.set(url,task)}return task};
 const materialFile=(m:Material)=>'./art/floor-'+(m==='grass'?'grass-v3':m)+'.png';
-const key=(e:TerrainContact)=>[e.rect.x,e.rect.y,e.rect.w,e.rect.h,e.axis,e.negative,e.positive].join(':');
+const key=(e:TerrainContact)=>[e.scene??'legacy',e.rect.x,e.rect.y,e.rect.w,e.rect.h,e.axis,e.negative,e.positive].join(':');
 const palette={1:[63,116,77],2:[121,42,44],4:[52,74,97]};
 const signatures=new Map<string,number[]>();
 for(const r of rules.rules){const k=r.corners.join(',');signatures.set(k,[...(signatures.get(k)??[]),r.id])}
@@ -32,6 +35,9 @@ async function profile(native:HTMLImageElement,id:number,axis:'x'|'y',negative:1
  * fully covered; floor texture phase remains the authored global 160 grid. */
 export async function prepareTerrainContact(e:TerrainContact){
  const k=key(e);if(textures.has(k))return;
+ if(e.scene==='coast-beach-path'&&[e.negative,e.positive].every(m=>['grass','sand','water'].includes(m))){
+  await prepareCoastalContact(e);return;
+ }
  const atlas=await source(atlasURL);
  for(const m of [e.negative,e.positive])if(!pixels.has(m)){
   const image=await source(materialFile(m)),c=document.createElement('canvas');c.width=c.height=160;
@@ -57,3 +63,29 @@ export async function prepareTerrainContact(e:TerrainContact){
  ctx.putImageData(out,0,0);const t=await Assets.load<Texture>(canvas.toDataURL('image/png'));t.source.scaleMode='nearest';textures.set(k,t);
 }
 export const terrainContactTexture=(e:TerrainContact)=>textures.get(key(e));
+
+let coastalComposer:Promise<ReturnType<typeof createCoastalComposer>>|undefined;
+async function prepareCoastalContact(e:TerrainContact){
+ const composer=await (coastalComposer??=(async()=>{
+  const files={grass:materialFile('grass'),sand:materialFile('sand'),water:materialFile('water')};
+  const tiles={} as Record<'grass'|'sand'|'water',PixelTile>;
+  for(const [name,url] of Object.entries(files)){
+   const im=await source(url),c=document.createElement('canvas');c.width=c.height=160;const ctx=c.getContext('2d')!;
+   ctx.imageSmoothingEnabled=false;ctx.drawImage(im,0,0,160,160);tiles[name as keyof typeof tiles]={width:160,height:160,data:ctx.getImageData(0,0,160,160).data};
+  }
+  const extra={} as {wetSand?:PixelTile;foam?:PixelTile};
+  for(const name of ['wetSand','foam'] as const){const url=coastalSurfaceAssets[name];if(!url)continue;if(!url.startsWith('./'))throw Error('COAST_ASSET_RELATIVE_URL_REQUIRED');
+   const image=await source(url),size=name==='wetSand'?160:16;
+   if(image.width!==size||image.height!==size)throw Error('COAST_ASSET_DIMENSIONS:'+name);
+   const c=document.createElement('canvas');c.width=c.height=size;const ctx=c.getContext('2d')!;ctx.drawImage(image,0,0);
+   const pixels=ctx.getImageData(0,0,size,size).data;if(name==='wetSand')for(let i=3;i<pixels.length;i+=4)if(pixels[i]!==255)throw Error('COAST_WET_SAND_MUST_BE_OPAQUE');
+   extra[name]={width:size,height:size,data:pixels};
+  }
+  const im=await source(atlasURL),c=document.createElement('canvas');c.width=im.width;c.height=im.height;
+  const ctx=c.getContext('2d')!;ctx.drawImage(im,0,0);
+  return createCoastalComposer({atlas:{width:c.width,height:c.height,data:ctx.getImageData(0,0,c.width,c.height).data},rules:rules.rules,materials:tiles,materialAt:coastalMaterialAt,...extra});
+ })());
+ const image=composer.render(e.rect),canvas=document.createElement('canvas');canvas.width=e.rect.w;canvas.height=e.rect.h;
+ canvas.getContext('2d')!.putImageData(new ImageData(new Uint8ClampedArray(image),canvas.width,canvas.height),0,0);
+ const t=await Assets.load<Texture>(canvas.toDataURL('image/png'));t.source.scaleMode='nearest';textures.set(key(e),t);
+}

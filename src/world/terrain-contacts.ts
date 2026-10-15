@@ -1,10 +1,12 @@
 import {outdoors,type TerrainPatch} from './outdoors';
+import {coastalMaterialAt} from './coastal-material-field';
+import {coastalContactRects} from './coastal-contact-plan';
 import {terrainAt} from './road-boundaries';
 import {COASTAL,globalPoint,zonesFor} from '../candidate/continuity';
 import type {Point,Rect} from '../engine/world';
 
 type Material=TerrainPatch['material'];
-export type TerrainContact={rect:Rect;axis:'x'|'y';negative:Material;positive:Material;native:'grass-dirt'|'dirt-water'|'grass-water'};
+export type TerrainContact={scene?:string;field?:'coastal-2d';rect:Rect;axis:'x'|'y';negative:Material;positive:Material;native:'grass-dirt'|'dirt-water'|'grass-water'};
 const cache=new Map<string,TerrainContact[]>();
 const visible=(id:string,p:Point)=>id==='coast'?!(p.x>=1235&&p.x<2035&&p.y>=260&&p.y<820)&&p.y<805:id==='beach'?p.y>=805:id==='path'?p.x>=1235:id==='market'?p.y>=650:id==='bazaar'?p.y<650:true;
 const pair=(a:Material,b:Material)=>[a,b].sort().join('/');
@@ -37,18 +39,12 @@ export function terrainContacts(scene:string):TerrainContact[]{
   for(let i=1;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++){const x=xs[i],y=(ys[j]+ys[j+1])/2;put(x,ys[j],ys[j+1],'x',terrainAt(l,{x:x-.5,y}),terrainAt(l,{x:x+.5,y}))}
   for(let j=1;j<ys.length-1;j++)for(let i=0;i<xs.length-1;i++){const y=ys[j],x=(xs[i]+xs[i+1])/2;put(y,xs[i],xs[i+1],'y',terrainAt(l,{x,y:y-.5}),terrainAt(l,{x,y:y+.5}))}
  }
- // The combined coastal renderer hands y=805 from the coast bitmap to the
- // beach bitmap. That ownership seam is not a patch edge in either source.
- // Coast water to the beach's sand backing needs the same native shore cut.
  if(scene===COASTAL){
-  // The path's legacy crop begins at x=1235 and paints grass over the sea
-  // from y=600 to 820. This is a second cross-zone contact.
-  out.push({rect:{x:1219,y:600,w:32,h:220},axis:'x',negative:'water',positive:'grass',native:'grass-water'});
-  let run:number|undefined;
-  const emit=(stop:number)=>{if(run===undefined)return;out.push({rect:{x:run,y:789,w:stop-run,h:32},axis:'y',negative:'water',positive:'sand',native:'dirt-water'});run=undefined};
-  for(let x=70;x<1235;x+=10){const stop=Math.min(x+10,1235),top=terrainAt(outdoors.coast,{x:(x+stop)/2,y:804})??'water';
-   if(top==='water'){run??=x}else emit(x)}
-  emit(1235);
+  // Keep built sand/stone treatment. All natural contacts, including bitmap
+  // ownership cuts, are found from the same world field rather than seam IDs.
+  for(let i=out.length-1;i>=0;i--)if([out[i].negative,out[i].positive].every(m=>['grass','sand','water'].includes(m)))out.splice(i,1);
+  for(const rect of coastalContactRects(coastalMaterialAt,{x:0,y:0,w:2600,h:1744}))out.push({scene,field:'coastal-2d',rect,axis:'y',negative:'water',positive:'sand',native:'dirt-water'});
  }
+ for(const edge of out)edge.scene=scene;
  cache.set(scene,out);return out;
 }
