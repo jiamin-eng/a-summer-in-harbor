@@ -137,5 +137,19 @@
     "newPlayerComprehension": "unverified",
     "phoneHardware": "unverified",
     "churchFacade": "HOLD"
+  },
+  "plantLandPhase2": {
+    "state": "local-review-candidate",
+    "scope": "explicit two-to-four beds on existing hill/courtyard; original authority and per-plant seed provenance",
+    "evidence": [
+      "_qa/land-phase2.test.ts",
+      "_qa/land-phase2-http.test.ts",
+      "_qa/land-phase2-presentation.test.tsx"
+    ],
+    "paidCalls": 0,
+    "realSaves": 0,
+    "browserRenderer": "unverified: current unprivileged Chromium launch failed",
+    "telegram": "existing QA window untouched",
+    "comprehension": "unverified"
   }
 }

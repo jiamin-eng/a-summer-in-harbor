@@ -420,3 +420,29 @@ prepareAfterRainDialogue是默认关闭的localFixture-only dry adapter。调用
 ## 2026-10-15 Gabriel R2 消费锁（本地未发布）
 
 从4451隔离接入4份既有PNG，固定character-family__gabriel/revision2/record44125733-66b7-4952-9f6a-a508a926ae30。只更新avatar crop、portraitShape与contain、provenance/artStatus及真实Gabriel十二帧视觉reservation；后者曾误指Arthur，保留原alpha>200/root64,122/scale56÷108公式。狗蟹及其余geometry逐字段不变，ground collision、日程、NPC动画、authority和Save schema不改。消费锁更正R2辅助镜像6项旧SHA；实际像素和整格镜像有效，canonical record本轮未改。28项相关测试、构建和8组实际本地Main/64受控frame核验通过；未写私库、未调用生成、未部署/推送。完整证据边界与复跑命令见doc/qa/gabriel-r2-integration-20261015/README.md。
+
+# 2026-10-15 土地二期本地候选（实际代码）
+
+## 1. 技术栈
+沿4451b92 React/TypeScript/Vite8/RPGJS/Pixi及同一Story Session/账号/clock/weather组合。依赖未安装或升级，复用既有Node22.22.2和共享node_modules。正式后端基线由协调线程给定9585；本轮只在内存/临时SQLite合成数据验证，不连接正式PG。
+
+## 2. 目录结构
+src/life/land-contract.ts集中两/四槽上限和ID；land.ts定义schema1原档、显式schema2扩地凭据、预览及确认/收回。life-{b2,plants-b2,runtime}.ts沿原host/authority做真实位置与命令准入。src/life/{save,seed-quota,rules}.ts扩大新槽可读/种植及最多7个在种来源，原采收配额规则与refs不改。src/weather/state.ts以已扩容量验证最多7个雨水计数，compact delta仍不能凭空加植株/ref。
+
+LandPanel/LandPreviewPanel消费真实预览，保留加载/陈旧态、显式扩地与空畦二次确认。src/life/land-selection.ts让暂停中的点选只生成4单位格预览，不行走或推进时间；View保留原镜头/日夜/地图，仅将土畦和作物槽扩为固定1–4并调用该输入合同。Bag中脆荚种子定位实际已访问种植地点，原三种仍去花园；原每株/每批次留种命令不改。
+
+_qa/land-phase2*含真实规则、SQLite CAS/重启、现行4000ms自然时钟、账号HTTP处理器进程内调用与React静态呈现检查。REVIEW.html为合成只读组件预览，不是实际Main/renderer或功能性应用。
+
+## 3. 核心模块
+只有显式expand-land将landV1从schema1升级schema2，记录revision/sourceAction/minute及保留原permission/plot；两地许可和先前两畦由权威验证。新菜畦仍geometryRevision1、48×24footprint及原保护/可达规则，第三/第四槽必须绑定已扩土地。clear-bed禁止有植株；删空畦不删许可、容量、采收来源或雨水计数，不退款。全部原子候选由原CAS/receipt提交；读不会升级。仅新schema2在life读取时校验土地扩展，原schema1模块读合同保持，完整runtime仍验证原土地。
+
+createLifeB2第五参数options.expansionStarts=false停止新扩容和编号3/4的新分配；原1/2槽与已有植物照料/收成/留种保持，schema2读取不能回退删除。createLifePlantsB2第三参数可透传此选项；现行装配沿默认值，独立关闭默认补丁供owner评审。
+
+新客户端请求携带公开能力头X-Harbor-Land:2。新HTTP处理器对已扩schema2旅程的会话/生活/土地读取及新的扩地/收回动作要求该头；旧两畦旅程仍服务旧客户端。写通道保持原CAS/版本检查，不插入额外数据库事务改变模糊提交结果。缺头时返回CLIENT_REFRESH_REQUIRED、terminal:false，保留待确认请求及真实head。新前端遇旧预览会保持原两畦；life投影的landPhase2能力缺失时不展示收回。此头是格式能力声明，不是身份、授权或凭据，所有动作仍按原账号/空间/版本/资源验证。
+
+自然时间先于土地/营业/收成结算，失败不提交自然分钟。新增有限业务拒绝409，未知/坏档仍503可重读。雨水每畦每天默认60分钟，不增加手浇标记、种子、腐败或死亡。
+
+## 4. 扩展点
+容量/稳定ID只在land-contract调，新增土地需独立几何及真实renderer验收；新物种仍走原不可变registry及资产准入，不由本包开放AI自动加机制。新增动作要同时维护parse/host/rules/错误/投影/UI与回执测试。前后端迁移以4451前端、9585后端逐文件对照补丁为依据；不能整份覆盖owner后续文件。schema2产生后保留新reader，优先止新和前向修复，不整库回档。
+
+本地可评审，尚未实际浏览器/Telegram/手机/PG验证或部署：普通回环listen为EPERM，Chromium启动探针提前退出；依本任务不新增权限/安装，未升级。纯规则/进程内HTTP/SSR/构建结果不能改标为真实运行画面通过。

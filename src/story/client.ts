@@ -20,7 +20,7 @@ export const hasPendingAction=()=>!!storage().getItem(pendingKey(identitySnapsho
 async function request(path:string,body?:unknown,s=identitySnapshot()){
  if(!s.account)throw Error('PLATFORM_LOGIN_REQUIRED');
  if(!/^[1-9][0-9]{0,19}$/.test(s.account))throw Error('INVALID_SHELL_IDENTITY');
- const r=await identityFetch(getGameApiBase()+'/api'+path,{method:body===undefined?'GET':'POST',headers:{'X-Harbor-Dynamic-Assets':'1',...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})},s);const data=await r.json();s.assert();if(!r.ok)throw Object.assign(Error(data.error??'REQUEST_FAILED'),{status:r.status,terminal:data.terminal,retryAfterMs:data.retryAfterMs});return data;
+ const r=await identityFetch(getGameApiBase()+'/api'+path,{method:body===undefined?'GET':'POST',headers:{'X-Harbor-Land':'2','X-Harbor-Dynamic-Assets':'1',...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})},s);const data=await r.json();s.assert();if(!r.ok)throw Object.assign(Error(data.error??'REQUEST_FAILED'),{status:r.status,terminal:data.terminal,retryAfterMs:data.retryAfterMs});return data;
 }
 export type JourneyChoice={browserClaimed?:boolean;journeys:{id:string;version:number;scene:string;updated?:number}[];legacy:{id:string;version:number;scene:string;updated?:number}[]};
 let choice:{scope:string;data:JourneyChoice;management?:boolean}|undefined;let bound:{scope:string;id:string}|undefined;

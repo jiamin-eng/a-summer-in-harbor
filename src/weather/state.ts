@@ -1,3 +1,4 @@
+import {landMaximum} from '../life/land-contract';
 import type {Save} from '../story/state';
 import type {LifePlot} from '../life/types';
 import type {PlantUsesSave} from '../life/plant-uses';
@@ -22,11 +23,11 @@ export function createWeatherState(minute:number,parameters:Readonly<WeatherPara
  if(!int(minute)||!validWeatherParameters(parameters))throw Error('INVALID_WEATHER_INPUT');
  return {schema:1,ruleset:'harbor-weather-v1',parameters:{...parameters},activatedAt:minute,settledThrough:minute,kind:weatherAt(minute,parameters),rainDay:Math.floor(minute/1440),water:{}};
 }
-export function validWeatherState(v:unknown,minute:number):v is WeatherState{
- if(!object(v)||!exact(v,['schema','ruleset','parameters','activatedAt','settledThrough','kind','rainDay','water'])||v.schema!==1||v.ruleset!=='harbor-weather-v1'||!validWeatherParameters(v.parameters)||!int(minute)||!int(v.activatedAt)||!int(v.settledThrough)||v.activatedAt>v.settledThrough||v.settledThrough!==minute||v.kind!==weatherAt(minute,v.parameters)||v.rainDay!==Math.floor(minute/1440)||!object(v.water)||Object.keys(v.water).length>5)return false;
- return Object.entries(v.water).every(([id,n])=>/^(garden:crop-bed-[123]|land:life-bed-[12])$/.test(id)&&int(n)&&n<=v.parameters.rainMinutesPerDay);
+export function validWeatherState(v:unknown,minute:number,maximumBeds=4):v is WeatherState{
+ if(!object(v)||!exact(v,['schema','ruleset','parameters','activatedAt','settledThrough','kind','rainDay','water'])||v.schema!==1||v.ruleset!=='harbor-weather-v1'||!validWeatherParameters(v.parameters)||!int(minute)||!int(v.activatedAt)||!int(v.settledThrough)||v.activatedAt>v.settledThrough||v.settledThrough!==minute||v.kind!==weatherAt(minute,v.parameters)||v.rainDay!==Math.floor(minute/1440)||!object(v.water)||![2,4].includes(maximumBeds)||Object.keys(v.water).length>3+maximumBeds)return false;
+ return Object.entries(v.water).every(([id,n])=>/^(garden:crop-bed-[123]|land:life-bed-[1-4])$/.test(id)&&(!id.startsWith('land:')||Number(id.slice(-1))<=maximumBeds)&&int(n)&&n<=v.parameters.rainMinutesPerDay);
 }
-export function assertWeatherReadable(s:Save){if(s.weatherV1!==undefined&&!validWeatherState(s.weatherV1,s.townMinutes??540))throw Error('UNSUPPORTED_WEATHER_SAVE');if(s.weatherEcologyV1!==undefined&&!validWeatherEcology(s.weatherEcologyV1,s.townMinutes??540,s.weatherV1))throw Error('UNSUPPORTED_WEATHER_ECOLOGY_SAVE')}
+export function assertWeatherReadable(s:Save){if(s.weatherV1!==undefined&&!validWeatherState(s.weatherV1,s.townMinutes??540,landMaximum(s.landV1)))throw Error('UNSUPPORTED_WEATHER_SAVE');if(s.weatherEcologyV1!==undefined&&!validWeatherEcology(s.weatherEcologyV1,s.townMinutes??540,s.weatherV1))throw Error('UNSUPPORTED_WEATHER_ECOLOGY_SAVE')}
 export function weatherForSave(s:Pick<Save,'townMinutes'|'weatherV1'>):WeatherKind{return s.weatherV1?.kind??weatherAt(s.townMinutes??540)}
 /** One bounded delta in the original compact confirmation; no full inventory/history. */
 export function weatherPatch(before:Save,next:Save):WeatherPatch|undefined{
@@ -40,7 +41,7 @@ export function weatherPatch(before:Save,next:Save):WeatherPatch|undefined{
 export function applyWeatherPatch<T extends {id:string}>(head:T,patch:WeatherPatch|undefined,previous:T):T{
  if(!patch)return head;
  const s=head as unknown as Save,old=previous as any;
- if(!object(patch)||Object.keys(patch).some(k=>!['weatherV1','weatherEcologyV1','mintRecovery','plots','lifePlots'].includes(k))||!validWeatherState(patch.weatherV1,s.townMinutes??540))throw Error('WEATHER_REPLY_UNCONFIRMED');
+ if(!object(patch)||Object.keys(patch).some(k=>!['weatherV1','weatherEcologyV1','mintRecovery','plots','lifePlots'].includes(k))||!validWeatherState(patch.weatherV1,s.townMinutes??540,landMaximum(s.landV1)))throw Error('WEATHER_REPLY_UNCONFIRMED');
  if(old.weatherV1&&(JSON.stringify(old.weatherV1.parameters)!==JSON.stringify(patch.weatherV1.parameters)||old.weatherV1.activatedAt!==patch.weatherV1.activatedAt))throw Error('WEATHER_REPLY_UNCONFIRMED');
  if(!old.weatherV1&&patch.weatherV1.activatedAt!==(old.townMinutes??540))throw Error('WEATHER_REPLY_UNCONFIRMED');
  if((s.townMinutes??540)<(old.townMinutes??540)||old.weatherV1?.rainDay===patch.weatherV1.rainDay&&Object.entries(old.weatherV1.water).some(([id,n])=>(patch.weatherV1.water[id]??0)<(n as number)))throw Error('WEATHER_REPLY_UNCONFIRMED');

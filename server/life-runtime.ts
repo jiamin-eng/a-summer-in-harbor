@@ -11,7 +11,7 @@ import {walkable} from '../src/engine/world';
 type Base=ReturnType<typeof createRuntime>;
 export type LifeHost={admit:(save:Readonly<LifeSave>,action:Readonly<Action>,command:Readonly<Command>)=>Admission|Promise<Admission>};
 const fields:Record<Command['verb'],string[]>={
- 'permit-land':['verb','region'],cultivate:['verb','region','at'],
+ 'permit-land':['verb','region'],'expand-land':['verb','region'],'clear-bed':['verb','plot'],cultivate:['verb','region','at'],
  'buy-seed':['verb','ref'],plant:['verb','ref','plot'],water:['verb','plot'],harvest:['verb','plot'],sell:['verb','ref'],'save-seed':['verb','ref','harvestBatch'],
  'accept-order':['verb','ref'],'deliver-order':['verb'],'close-order':['verb'],'share-dani':['verb'],'observe-animal':['verb','animal','behavior'],'display-gift':['verb','slot','gift'],'news-memento':['verb','edition'],
 };
@@ -43,7 +43,7 @@ export function createLifeRuntime(base:Base,registry:ContentRegistry,host:LifeHo
    const admission=await host.admit(structuredClone(s),structuredClone(a),structuredClone(command));
    if(!admission||admission.scene!==s.scene||admission.target!==a.target)throw Error('LIFE_ADMISSION_MISMATCH');
    const intent={actionId:a.action_id,expectedVersion:a.expected_version,command};
-   const result=command.verb==='permit-land'||command.verb==='cultivate'?applyLand(s,intent,admission):applyLife(s,intent,registry,admission);
+   const result=['permit-land','cultivate','expand-land','clear-bed'].includes(command.verb)?applyLand(s,intent,admission):applyLife(s,intent,registry,admission);
    result.head.position={...a.position};result.head.version=s.version+1;result.head.cursor=s.cursor+1;
    result.head.history.push({id:a.action_id,kind:'action',...(admission.resident?{person:admission.resident}:{}),text:result.text});result.head.history=result.head.history.slice(-500);
    return {...result,kind:'life:'+command.verb,accepted:true,actionId:a.action};

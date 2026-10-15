@@ -15,13 +15,18 @@ export function createApiHandler({authority,usage,noteMedia,dynamicAssets,newsPr
   const match=path.match(/^\/api\/sessions\/([a-f0-9-]{36})(?:\/(action|motion|active-play|checkpoint|events|life|land-preview))?$/);
   if(!match)return json(res,404,{error:'NOT_FOUND'});const [,id,operation]=match;
   const inContext=(fn:()=>Promise<any>)=>dynamicAssets?dynamicAssets.context(who,id,fn):fn();
+  // Capability is public format negotiation, never an extra DB transaction
+  // before the existing write/CAS and its ambiguous-outcome handling.
+  const currentLandClient=(head?:any)=>req.headers['x-harbor-land']==='2'||head?.landV1?.schema!==2;
+  const refreshLandClient=()=>json(res,409,{error:'CLIENT_REFRESH_REQUIRED',terminal:false});
+  if(operation==='action'&&['life:expand-land','life:clear-bed'].includes(body.action)&&req.headers['x-harbor-land']!=='2')return refreshLandClient();
 
   if(dynamicAssets?.policy.entry(who,id)&&req.headers['x-harbor-dynamic-assets']!=='1')return json(res,409,{error:'CLIENT_REFRESH_REQUIRED'});
-  if(!operation&&method==='GET')return json(res,200,await inContext(async()=>project(dynamicAssets?await dynamicAssets.project(who,await authority.get(who,id)):await authority.get(who,id))));
+  if(!operation&&method==='GET')return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head))return refreshLandClient();return json(res,200,await project(dynamicAssets?await dynamicAssets.project(who,head):head))});
   if((operation==='life'||operation==='land-preview')&&method==='GET'){
    const projection=operation==='life'?lifeProject:landProject;
    if(!projection)return json(res,403,{error:'LIFE_B2_UNAVAILABLE'});
-   return json(res,200,await inContext(async()=>projection(await authority.get(who,id),new URL(req.url!,'http://localhost').searchParams)));
+   return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head))return refreshLandClient();return json(res,200,await projection(head,new URL(req.url!,'http://localhost').searchParams))});
   }
   if(operation==='active-play'&&method==='POST'){if(typeof authority.activePlay!=='function')return json(res,403,{error:'CANDIDATE_ACTIVE_CLOSED',terminal:true});try{return json(res,200,await inContext(()=>authority.activePlay(who,id,body)))}catch(error){const failure=motionHttpFailure(error);return json(res,failure.status,failure.body)}}
   if(operation==='motion'&&method==='POST'){if(typeof authority.motion!=='function')return json(res,403,{error:'CANDIDATE_MOTION_CLOSED',terminal:true});try{return json(res,200,await inContext(()=>authority.motion(who,id,body)))}catch(error){const failure=motionHttpFailure(error);return json(res,failure.status,failure.body)}}

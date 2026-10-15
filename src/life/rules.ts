@@ -6,6 +6,7 @@ import {slotAt} from '../animals/behavior';
 import {ContentRegistry} from './registry';
 import {addLot,assertLifeReadable,consumeForSeed,consumeLot,displaySlots,giftItems,pinLegacy,sameRef} from './save';
 import {pinSeedPlant,recordSeedHarvest} from './seed-quota';
+import {isLifeBed} from './land-contract';
 import type {Admission,ContentRef,Discovery,Intent,LifeEvent,LifePlot,LifeResult,LifeSave} from './types';
 
 function requireRule(condition:unknown,code:string):asserts condition{if(!condition)throw Error(code)}
@@ -27,7 +28,7 @@ export function lifePlotStatus(s:LifeSave,id:string,r:ContentRegistry){
  const p=s.lifeV1?.plots[id];if(!p)return null;const d=r.get(p.ref),now=minute(s),grown=Math.min(d.growMinutes,p.grown+Math.max(0,Math.min(now,p.wetUntil)-p.updatedAt));return {grown,ready:grown>=d.growMinutes,needsWater:grown<d.growMinutes&&now>=p.wetUntil,ref:{...p.ref}};
 }
 function plot(s:LifeSave,a:Admission,id:string):LifePlot{
- requireRule(a.plot===id&&a.cultivated===true&&/^life-bed-[12]$/.test(id),'PLOT_ADMISSION_REQUIRED');const p=s.lifeV1!.plots[id];requireRule(p,'PLOT_EMPTY');return p;
+ requireRule(a.plot===id&&a.cultivated===true&&isLifeBed(id,s.landV1),'PLOT_ADMISSION_REQUIRED');const p=s.lifeV1!.plots[id];requireRule(p,'PLOT_EMPTY');return p;
 }
 /** Pure rules: returns a candidate; never mutates caller, calls models or writes
  * DB. The existing authority is responsible for the single CAS transaction. */
@@ -40,7 +41,7 @@ export function applyLife(previous:LifeSave,intent:Intent,r:ContentRegistry,a:Ad
    requireRule(a.target==='crop-counter','SHOP_ADMISSION_REQUIRED');requireRule(shopOpen(s),'SHOP_CLOSED');startAllowed(r,c.ref);const d=r.get(c.ref);requireRule(s.cash>=d.seedCost,'CASH_LOW');s.cash-=d.seedCost;addLot(s,r,c.ref,'seed',1,intent.actionId);text=['买到一包种子。','You bought a packet of seeds.'];break;
   }
   case 'plant':{
-   requireRule(a.plot===c.plot&&a.cultivated===true&&/^life-bed-[12]$/.test(c.plot),'PLOT_ADMISSION_REQUIRED');requireRule(!life.plots[c.plot],'PLOT_OCCUPIED');startAllowed(r,c.ref);requireRule(!r.isLegacy(c.ref),'USE_AUTHORED_PLOT');requireRule(s.energy>=2,'ENERGY_LOW');consumeLot(s,r,c.ref,'seed',1);const now=minute(s);life.plots[c.plot]={ref:{...c.ref},grown:0,updatedAt:now,wetUntil:now};pinSeedPlant(s,c.ref,c.plot,intent.actionId);labor(s);text=['种子已播下。浇水后才开始生长；这株收成最多留一包种。','The seed is planted. Water it to begin growth; this plant can provide one saved seed packet.'];break;
+   requireRule(a.plot===c.plot&&a.cultivated===true&&isLifeBed(c.plot,s.landV1),'PLOT_ADMISSION_REQUIRED');requireRule(!life.plots[c.plot],'PLOT_OCCUPIED');startAllowed(r,c.ref);requireRule(!r.isLegacy(c.ref),'USE_AUTHORED_PLOT');requireRule(s.energy>=2,'ENERGY_LOW');consumeLot(s,r,c.ref,'seed',1);const now=minute(s);life.plots[c.plot]={ref:{...c.ref},grown:0,updatedAt:now,wetUntil:now};pinSeedPlant(s,c.ref,c.plot,intent.actionId);labor(s);text=['种子已播下。浇水后才开始生长；这株收成最多留一包种。','The seed is planted. Water it to begin growth; this plant can provide one saved seed packet.'];break;
   }
   case 'water':{
    const p=plot(s,a,c.plot),status=lifePlotStatus(s,c.plot,r)!;requireRule(status.needsWater,'WATER_UNAVAILABLE');requireRule(s.energy>=2,'ENERGY_LOW');p.grown=status.grown;p.updatedAt=minute(s);p.wetUntil=minute(s)+r.get(p.ref).wetMinutes;labor(s);text=['土已浇湿，可以先去做别的事。','The soil is watered. You can leave it to grow.'];break;
