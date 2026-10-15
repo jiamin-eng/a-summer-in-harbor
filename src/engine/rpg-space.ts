@@ -166,7 +166,11 @@ function createRawRpgSpace(options:SpaceOptions){
   async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
  },maps:ids.map(id=>({id,events:staticSprites.mapEvents(id)}))}]) ]});
  startGame({providers:[
-  provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1}}),
+  // RPGJS mounts CanvasEngine layout nodes. Its Yoga system is registered only
+  // on WebGL/WebGPU renderers; Pixi's automatic Canvas fallback leaves Yoga
+  // unset and repeatedly throws while mounting the scene. A recoverable
+  // startup failure is safer than leaving a broken renderer running.
+  provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1,preference:['webgl','webgpu']}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
   provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
  ]}).catch(error=>{if(!disposed)options.onError(error)});
