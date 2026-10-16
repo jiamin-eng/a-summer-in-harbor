@@ -71,6 +71,25 @@ test('coast source-crop exits use the four delivered junctions without uncovered
  }
 });
 
+test('coast bitmap outer ends use existing stone-water seams and corner cells',()=>{
+ const scene='coast-beach-path',plan=structuralContactPlan(scene);
+ const ends=[
+  {middle:{x:550,y:0},axis:'y',corners:[[{x:495,y:0},4],[{x:605,y:0},5]]},
+  {middle:{x:0,y:475},axis:'x',corners:[[{x:0,y:415},4],[{x:0,y:535},7]]},
+ ];
+ for(const end of ends){
+  const seam=plan.find(p=>p.kind==='seam'&&p.atlas==='stone-water'&&p.seam.axis===end.axis&&end.middle.x>=p.rect.x&&end.middle.x<p.rect.x+p.rect.w&&end.middle.y>=p.rect.y&&end.middle.y<p.rect.y+p.rect.h);
+  assert.ok(seam,`outer seam ${end.axis}`);
+  assert.ok(composeStructuralPiece(scene,seam,plan,atlases).some((v,i)=>i%4===3&&v),`visible outer seam ${end.axis}`);
+  for(const [at,index] of end.corners){
+   const corner=plan.find(p=>p.kind==='junction'&&p.junction.at.x===at.x&&p.junction.at.y===at.y);
+   assert.ok(corner,`outer corner ${at.x},${at.y}`);
+   assert.equal(corner.atlas,'stone-water');assert.equal(corner.index,index);
+   assert.ok(composeStructuralPiece(scene,corner,plan,atlases).some((v,i)=>i%4===3&&v),`visible outer corner ${at.x},${at.y}`);
+  }
+ }
+});
+
 test('visual integration preserves released layout, water collision and room/save anchors byte-for-byte',()=>{
  const inputs={outdoors,waterBarriers:Object.fromEntries(Object.entries(outdoors).map(([id,l])=>[id,waterBarriers(l)])),worldScenes:world.scenes,rooms};
  const pins={

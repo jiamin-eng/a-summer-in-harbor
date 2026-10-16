@@ -51,6 +51,10 @@ export function terrainSeams(scene:string):TerrainSeam[]{
    };
    for(let i=1;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++){const x=xs[i],y=(ys[j]+ys[j+1])/2;add('x',x,ys[j],ys[j+1],coastalMaterialAt(x-.5,y),coastalMaterialAt(x+.5,y))}
    for(let j=1;j<ys.length-1;j++)for(let i=0;i<xs.length-1;i++){const y=ys[j],x=(xs[i]+xs[i+1])/2;add('y',y,xs[i],xs[i+1],coastalMaterialAt(x,y-.5),coastalMaterialAt(x,y+.5))}
+   // The coast bitmap starts at world x/y=0 while the water backdrop remains
+   // visible beyond it. Its two exit roads need end seams at that crop edge.
+   if(r.x===0)for(let j=0;j<ys.length-1;j++){const y=(ys[j]+ys[j+1])/2;add('x',0,ys[j],ys[j+1],coastalMaterialAt(-.5,y),coastalMaterialAt(.5,y))}
+   if(r.y===0)for(let i=0;i<xs.length-1;i++){const x=(xs[i]+xs[i+1])/2;add('y',0,xs[i],xs[i+1],coastalMaterialAt(x,-.5),coastalMaterialAt(x,.5))}
   }
  }
  cache.set(scene,out);return out;
@@ -81,6 +85,15 @@ export function terrainJunctions(scene:string):TerrainJunction[]{
    if(x!==b.x&&y!==b.y)continue;
    const q=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(([dx,dy])=>coastalMaterialAt(x+dx,y+dy)) as [Material,Material,Material,Material];
    const materials=[...new Set(q)];if(materials.length<3||q[0]===q[1]&&q[3]===q[2]||q[0]===q[3]&&q[1]===q[2])continue;
+   out.push({zone:'coast',at:{x,y},quadrants:q,materials});
+  }
+  // Two-material outer corners at the visible x=0/y=0 source crop edges use
+  // the already delivered stone/water outer-corner cells, not new art.
+  const outerXs=[...new Set(l.patches.flatMap(p=>[p.x,p.x+p.w]))].filter(x=>x>0&&x<1280);
+  const outerYs=[...new Set(l.patches.flatMap(p=>[p.y,p.y+p.h]))].filter(y=>y>0&&y<805);
+  for(const [x,y] of [...outerXs.map(x=>[x,0]),...outerYs.map(y=>[0,y])]){
+   const q=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(([dx,dy])=>coastalMaterialAt(x+dx,y+dy)) as [Material,Material,Material,Material];
+   const materials=[...new Set(q)];if(materials.length<2||q[0]===q[1]&&q[3]===q[2]||q[0]===q[3]&&q[1]===q[2])continue;
    out.push({zone:'coast',at:{x,y},quadrants:q,materials});
   }
  }
