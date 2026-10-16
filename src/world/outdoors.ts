@@ -69,10 +69,15 @@ outdoors.coast.patches.push({x:495,y:80,w:110,h:450,material:'stone'},{x:495,y:5
 outdoors.hill.patches.push({x:305,y:110,w:100,h:160,material:'sand'},{x:955,y:110,w:100,h:180,material:'sand'});
 outdoors.beach.patches.push({x:430,y:120,w:100,h:430,material:'sand'});
 outdoors.path.patches.push({x:80,y:285,w:150,h:100,material:'stone'});
-// The west/east edges of the quay need a physical dry route to the next district.
-outdoors.harbor.patches.push({x:40,y:395,w:1280,h:110,material:'stone'});
+// The east road meets a widening dry shore, rather than becoming a narrow
+// stone pier over open water. The return path on the Coast stays at 90,469.
+outdoors.harbor.patches.push(
+ {x:1110,y:350,w:90,h:210,material:'sand'},
+ {x:1200,y:295,w:120,h:320,material:'sand'},
+ {x:40,y:395,w:1280,h:110,material:'stone'}
+);
 outdoors.harbor.barriers=outdoors.harbor.barriers.filter(b=>b.x!==1150);
-outdoors.harbor.barriers.push({x:1150,y:80,w:170,h:315},{x:1150,y:505,w:170,h:455});
+outdoors.harbor.barriers.push({x:1150,y:80,w:170,h:215},{x:1150,y:615,w:170,h:345});
 
 // Rocks/trees/tents already have grounded prop footprints. Old placeholder
 // rectangles here blocked empty grass and no longer represent scenery.
@@ -89,7 +94,8 @@ for(const [scene,links] of Object.entries(passages))for(const p of Object.values
  // Hill's east road is a visible cul-de-sac at the playable edge. Keep its
  // coast portal at x=1270, but end the soil at x=1280 so its native end trim
  // fits inside bounds (x=1320) instead of drawing a false road to x=1440.
- const eastEnd=scene==='hill'&&p===passages.hill.coast?1280:1440;
+ const eastEnd=scene==='hill'&&p===passages.hill.coast?1280:
+  scene==='harbor'&&p===passages.harbor.coast?layout.bounds.x+layout.bounds.w:1440;
  const westStart=scene==='hill'&&p===passages.hill.market?70:0;
  const northStart=scene==='hill'&&(p===passages.hill.garden||p===passages.hill.camp)?110:0;
  const patch=p.side==='N'?{x:p.at.x-width/2,y:northStart,w:width,h:p.at.y+40-northStart}:
