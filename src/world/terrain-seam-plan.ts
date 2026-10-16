@@ -1,6 +1,8 @@
 import {outdoors,type TerrainPatch} from './outdoors';
 import {terrainAt} from './road-boundaries';
 import {globalPoint,zonesFor} from '../candidate/continuity';
+import {COASTAL} from '../candidate/continuity';
+import {coastalMaterialAt} from './coastal-material-field';
 import type {Point,Rect} from '../engine/world';
 
 type Material=TerrainPatch['material'];
@@ -35,6 +37,22 @@ export function terrainSeams(scene:string):TerrainSeam[]{
   for(let i=1;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++){const x=xs[i],y=(ys[j]+ys[j+1])/2;put(x,ys[j],ys[j+1],'x',terrainAt(l,{x:x-.5,y}),terrainAt(l,{x:x+.5,y}))}
   for(let j=1;j<ys.length-1;j++)for(let i=0;i<xs.length-1;i++){const y=ys[j],x=(xs[i]+xs[i+1])/2;put(y,xs[i],xs[i+1],'y',terrainAt(l,{x,y:y-.5}),terrainAt(l,{x,y:y+.5}))}
  }
+ if(scene===COASTAL){
+  // The coast bitmap paints two exit roads outside its logical x=40/y=80
+  // bounds. Their stone/water edges remain visible in the full source crop.
+  const l=outdoors.coast,structural=new Set(['stone/water','water/wood','stone/wood','grass/wood']);
+  for(const r of [{x:0,y:0,w:1280,h:80},{x:0,y:80,w:40,h:725}]){
+   const xs=[...new Set([r.x,r.x+r.w,...l.patches.flatMap(p=>[p.x,p.x+p.w])])].filter(x=>x>=r.x&&x<=r.x+r.w).sort((a,b)=>a-b);
+   const ys=[...new Set([r.y,r.y+r.h,...l.patches.flatMap(p=>[p.y,p.y+p.h])])].filter(y=>y>=r.y&&y<=r.y+r.h).sort((a,b)=>a-b);
+   const add=(axis:'x'|'y',edge:number,start:number,end:number,a:Material,b:Material)=>{
+    if(a===b||!structural.has(seamPair(a,b)))return;
+    const rect=axis==='x'?{x:edge-16,y:start,w:32,h:end-start}:{x:start,y:edge-16,w:end-start,h:32};
+    out.push({zone:'coast',rect,axis,negative:a,positive:b});
+   };
+   for(let i=1;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++){const x=xs[i],y=(ys[j]+ys[j+1])/2;add('x',x,ys[j],ys[j+1],coastalMaterialAt(x-.5,y),coastalMaterialAt(x+.5,y))}
+   for(let j=1;j<ys.length-1;j++)for(let i=0;i<xs.length-1;i++){const y=ys[j],x=(xs[i]+xs[i+1])/2;add('y',y,xs[i],xs[i+1],coastalMaterialAt(x,y-.5),coastalMaterialAt(x,y+.5))}
+  }
+ }
  cache.set(scene,out);return out;
 }
 
@@ -53,6 +71,17 @@ export function terrainJunctions(scene:string):TerrainJunction[]{
    const materials=[...new Set(q)] as Material[];
    if(materials.length<2||nw===ne&&sw===se||nw===sw&&ne===se)continue;
    out.push({zone:id,at:globalPoint(id,{x,y}),quadrants:[nw,ne,se,sw],materials});
+  }
+ }
+ if(scene===COASTAL){
+  const l=outdoors.coast,b=l.bounds;
+  const xs=[...new Set([b.x,...l.patches.flatMap(p=>[p.x,p.x+p.w])])].filter(x=>x>=0&&x<=1280);
+  const ys=[...new Set([b.y,...l.patches.flatMap(p=>[p.y,p.y+p.h])])].filter(y=>y>=0&&y<=805);
+  for(const x of xs)for(const y of ys){
+   if(x!==b.x&&y!==b.y)continue;
+   const q=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(([dx,dy])=>coastalMaterialAt(x+dx,y+dy)) as [Material,Material,Material,Material];
+   const materials=[...new Set(q)];if(materials.length<3||q[0]===q[1]&&q[3]===q[2]||q[0]===q[3]&&q[1]===q[2])continue;
+   out.push({zone:'coast',at:{x,y},quadrants:q,materials});
   }
  }
  return out;

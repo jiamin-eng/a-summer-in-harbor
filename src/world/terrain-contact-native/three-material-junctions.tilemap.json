@@ -1,0 +1,576 @@
+{
+  "file": "three-material-junctions.png",
+  "atlasSize": [
+    200,
+    200
+  ],
+  "cellWorldPixels": 40,
+  "anchor": [
+    20,
+    20
+  ],
+  "quadrantOrder": [
+    "NW",
+    "NE",
+    "SE",
+    "SW"
+  ],
+  "baseFloorPhase": 160,
+  "sampling": "nearest",
+  "mapping": {
+    "stone,wood,wood,water": {
+      "index": 0,
+      "rect": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "harbor",
+          "zone": "harbor",
+          "at": {
+            "x": 80,
+            "y": 600
+          },
+          "materials": [
+            "stone",
+            "wood",
+            "water"
+          ],
+          "quadrants": [
+            "stone",
+            "wood",
+            "wood",
+            "water"
+          ]
+        },
+        {
+          "scene": "harbor",
+          "zone": "harbor",
+          "at": {
+            "x": 750,
+            "y": 600
+          },
+          "materials": [
+            "stone",
+            "wood",
+            "water"
+          ],
+          "quadrants": [
+            "stone",
+            "wood",
+            "wood",
+            "water"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    },
+    "wood,stone,water,wood": {
+      "index": 1,
+      "rect": [
+        40,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "harbor",
+          "zone": "harbor",
+          "at": {
+            "x": 650,
+            "y": 600
+          },
+          "materials": [
+            "wood",
+            "stone",
+            "water"
+          ],
+          "quadrants": [
+            "wood",
+            "stone",
+            "water",
+            "wood"
+          ]
+        },
+        {
+          "scene": "harbor",
+          "zone": "harbor",
+          "at": {
+            "x": 860,
+            "y": 600
+          },
+          "materials": [
+            "wood",
+            "stone",
+            "water"
+          ],
+          "quadrants": [
+            "wood",
+            "stone",
+            "water",
+            "wood"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    },
+    "grass,sand,sand,water": {
+      "index": 2,
+      "rect": [
+        80,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "coast",
+          "at": {
+            "x": 80,
+            "y": 600
+          },
+          "materials": [
+            "grass",
+            "sand",
+            "water"
+          ],
+          "quadrants": [
+            "grass",
+            "sand",
+            "sand",
+            "water"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "stone,stone,sand,grass": {
+      "index": 3,
+      "rect": [
+        120,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "coast",
+          "at": {
+            "x": 80,
+            "y": 535
+          },
+          "materials": [
+            "stone",
+            "sand",
+            "grass"
+          ],
+          "quadrants": [
+            "stone",
+            "stone",
+            "sand",
+            "grass"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "sand,grass,water,sand": {
+      "index": 4,
+      "rect": [
+        160,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "coast",
+          "at": {
+            "x": 960,
+            "y": 600
+          },
+          "materials": [
+            "sand",
+            "grass",
+            "water"
+          ],
+          "quadrants": [
+            "sand",
+            "grass",
+            "water",
+            "sand"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "stone,stone,grass,sand": {
+      "index": 5,
+      "rect": [
+        0,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "coast",
+          "at": {
+            "x": 960,
+            "y": 535
+          },
+          "materials": [
+            "stone",
+            "grass",
+            "sand"
+          ],
+          "quadrants": [
+            "stone",
+            "stone",
+            "grass",
+            "sand"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "grass,water,wood,wood": {
+      "index": 6,
+      "rect": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1590,
+            "y": 425
+          },
+          "materials": [
+            "grass",
+            "water",
+            "wood"
+          ],
+          "quadrants": [
+            "grass",
+            "water",
+            "wood",
+            "wood"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 520
+    },
+    "wood,wood,water,stone": {
+      "index": 7,
+      "rect": [
+        80,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1590,
+            "y": 473
+          },
+          "materials": [
+            "wood",
+            "water",
+            "stone"
+          ],
+          "quadrants": [
+            "wood",
+            "wood",
+            "water",
+            "stone"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    },
+    "water,grass,wood,wood": {
+      "index": 8,
+      "rect": [
+        120,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1680,
+            "y": 425
+          },
+          "materials": [
+            "water",
+            "grass",
+            "wood"
+          ],
+          "quadrants": [
+            "water",
+            "grass",
+            "wood",
+            "wood"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 520
+    },
+    "wood,wood,stone,water": {
+      "index": 9,
+      "rect": [
+        160,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1680,
+            "y": 473
+          },
+          "materials": [
+            "wood",
+            "stone",
+            "water"
+          ],
+          "quadrants": [
+            "wood",
+            "wood",
+            "stone",
+            "water"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    },
+    "grass,grass,wood,stone": {
+      "index": 10,
+      "rect": [
+        0,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1547,
+            "y": 425
+          },
+          "materials": [
+            "grass",
+            "wood",
+            "stone"
+          ],
+          "quadrants": [
+            "grass",
+            "grass",
+            "wood",
+            "stone"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "grass,grass,stone,wood": {
+      "index": 11,
+      "rect": [
+        40,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "coast-beach-path",
+          "zone": "path",
+          "at": {
+            "x": 1723,
+            "y": 425
+          },
+          "materials": [
+            "grass",
+            "stone",
+            "wood"
+          ],
+          "quadrants": [
+            "grass",
+            "grass",
+            "stone",
+            "wood"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 448
+    },
+    "water,wood,stone,stone": {
+      "index": 12,
+      "rect": [
+        80,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "dock",
+          "zone": "dock",
+          "at": {
+            "x": 325,
+            "y": 540
+          },
+          "materials": [
+            "water",
+            "wood",
+            "stone"
+          ],
+          "quadrants": [
+            "water",
+            "wood",
+            "stone",
+            "stone"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    },
+    "wood,water,stone,stone": {
+      "index": 13,
+      "rect": [
+        120,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "points": [
+        {
+          "scene": "dock",
+          "zone": "dock",
+          "at": {
+            "x": 655,
+            "y": 540
+          },
+          "materials": [
+            "wood",
+            "water",
+            "stone"
+          ],
+          "quadrants": [
+            "wood",
+            "water",
+            "stone",
+            "stone"
+          ]
+        }
+      ],
+      "missingPairs": [],
+      "newNonzeroPixels": 568
+    }
+  },
+  "fileInfo": {
+    "path": "/Users/yin/code/games/harbor-terrain-contact-art-20261016-v1/delivery/three-material-junctions.png",
+    "sha256": "246041ae4fa9e5f7d84a7efc99cc8ce3aebbbd2065da60f8f6bb40f0a8b22cb5",
+    "bytes": 20070,
+    "size": [
+      200,
+      200
+    ],
+    "mode": "RGBA"
+  },
+  "composition": "Nearest eligible boundary selected once per pixel; dry transition and water-facing masonry/timber retained by material ownership. No stacked alpha or repeated generic center square.",
+  "integration": "Place at actual junction minus(20,20) above straight contacts; do not stack original straight art inside the replaced junction footprint. Coast owner must use coastalMaterialAt final ownership, inventory only is insufficient."
+}

@@ -1,0 +1,538 @@
+{
+  "family": "stone-water",
+  "file": "stone-water.png",
+  "atlasSize": [
+    200,
+    200
+  ],
+  "cellWorldPixels": 40,
+  "sampling": "nearest",
+  "anchor": [
+    20,
+    20
+  ],
+  "A": "stone",
+  "B": "water",
+  "direction": "N/E/S/W names are normals pointing from A to B. outer-NW means A only SE; inner-NW means B only NW.",
+  "T": "20px-wide A corridor; named direction is stem; cap extends toward named direction; cross extends all 4. Synthetic topology coverage, not a scene geometry change.",
+  "contactBands": {
+    "Amax": 7,
+    "Bmax": 4,
+    "waterShadowMax": 4
+  },
+  "baseFloorPhase": 160,
+  "overlayDetailPeriod": 40,
+  "baseFloorRepaint": false,
+  "straightPlacement": "Contact coordinate through tile center20. Along-seam repeat40 in world space; clip partial first/last tiles. Draw junction above straight ends, once per output pixel; do not stack overlapping strips.",
+  "unusedCells": [
+    21,
+    22,
+    23,
+    24
+  ],
+  "cells": [
+    {
+      "name": "N",
+      "index": 0,
+      "rect": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "water",
+        "stone",
+        "stone"
+      ],
+      "alphaNonzero": 440,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 380,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "E",
+      "index": 1,
+      "rect": [
+        40,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "water",
+        "water",
+        "stone"
+      ],
+      "alphaNonzero": 440,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 381,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "S",
+      "index": 2,
+      "rect": [
+        80,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "stone",
+        "water",
+        "water"
+      ],
+      "alphaNonzero": 440,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 361,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "W",
+      "index": 3,
+      "rect": [
+        120,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "stone",
+        "stone",
+        "water"
+      ],
+      "alphaNonzero": 440,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 378,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "outer-NW",
+      "index": 4,
+      "rect": [
+        160,
+        0,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "water",
+        "stone",
+        "water"
+      ],
+      "alphaNonzero": 404,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 334,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "outer-NE",
+      "index": 5,
+      "rect": [
+        0,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "water",
+        "water",
+        "stone"
+      ],
+      "alphaNonzero": 404,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 339,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "outer-SE",
+      "index": 6,
+      "rect": [
+        40,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "water",
+        "water",
+        "water"
+      ],
+      "alphaNonzero": 404,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 340,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "outer-SW",
+      "index": 7,
+      "rect": [
+        80,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "stone",
+        "water",
+        "water"
+      ],
+      "alphaNonzero": 404,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 346,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "inner-NW",
+      "index": 8,
+      "rect": [
+        120,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "water",
+        "stone",
+        "stone",
+        "stone"
+      ],
+      "alphaNonzero": 463,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 398,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "inner-NE",
+      "index": 9,
+      "rect": [
+        160,
+        40,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "water",
+        "stone",
+        "stone"
+      ],
+      "alphaNonzero": 463,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 395,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "inner-SE",
+      "index": 10,
+      "rect": [
+        0,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "stone",
+        "water",
+        "stone"
+      ],
+      "alphaNonzero": 463,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 402,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "inner-SW",
+      "index": 11,
+      "rect": [
+        40,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": [
+        "stone",
+        "stone",
+        "stone",
+        "water"
+      ],
+      "alphaNonzero": 463,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 393,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "T-N",
+      "index": 12,
+      "rect": [
+        80,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 926,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 756,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "T-E",
+      "index": 13,
+      "rect": [
+        120,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 926,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 763,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "T-S",
+      "index": 14,
+      "rect": [
+        160,
+        80,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 926,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 775,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "T-W",
+      "index": 15,
+      "rect": [
+        0,
+        120,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 926,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 760,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "cap-N",
+      "index": 16,
+      "rect": [
+        40,
+        120,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 808,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 652,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "cap-E",
+      "index": 17,
+      "rect": [
+        80,
+        120,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 808,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 656,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "cap-S",
+      "index": 18,
+      "rect": [
+        120,
+        120,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 808,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 659,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "cap-W",
+      "index": 19,
+      "rect": [
+        160,
+        120,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 808,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 655,
+      "floorPixelsOutsideBandTransparent": true
+    },
+    {
+      "name": "cross",
+      "index": 20,
+      "rect": [
+        0,
+        160,
+        40,
+        40
+      ],
+      "anchor": [
+        20,
+        20
+      ],
+      "quadrantsClockwiseNW": null,
+      "alphaNonzero": 972,
+      "alphaMax": 253,
+      "uniqueVisibleRGB": 799,
+      "floorPixelsOutsideBandTransparent": true
+    }
+  ],
+  "fileInfo": {
+    "path": "/Users/yin/code/games/harbor-terrain-contact-art-20261016-v1/delivery/stone-water.png",
+    "sha256": "ddbf907683e11a8d9f99c0934a65ac06f3b5a26b007b83e2730d050cd7a3a9fa",
+    "bytes": 13276,
+    "size": [
+      200,
+      200
+    ],
+    "mode": "RGBA"
+  },
+  "source": {
+    "A": "stone",
+    "B": "water",
+    "source": "originals/001-stone-water-masonry-donor.png",
+    "cropBoxes": [
+      [
+        0,
+        213,
+        1254,
+        302
+      ],
+      [
+        0,
+        491,
+        1254,
+        582
+      ],
+      [
+        0,
+        769,
+        1254,
+        866
+      ],
+      [
+        0,
+        1042,
+        1254,
+        1139
+      ]
+    ],
+    "insideBand": 7,
+    "outsideBand": 4,
+    "cropReason": "Inset opaque painted masonry rows; excludes low-alpha colored dust/empty canvas. No source overwritten."
+  }
+}
