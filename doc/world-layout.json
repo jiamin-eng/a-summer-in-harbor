@@ -1841,6 +1841,30 @@
             "y": 351,
             "w": 18,
             "h": 12
+          },
+          {
+            "x": 326,
+            "y": 254,
+            "w": 28,
+            "h": 16
+          },
+          {
+            "x": 119,
+            "y": 532,
+            "w": 22,
+            "h": 18
+          },
+          {
+            "x": 761,
+            "y": 238,
+            "w": 18,
+            "h": 12
+          },
+          {
+            "x": 797,
+            "y": 448,
+            "w": 36,
+            "h": 22
           }
         ]
       },
@@ -2089,6 +2113,92 @@
             "y": 292,
             "w": 46,
             "h": 18
+          }
+        ]
+      },
+      "chapel": {
+        "interior": {
+          "x": 270,
+          "y": 225,
+          "w": 420,
+          "h": 360
+        },
+        "spawn": {
+          "x": 470,
+          "y": 559
+        },
+        "obstacles": [
+          {
+            "x": 307,
+            "y": 263,
+            "w": 56,
+            "h": 17
+          },
+          {
+            "x": 329,
+            "y": 327,
+            "w": 52,
+            "h": 25
+          },
+          {
+            "x": 558,
+            "y": 351,
+            "w": 64,
+            "h": 14
+          },
+          {
+            "x": 323,
+            "y": 426,
+            "w": 64,
+            "h": 14
+          },
+          {
+            "x": 558,
+            "y": 426,
+            "w": 64,
+            "h": 14
+          },
+          {
+            "x": 323,
+            "y": 501,
+            "w": 64,
+            "h": 14
+          },
+          {
+            "x": 558,
+            "y": 501,
+            "w": 64,
+            "h": 14
+          },
+          {
+            "x": 609,
+            "y": 515,
+            "w": 32,
+            "h": 10
+          },
+          {
+            "x": 304,
+            "y": 525,
+            "w": 12,
+            "h": 10
+          },
+          {
+            "x": 433,
+            "y": 253,
+            "w": 84,
+            "h": 22
+          },
+          {
+            "x": 407,
+            "y": 275,
+            "w": 10,
+            "h": 10
+          },
+          {
+            "x": 533,
+            "y": 275,
+            "w": 10,
+            "h": 10
           }
         ]
       }
@@ -3580,6 +3690,69 @@
             "w": 25,
             "h": 12
           }
+        },
+        {
+          "id": "pier-rope-post-0",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 741.5,
+            "y": 774
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-1",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 741.5,
+            "y": 854
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-2",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 741.5,
+            "y": 934
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-3",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 869.5,
+            "y": 774
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-4",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 869.5,
+            "y": 854
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-5",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 869.5,
+            "y": 934
+          },
+          "width": 5
+        },
+        {
+          "id": "pier-rope-post-6",
+          "art": "existing-C-post-5x26",
+          "at": {
+            "x": 821.5,
+            "y": 934
+          },
+          "width": 5
         }
       ],
       "entities": [
@@ -7163,6 +7336,15 @@
             "y": 370
           },
           "width": 49
+        },
+        {
+          "id": "chapel-wayfinding",
+          "art": "street-sign",
+          "at": {
+            "x": 510,
+            "y": 365
+          },
+          "width": 46
         }
       ],
       "entities": [
@@ -7302,6 +7484,23 @@
               "y": 610
             }
           }
+        },
+        {
+          "id": "to-chapel",
+          "label": [
+            "教堂大厅",
+            "Chapel Hall"
+          ],
+          "kind": "portal",
+          "destination": "chapel",
+          "at": {
+            "x": 510,
+            "y": 365
+          },
+          "approach": {
+            "x": 502,
+            "y": 397
+          }
         }
       ],
       "neighbors": [
@@ -7310,7 +7509,8 @@
         "weather",
         "market",
         "harbor",
-        "coast"
+        "coast",
+        "chapel"
       ],
       "map": {
         "x": 1,
@@ -7617,6 +7817,66 @@
             "y": 351,
             "w": 18,
             "h": 12
+          }
+        },
+        {
+          "id": "static-sundial",
+          "art": "pedestal-sundial",
+          "at": {
+            "x": 340,
+            "y": 270
+          },
+          "width": 96,
+          "footprint": {
+            "x": 326,
+            "y": 254,
+            "w": 28,
+            "h": 16
+          }
+        },
+        {
+          "id": "static-chiminea",
+          "art": "clay-chiminea",
+          "at": {
+            "x": 130,
+            "y": 550
+          },
+          "width": 98,
+          "footprint": {
+            "x": 119,
+            "y": 532,
+            "w": 22,
+            "h": 18
+          }
+        },
+        {
+          "id": "static-birdhouse",
+          "art": "nest-birdhouse",
+          "at": {
+            "x": 770,
+            "y": 250
+          },
+          "width": 91,
+          "footprint": {
+            "x": 761,
+            "y": 238,
+            "w": 18,
+            "h": 12
+          }
+        },
+        {
+          "id": "static-beehive",
+          "art": "wooden-beehive-box",
+          "at": {
+            "x": 815,
+            "y": 470
+          },
+          "width": 90,
+          "footprint": {
+            "x": 797,
+            "y": 448,
+            "w": 36,
+            "h": 22
           }
         }
       ],
@@ -8609,6 +8869,435 @@
         "x": 1,
         "y": 1
       }
+    },
+    "chapel": {
+      "id": "chapel",
+      "title": [
+        "教堂大厅",
+        "Chapel Hall"
+      ],
+      "area": "hill",
+      "outdoor": false,
+      "spawn": {
+        "x": 470,
+        "y": 559
+      },
+      "interior": {
+        "x": 270,
+        "y": 225,
+        "w": 420,
+        "h": 360
+      },
+      "map": {
+        "x": 1.28,
+        "y": -0.1
+      },
+      "neighbors": [
+        "hill"
+      ],
+      "entities": [
+        {
+          "id": "exit",
+          "label": [
+            "山坡",
+            "The Hill"
+          ],
+          "kind": "portal",
+          "destination": "hill",
+          "at": {
+            "x": 480,
+            "y": 582
+          },
+          "approach": {
+            "x": 470,
+            "y": 559
+          }
+        },
+        {
+          "id": "chapel-note",
+          "label": [
+            "社区活动便条",
+            "Community activity note"
+          ],
+          "kind": "object",
+          "at": {
+            "x": 625,
+            "y": 525
+          },
+          "approach": {
+            "x": 617,
+            "y": 559
+          },
+          "actions": [
+            "chapel-read-notice",
+            "chapel-recall"
+          ]
+        },
+        {
+          "id": "chapel-reading",
+          "label": [
+            "阅读角",
+            "Reading corner"
+          ],
+          "kind": "object",
+          "at": {
+            "x": 355,
+            "y": 352
+          },
+          "approach": {
+            "x": 347,
+            "y": 386
+          },
+          "actions": [
+            "chapel-help-reading",
+            "chapel-recall"
+          ]
+        },
+        {
+          "id": "chapel-seat",
+          "label": [
+            "靠过道的座席",
+            "Aisle-side seats"
+          ],
+          "kind": "object",
+          "at": {
+            "x": 580,
+            "y": 485
+          },
+          "approach": {
+            "x": 572,
+            "y": 519
+          },
+          "actions": [
+            "chapel-listen",
+            "chapel-recall"
+          ]
+        },
+        {
+          "id": "gabriel",
+          "label": [
+            "整理椅子的神父",
+            "Priest arranging the chairs"
+          ],
+          "kind": "person",
+          "person": "gabriel",
+          "at": {
+            "x": 475,
+            "y": 315
+          },
+          "approach": {
+            "x": 467,
+            "y": 357
+          }
+        },
+        {
+          "id": "samira",
+          "label": [
+            "轻轻哼歌的居民",
+            "Resident humming softly"
+          ],
+          "kind": "person",
+          "person": "samira",
+          "at": {
+            "x": 600,
+            "y": 400
+          },
+          "approach": {
+            "x": 592,
+            "y": 442
+          },
+          "gatheringRole": "routine"
+        },
+        {
+          "id": "dani",
+          "label": [
+            "收好一片叶子的居民",
+            "Resident saving a fallen leaf"
+          ],
+          "kind": "person",
+          "person": "dani",
+          "at": {
+            "x": 355,
+            "y": 405
+          },
+          "approach": {
+            "x": 347,
+            "y": 447
+          }
+        },
+        {
+          "id": "neighbor-gathering",
+          "label": [
+            "一起坐坐的地方",
+            "A place to sit together"
+          ],
+          "kind": "object",
+          "at": {
+            "x": 550,
+            "y": 515
+          },
+          "approach": {
+            "x": 542,
+            "y": 549
+          },
+          "actions": [
+            "neighbor-select:mara",
+            "neighbor-select:avery",
+            "neighbor-select:samira",
+            "neighbor-start",
+            "neighbor-move-inside",
+            "neighbor-finish",
+            "neighbor-recall"
+          ]
+        },
+        {
+          "id": "gathering-mara",
+          "person": "mara",
+          "gatheringRole": "guest",
+          "label": [
+            "来小聚的邻居",
+            "Neighbor at the gathering"
+          ],
+          "kind": "person",
+          "at": {
+            "x": 430,
+            "y": 420
+          },
+          "approach": {
+            "x": 422,
+            "y": 462
+          }
+        },
+        {
+          "id": "gathering-avery",
+          "person": "avery",
+          "gatheringRole": "guest",
+          "label": [
+            "来小聚的邻居",
+            "Neighbor at the gathering"
+          ],
+          "kind": "person",
+          "at": {
+            "x": 480,
+            "y": 420
+          },
+          "approach": {
+            "x": 472,
+            "y": 462
+          }
+        }
+      ],
+      "props": [
+        {
+          "id": "bookcase",
+          "art": "interior-bookcase-v1",
+          "at": {
+            "x": 335,
+            "y": 280
+          },
+          "width": 65,
+          "footprint": {
+            "x": 307,
+            "y": 263,
+            "w": 56,
+            "h": 17
+          }
+        },
+        {
+          "id": "reading-table",
+          "art": "dining-table-front-v1",
+          "at": {
+            "x": 355,
+            "y": 352
+          },
+          "width": 58,
+          "footprint": {
+            "x": 329,
+            "y": 327,
+            "w": 52,
+            "h": 25
+          }
+        },
+        {
+          "id": "reading-chair",
+          "art": "dining-chair-back-v1",
+          "at": {
+            "x": 392,
+            "y": 352
+          },
+          "width": 23,
+          "visibleWhen": "chapel:participation:reading"
+        },
+        {
+          "id": "bench-0-1",
+          "art": "chapel-wood-pew",
+          "at": {
+            "x": 590,
+            "y": 365
+          },
+          "width": 68,
+          "footprint": {
+            "x": 558,
+            "y": 351,
+            "w": 64,
+            "h": 14
+          }
+        },
+        {
+          "id": "bench-1-0",
+          "art": "chapel-wood-pew",
+          "at": {
+            "x": 355,
+            "y": 440
+          },
+          "width": 68,
+          "footprint": {
+            "x": 323,
+            "y": 426,
+            "w": 64,
+            "h": 14
+          }
+        },
+        {
+          "id": "bench-1-1",
+          "art": "chapel-wood-pew",
+          "at": {
+            "x": 590,
+            "y": 440
+          },
+          "width": 68,
+          "footprint": {
+            "x": 558,
+            "y": 426,
+            "w": 64,
+            "h": 14
+          }
+        },
+        {
+          "id": "bench-2-0",
+          "art": "chapel-wood-pew",
+          "at": {
+            "x": 355,
+            "y": 515
+          },
+          "width": 68,
+          "footprint": {
+            "x": 323,
+            "y": 501,
+            "w": 64,
+            "h": 14
+          }
+        },
+        {
+          "id": "bench-2-1",
+          "art": "chapel-wood-pew",
+          "at": {
+            "x": 590,
+            "y": 515
+          },
+          "width": 68,
+          "footprint": {
+            "x": 558,
+            "y": 501,
+            "w": 64,
+            "h": 14
+          }
+        },
+        {
+          "id": "note",
+          "art": "noticeboard",
+          "at": {
+            "x": 625,
+            "y": 525
+          },
+          "width": 38,
+          "footprint": {
+            "x": 609,
+            "y": 515,
+            "w": 32,
+            "h": 10
+          }
+        },
+        {
+          "id": "coat",
+          "art": "interior-coatstand-v1",
+          "at": {
+            "x": 310,
+            "y": 535
+          },
+          "width": 19,
+          "footprint": {
+            "x": 304,
+            "y": 525,
+            "w": 12,
+            "h": 10
+          }
+        },
+        {
+          "id": "stained-window",
+          "art": "chapel-stained-glass-window",
+          "at": {
+            "x": 475,
+            "y": 225
+          },
+          "width": 32
+        },
+        {
+          "id": "altar",
+          "art": "chapel-altar",
+          "at": {
+            "x": 475,
+            "y": 275
+          },
+          "width": 94,
+          "footprint": {
+            "x": 433,
+            "y": 253,
+            "w": 84,
+            "h": 22
+          }
+        },
+        {
+          "id": "candle-left",
+          "art": "chapel-floor-candlestick",
+          "at": {
+            "x": 412,
+            "y": 285
+          },
+          "width": 12,
+          "footprint": {
+            "x": 407,
+            "y": 275,
+            "w": 10,
+            "h": 10
+          }
+        },
+        {
+          "id": "candle-right",
+          "art": "chapel-floor-candlestick",
+          "at": {
+            "x": 538,
+            "y": 285
+          },
+          "width": 12,
+          "footprint": {
+            "x": 533,
+            "y": 275,
+            "w": 10,
+            "h": 10
+          }
+        },
+        {
+          "id": "exit-leaf",
+          "art": "door-front-v7",
+          "at": {
+            "x": 480,
+            "y": 593
+          },
+          "width": 46,
+          "foreground": true
+        }
+      ]
     }
   },
   "outdoors": {
@@ -9929,6 +10618,30 @@
       }
     },
     "workshop-annex-2": {
+      "id": "exit",
+      "side": "S",
+      "center": 480,
+      "width": 50,
+      "leafWidth": 46,
+      "leafBottom": 593,
+      "opening": {
+        "start": 455,
+        "end": 505
+      },
+      "activation": {
+        "x": 441,
+        "y": 527,
+        "w": 78,
+        "h": 58
+      },
+      "closedFootprint": {
+        "x": 455,
+        "y": 585,
+        "w": 50,
+        "h": 8
+      }
+    },
+    "chapel": {
       "id": "exit",
       "side": "S",
       "center": 480,

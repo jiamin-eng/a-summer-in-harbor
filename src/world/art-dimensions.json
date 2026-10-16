@@ -2058,5 +2058,59 @@
     "processedSha": "efdd6eda4830a99d3f9c759b74b2fbaa67e5f8179169e0269b79f686eeafd2af",
     "process": "magenta colour key, tight crop, uniform nearest scaling; no geometry changes",
     "status": "renderer-reviewed; user aesthetic review pending; not deployed"
+  },
+  "chapel-stained-glass-window": {
+    "width": 64,
+    "height": 128,
+    "processedSha": "a3dca35645a1afdc0a0e8613edfb327ee8bc97b074771b09132d84b781586d5b",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "chapel-wood-pew": {
+    "width": 128,
+    "height": 48,
+    "processedSha": "35de66524ce7a40c988048222eea5dda84f682b80a0e2f97e4a55f95a1719572",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "chapel-altar": {
+    "width": 128,
+    "height": 64,
+    "processedSha": "233117902a5f8d2972f0f611156b74201a45ab8cac483a446a346dad5c3eab5b",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "chapel-floor-candlestick": {
+    "width": 32,
+    "height": 128,
+    "processedSha": "e2ab753aaa0facab254e4c120c390febaaa300fc4d814efc99aa0d68b36fe495",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "pedestal-sundial": {
+    "width": 1254,
+    "height": 1254,
+    "processedSha": "c6fdfc5c4b466daa9a6d5972083a79678ccf147714de56eb893b21d8f6aa0264",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "clay-chiminea": {
+    "width": 1254,
+    "height": 1254,
+    "processedSha": "097f8e66a3bda9c8ed6ab0f4ad47ebf55c43d0f6247dcce6fd006f19bd12bd9a",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "nest-birdhouse": {
+    "width": 1254,
+    "height": 1254,
+    "processedSha": "ac9a4f156b07e94f4c3f940e743087d37faf3291078f9d88b505d46a2675cff6",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "wooden-beehive-box": {
+    "width": 1254,
+    "height": 1254,
+    "processedSha": "20fc951549abec464a968da794dc824ddb097f47af9c39d7c9251c3ebc74b547",
+    "status": "pinned local consumer candidate; no Library admission inferred"
+  },
+  "existing-C-post-5x26": {
+    "width": 5,
+    "height": 26,
+    "processedSha": "d6cce4d299c86aacf59565a1a20f1a3366c0ee2eaf4186d245f493f3a874971a",
+    "status": "pinned local consumer candidate; no Library admission inferred"
   }
 }

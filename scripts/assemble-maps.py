@@ -36,6 +36,15 @@ for id,r in layout['rooms'].items():
    for py in range(-(patch['y']%160),area.height,160):
     for px in range(-(patch['x']%160),area.width,160):area.alpha_composite(source,(px,py))
    floor.alpha_composite(area,(patch['x'],patch['y']))
+ if id=='harbor':
+  rope=json.loads((ROOT/'src/world/pier-rope-layout.json').read_text())
+  atlas=Image.open(ROOT/'public/art'/rope['atlas']).convert('RGBA')
+  for piece in rope['pieces']:
+   sx,sy,sw,sh=rope['roles'][piece['role']]
+   cell=atlas.crop((sx,sy,sx+sw,sy+sh))
+   if 'cropX' in piece:
+    cell=cell.crop((piece['cropX'],0,piece['cropX']+piece['width'],sh))
+   floor.alpha_composite(cell,(piece['x'],piece['y']+rope['displayYOffset']))
  # Independent floor textiles sit below every character/furniture sprite. They
  # remain separate source assets and never invent collision or cover walking feet.
  for p in r['props']:
