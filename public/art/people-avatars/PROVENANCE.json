@@ -202,9 +202,24 @@
     },
     {
       "person": "gabriel",
-      "sha256": "8dd9261e7fb5ae3c8b9bbc9bd7adef6c89ba424ba39ed5163ded9241fdae153d",
-      "sourceSeries": "priest-gabriel-eight-actions-approved-20261012-v1/local-consumer",
+      "sha256": "f6e4ae15123b335221a438864275ad29195882b838895a414840b777e996e353",
+      "sourceSeries": "gabriel-camera15-private-library-r2",
       "dimensions": [
+        256,
+        256
+      ],
+      "assetId": "character-family__gabriel",
+      "revision": 2,
+      "recordId": "44125733-66b7-4952-9f6a-a508a926ae30",
+      "nativeAvatarSHA256": "2e6e3640789da3edc81b3d3874394ee144fd5ae3a204e56a008e034f5f40b698",
+      "nativeDimensions": [
+        128,
+        128
+      ],
+      "consumerTransform": "exact-nearest-neighbor-2x",
+      "cropOn256": [
+        0,
+        0,
         256,
         256
       ]

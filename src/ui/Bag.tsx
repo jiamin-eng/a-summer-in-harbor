@@ -1,3 +1,4 @@
+import {landRegions} from '../life/land';
 import {mintItem,type PlantUseVerb} from '../life/plant-uses';
 import {useRef,useState} from 'react';
 import {items,type Save} from '../story/state';
@@ -51,7 +52,7 @@ export function Bag({save,view,current,locale,busy,retry,error,feedback,pending,
  {row.batch?.saveSeedAvailable&&<button disabled={locked} onClick={()=>void run(()=>onCommand({verb:'save-seed',ref:row.batch!.ref,...(row.batch!.harvestBatch?{harvestBatch:row.batch!.harvestBatch}:{})}))}>{tx(['留种 · 消耗1份收成','Save seed · use 1 harvest unit'],locale)}</button>}
  {row.item===mintItem&&p?.mintEnabled&&!p.mint.archived&&onPlantUse&&<button disabled={locked} onClick={()=>void run(()=>onPlantUse('archive-mint'))}>{tx(['收入记录 · 消耗一份叶','Add to my notebook · use one portion'],locale)}</button>}
  {row.item==='packed-snack'&&<button disabled={locked||save.energy>=100} onClick={()=>void run(onEat)}>{tx(['吃1份 · 精力+30','Eat 1 · +30 energy'],locale)}</button>}
- {row.category==='seed'&&<button disabled={busy} onClick={()=>onPlace('garden')}>{tx(['查看菜畦地点','Find the garden beds'],locale)}<Icon name="map"/></button>}
+ {row.category==='seed'&&(row.batch?.ref.id===snapPea.id?<section data-seed-places><p>{tx(['这批种子使用已开垦菜畦。选地点查看自己的菜畦；没有菜畦时先查看种植许可。','These seeds use cultivated beds. Choose a place to find your beds, or check its cultivation permission first.'],locale)}</p>{landRegions.filter(region=>save.visited.includes(region.scene)).map(region=>{const count=view?.plants?.plots.filter(b=>b.scene===region.scene).length??0;return <button key={region.id} disabled={busy} onClick={()=>onPlace(region.scene)}>{tx(region.name,locale)} · {tx(count?[`${count}畦`,`${count} ${count===1?'bed':'beds'}`]:['查看许可','Check permission'],locale)}<Icon name="map"/></button>})}</section>:<button disabled={busy} onClick={()=>onPlace('garden')}>{tx(['查看菜畦地点','Find the garden beds'],locale)}<Icon name="map"/></button>)}
  {row.category==='produce'&&<button disabled={busy} onClick={()=>onPlace('grocery')}>{tx(['查看出售地点','Find the grocer'],locale)}<Icon name="map"/></button>}
  {['photo','route'].includes(row.item??'')&&<button onClick={()=>onPortrait('asset:'+(row.item==='photo'?'bridge-photo':'trail-map-closeup'))}>{tx(['放大查看','View closely'],locale)}</button>}
  </>}</section>}</div>

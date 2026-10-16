@@ -2,6 +2,7 @@ import {ContentRegistry,snapPeaDefinition,definitionHash} from '../src/life/regi
 import definition from '../src/life/snap-pea-v2.json';
 import art from '../src/world/snap-pea-art.json';
 import {sameRef} from '../src/life/save';
+import {isLifeBed} from '../src/life/land-contract';
 import type {CropDefinition,ContentRef} from '../src/life/types';
 import {landEntities,landRegion,landWorld} from '../src/life/land';
 import {dynamicWorld} from '../src/dynamic-assets/layout';
@@ -23,7 +24,7 @@ export function createPlantsRegistry(newStarts=true){
  }
  return new PlantsRegistry([snapPeaDefinition,snapPeaV2]);
 }
-export function createLifePlantsB2(base:ReturnType<typeof createRuntime>,newStarts=true){
+export function createLifePlantsB2(base:ReturnType<typeof createRuntime>,newStarts=true,landOptions?:{expansionStarts?:boolean}){
  const registry=createPlantsRegistry(newStarts);
  return createLifeB2(base,registry,{ref:snapPeaV2Ref,newStarts}, {admit(s,a,c){
   let entity;
@@ -36,7 +37,7 @@ export function createLifePlantsB2(base:ReturnType<typeof createRuntime>,newStar
    if(!entity)throw Error('SHOP_ADMISSION_REQUIRED');
   }else if(c.verb==='plant'||c.verb==='water'||c.verb==='harvest'){
    plot=c.plot;
-   if(!/^life-bed-[12]$/.test(plot))throw Error('PLOT_ADMISSION_REQUIRED');
+   if(!isLifeBed(plot,s.landV1))throw Error('PLOT_ADMISSION_REQUIRED');
    const id=plot.replace('life-','land-');
    const bed=s.landV1?.plots.find(p=>p.id===id);
    if(!bed||landRegion(bed.region)?.scene!==s.scene)throw Error('PLOT_ADMISSION_REQUIRED');
@@ -48,5 +49,5 @@ export function createLifePlantsB2(base:ReturnType<typeof createRuntime>,newStar
   if(!binding.admits(rule,entity.id,s.scene,a.position))throw Error('TOO_FAR');
   binding.assertTransition({cartridgeId:GAME_UUID,map:[{id:s.scene,current:true}],characters:[]},{cartridgeId:GAME_UUID,map:[{id:s.scene,current:true}],characters:[]},rule,s.scene);
   return {scene:s.scene,target:entity.id,...(plot?{plot,cultivated:true}:{})};
- }});
+ }},landOptions);
 }

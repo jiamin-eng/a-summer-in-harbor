@@ -1,5 +1,6 @@
 import type {ContentRegistry} from './registry';
 import type {ContentRef,LifeSave,SeedPlant} from './types';
+import {landMaximum} from './land-contract';
 
 const matches=(a:ContentRef,b:ContentRef)=>a.id===b.id&&a.revision===b.revision&&a.hash===b.hash&&a.capability===b.capability;
 const source=(v:unknown)=>typeof v==='string'&&/^[a-zA-Z0-9-]{16,80}$/.test(v);
@@ -48,7 +49,7 @@ export function consumeSeedHarvest(s:LifeSave,ref:ContentRef,total:number,quanti
 export function assertSeedQuotaReadable(s:LifeSave,r:ContentRegistry){
  const q=s.lifeV1?.seedQuotaV1;if(q===undefined)return;
  const bad=()=>{throw Error('UNSUPPORTED_SEED_QUOTA_SAVE')};
- if(!object(q)||!keys(q,'harvests,plants,policy')||q.policy!=='one-seed-per-plant-v1'||!object(q.plants)||Object.keys(q.plants).length>5||!Array.isArray(q.harvests)||q.harvests.length>9999)bad();
+ if(!object(q)||!keys(q,'harvests,plants,policy')||q.policy!=='one-seed-per-plant-v1'||!object(q.plants)||Object.keys(q.plants).length>3+landMaximum(s.landV1)||!Array.isArray(q.harvests)||q.harvests.length>9999)bad();
  const now=s.townMinutes??540,ids=new Set<string>(),batches=new Set<string>();
  const plant=(p:SeedPlant)=>{
   if(!object(p)||!keys(p,'id,plantedMinute,ref')||!source(p.id)||ids.has(p.id)||batches.has(p.id)||!integer(p.plantedMinute,0,now))bad();

@@ -22,6 +22,8 @@ export type LifeState={schema:1;lots:Lot[];legacyPlotRefs:Record<string,ContentR
 export type LifeSave=Save&{lifeV1?:LifeState};
 export type Command=
  |{verb:'permit-land';region:string}
+ |{verb:'expand-land';region:string}
+ |{verb:'clear-bed';plot:string}
  |{verb:'cultivate';region:string;at:{x:number;y:number}}
  |{verb:'buy-seed';ref:ContentRef}
  |{verb:'plant';ref:ContentRef;plot:string}
@@ -36,7 +38,7 @@ export type Command=
 /** Only constructed inside the trusted server after spatial/source admission.
  * No field in this structure may be copied unchecked from a client payload. */
 export type Admission={
- land?:{region:string;geometryRevision:1;position:{x:number;y:number}};
+ land?:{region:string;geometryRevision:1;position:{x:number;y:number};expansionAllowed?:boolean};
  scene:string;target:string;plot?:string;cultivated?:boolean;
  resident?:'theo'|'dani';premiseRead?:boolean;displaySlot?:string;
  animal?:{id:string;behavior:'sun-rest'|'sleep';visualVersion:string};

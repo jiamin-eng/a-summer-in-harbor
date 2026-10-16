@@ -1,7 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';import {mkdtempSync,rmSync} from 'node:fs';
 import {initial,applyAction,availableTopics,type Save,type Action} from '../src/story/state';
 import {entityAt,rooms} from '../src/world/data';
-import {relationshipStage,relationshipProfiles,relationshipMemory,relationshipProgressNotes,relationshipLastMemory,growthTopics,validRelationshipGrowth} from '../src/story/relationship-growth';
+import {relationshipStage,relationshipProfiles,relationshipPilotIds,relationshipMemory,relationshipProgressNotes,relationshipLastMemory,growthTopics,validRelationshipGrowth} from '../src/story/relationship-growth';
 import {relationshipNarrativeContext,admitRelationshipNarrative} from '../server/relationship-narrative';import {createRuntime} from '../server/runtime';
 // @ts-expect-error frozen asynchronous SQLite authority
 import {AsyncSessionAuthority,openAsyncSqliteAuthorityStore} from '../vendor/dynamic-runtime/packages/authority-session/async.mjs';
@@ -9,7 +9,7 @@ export function fixture(p:string):Save{const s=initial('en',randomUUID());s.scen
 export function action(s:Save,p:string,id:string):Action{return {action_id:randomUUID(),expected_version:s.version,scene:s.scene,position:entityAt(s.scene,p)!.approach,target:p,action:id==='introduce'?id:id==='observe'?'relationship-observe:'+Object.entries(relationshipProfiles).find(([,d])=>d.observeTarget===p)![0]:'talk:'+id}}
 export function step(s:Save,p:string,id:string){return applyAction(s,action(s,p,id)).head}
 export function at(s:Save,scene:string,minute:number){return {...structuredClone(s),scene,townMinutes:minute,position:{...rooms[scene].spawn}}}
-for(const p of Object.keys(relationshipProfiles))test(p+' five stages: evidence, observation, promise and two distinct experiences',()=>{
+for(const p of relationshipPilotIds)test(p+' five stages: evidence, observation, promise and two distinct experiences',()=>{
  let s=fixture(p);const profile=relationshipProfiles[p];assert.equal(relationshipStage(s,p),'stranger');s=step(s,p,'introduce');assert.equal(relationshipStage(s,p),'acquaintance');s=step(s,p,'rg-greet');s=step(s,p,'rg-personal');
  assert.equal(relationshipStage(s,p),'acquaintance');assert.throws(()=>step(s,p,'rg-greet'),/TOPIC_UNAVAILABLE/);assert.throws(()=>step(s,p,'rg-request'),/TOPIC_UNAVAILABLE/);
  s=at(s,s.scene,1980);s=step(s,p,'rg-greet');assert.equal(relationshipStage(s,p),'familiar');s=step(s,p,'rg-request');assert.throws(()=>step(s,p,'rg-fulfill'),/TOPIC_UNAVAILABLE/);

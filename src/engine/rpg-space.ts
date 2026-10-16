@@ -135,7 +135,13 @@ function createRawRpgSpace(options:SpaceOptions){
   scale=height/engineHeight;leftInset=(width-engineWidth*scale)/2;
   host.style.width=`${engineWidth}px`;host.style.height=`${engineHeight}px`;host.style.left='50%';host.style.top='0';host.style.transformOrigin='top center';host.style.transform=`translateX(-50%) scale(${scale})`;
   const resolution=Math.min(3,Math.max(1,Math.ceil(scale*(devicePixelRatio||1)*4)/4));
-  if(client?.renderer){client.renderer.resize(engineWidth,engineHeight,resolution);client.width.set(String(engineWidth));client.height.set(String(engineHeight));configureCamera()}
+  if(client?.renderer){
+   // CanvasEngine already sizes the initial Pixi surface. Resizing it again
+   // during a fresh scene mount can stall the next map load after an error.
+   const screen=client.renderer.screen;
+   if(Math.round(screen.width)!==Math.round(engineWidth)||Math.round(screen.height)!==Math.round(engineHeight))client.renderer.resize(engineWidth,engineHeight,resolution);
+   client.width.set(String(engineWidth));client.height.set(String(engineHeight));configureCamera();
+  }
  };
  // The embedded RPGJS sync/physics tick may apply an older local ACK after
  // Harbor's rAF projection. Commit the same swept pose and camera together at
@@ -166,7 +172,11 @@ function createRawRpgSpace(options:SpaceOptions){
   async onConnected(instance){if(disposed)return;player=instance;try{instance.setGraphic(options.sheet.id);instance.setHitbox(world.actor.w,world.actor.h);instance.animationFixed=true;instance.animationName.set('stand');await prepareVisualScene(scene);await instance.changeMap(scene,pos);void wait(scene).then(()=>{if(disposed)return;projectPlayer();options.onReady(runtime)}).catch(error=>{if(!disposed)options.onError(error)})}catch(error){if(!disposed)options.onError(error)}}
  },maps:ids.map(id=>({id,events:staticSprites.mapEvents(id)}))}]) ]});
  startGame({providers:[
-  provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1}}),
+  // RPGJS mounts CanvasEngine layout nodes. Its Yoga system is registered only
+  // on WebGL/WebGPU renderers; Pixi's automatic Canvas fallback leaves Yoga
+  // unset and repeatedly throws while mounting the scene. A recoverable
+  // startup failure is safer than leaving a broken renderer running.
+  provideClientGlobalConfig({prediction:{enabled:false},bootstrapCanvasOptions:{antialias:false,backgroundAlpha:0,autoDensity:true,resolution:1,preference:['webgl','webgpu']}}),
   instanceClientModules(tiledClient({basePath:'./map'})),
   provideClientModules([{spritesheets:[options.sheet,...options.spritesheets],sprite:spriteLifecycle.hooks,sceneMap:{onAfterLoading(){cameraSignature='';loaded=client?.activeRoom()?.name?.replace(/^map-/,'')??null;checks.forEach(fn=>fn())}},engine:{onStart(engine){if(disposed){engine.clear();return}client=engine;if(debug)(host as HTMLElement&{__rpgClient?:RpgClientEngine}).__rpgClient=engine;engine.stopProcessingInput=true;engine.renderer.background.alpha=0;engine.renderer.runners.prerender.add(presentation);resize()}}}]),provideRpg(server)
  ]}).catch(error=>{if(!disposed)options.onError(error)});

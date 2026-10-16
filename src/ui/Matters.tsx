@@ -1,20 +1,39 @@
 import {relationshipStory,type StoryLead} from '../story/relationships';
 import {relationshipNext,relationshipProfiles} from '../story/relationship-growth';
 import {plotIds,plotDescription} from '../story/crops';
-import {has,type Save} from '../story/state';
+import {has,objective,type Save} from '../story/state';
+import {objectivePlace} from '../story/navigation';
 import {rooms,people,tx,type Locale,type Words} from '../world/data';
 import {gameMinuteLabel,type LifeView} from './LifeBag';
 import {useView} from './PlantUsesPanel';
 import {fernDescription} from '../world/residents';
 import {Icon} from './icons';
 const labels:Record<StoryLead['state'],Words>={active:['进行中','In progress'],done:['已发生','Completed'],upcoming:['已约好','Planned'],available:['可以赴约','Time to meet'],'return-later':['改日也可以','Another day is fine']};
+export type MatterOption={id:string;title:Words;detail:Words;preview?:Words;place?:string;person?:string};
+/** Read-only shortcuts to entries already shown by Matters. Selection never changes Save. */
+export function matterOptions(save:Save,view:LifeView|null):MatterOption[]{
+ const options:MatterOption[]=[],add=(option:MatterOption)=>{if(!options.some(x=>x.id===option.id))options.push(option)};
+ const destination=objectivePlace(save),model=relationshipStory(save),plants=useView(view);
+ if(destination)add({id:'journey',title:['旅程线索','Journey thread'],detail:objective(save),place:destination.scene});
+ for(const lead of model.leads)if(lead.state!=='done'&&lead.place){const detail=lead.next??lead.summary;add({id:'story:'+lead.id,title:lead.title,detail,preview:lead.id==='neighbor-chapter'&&detail[1].startsWith('Say hello to someone new')?[detail[0].split('，')[0],detail[1].split(',')[0]]:undefined,place:lead.place})}
+ for(const person of model.people)if(relationshipProfiles[person.id]){const next=relationshipNext(save,person.id);if(next?.place)add({id:'relationship:'+person.id,title:person.name,detail:next.text,place:next.place})}
+ if(save.turnBattle?.phase==='paused')add({id:'paused-bout',title:['暂停的对练','Paused bout'],detail:['回拳馆找伊德里斯，06:00–17:00可继续。','Return to Idris at the gym, 06:00–17:00, to resume.'],place:'gym'});
+ if(view?.order)add({id:'snap-pea-order',title:['西奥的脆荚订单','Theo’s snap pea order'],detail:['去咖啡馆当面交货','Find the café for delivery'],place:'cafe'});
+ if(plants?.order)add({id:'basil-order',title:['厨房的罗勒订单','Basil for the kitchen'],detail:['去咖啡馆当面交货','Find the café for delivery'],place:'cafe'});
+ for(const commission of view?.animals?.commissions??[])if(commission.active&&save.known.includes(commission.definition.resident))add({id:'animal:'+commission.ref.id,title:commission.definition.title,detail:['记录仍保留，分享需要在对方身边。','Your records remain; share when you meet the neighbor.'],person:commission.definition.resident});
+ if(has(save,'unpacked'))add({id:'garden-crops',title:['花园里的作物','Crops in the garden'],detail:['查看山坡花园里的作物','See the crops in Hillside Garden'],place:'garden'});
+ for(const bed of view?.plants?.plots??[])add({id:'bed:'+bed.id,title:[rooms[bed.scene].title[0]+' · 新菜畦',rooms[bed.scene].title[1]+' · New bed'],detail:bed.status?bed.status.name:['空畦','Empty bed'],place:bed.scene});
+ for(const room of save.fieldNotes?.rooms??[])add({id:'notes:'+room.id,title:room.title,detail:[`已查看${room.observations.filter(o=>o.read).length}/${room.observations.length}条线索。`,`Clues read: ${room.observations.filter(o=>o.read).length}/${room.observations.length}.`],place:room.id});
+ return options;
+}
 export function StoryCards({save,locale,onPlace,onPerson,limit,place}:{save:Save;locale:Locale;onPlace:(id:string)=>void;onPerson:(id:string)=>void;limit?:number;place?:string}){
  const model=relationshipStory(save),leads=model.leads.filter(l=>!place||l.place===place).sort((a,b)=>Number(a.state==='done')-Number(b.state==='done'));
  return <>{(limit?leads.filter(l=>l.state!=='done').slice(0,limit):leads).map((lead:StoryLead)=><article className="harbor-rel__story" key={lead.id} data-story={lead.id}><small>{tx(labels[lead.state],locale)}</small><h4>{tx(lead.title,locale)}</h4><p>{tx(lead.summary,locale)}</p>{lead.next&&<p>{tx(lead.next,locale)}</p>}{lead.place&&<button onClick={()=>onPlace(lead.place!)}><Icon name="map"/>{tx(rooms[lead.place].title,locale)}</button>}<div className="harbor-rel__links">{lead.people.map(id=><button key={id} onClick={()=>onPerson(id)}>{tx(people[id].name,locale)}<Icon name="people"/></button>)}</div></article>)}</>;
 }
-export function Matters({save,view,locale,busy,current,onPlace,onPerson,onAction,place}:{save:Save;view:LifeView|null;locale:Locale;busy:boolean;current:boolean;onPlace:(id:string)=>void;onPerson:(id:string)=>void;onAction:(action:string,payload?:unknown,target?:string)=>void;place?:string}){
+export function Matters({save,view,locale,busy,current,onPlace,onPerson,onAction,place,options,selectedId,onChoose}:{save:Save;view:LifeView|null;locale:Locale;busy:boolean;current:boolean;onPlace:(id:string)=>void;onPerson:(id:string)=>void;onAction:(action:string,payload?:unknown,target?:string)=>void;place?:string;options?:MatterOption[];selectedId?:string;onChoose?:(id:string)=>void}){
  const p=useView(view),model=relationshipStory(save);
  return <div className="harbor-matters">
+ {onChoose&&options&&<section className="harbor-matter-picker" aria-label={tx(['选择眼前的事','Choose a matter'],locale)}><h3>{tx(['挑一件想关注的事','Choose what to focus on'],locale)}</h3><p>{tx(['这些是已经知道的事，可以随时换一件。','These are matters you know about. Choose another whenever you like.'],locale)}</p><div>{options.map(option=><button key={option.id} data-matter-id={option.id} type="button" aria-pressed={selectedId===option.id} onClick={()=>onChoose(option.id)}><strong>{tx(option.title,locale)}</strong><small>{tx(option.detail,locale)}</small></button>)}</div></section>}
  <StoryCards save={save} locale={locale} onPlace={onPlace} onPerson={onPerson} place={place}/>
  {!place&&model.people.filter(p=>relationshipProfiles[p.id]).map(person=>{const next=relationshipNext(save,person.id);return next&&<article className="harbor-item" key={person.id}><h3>{tx(person.name,locale)}</h3><p>{tx(next.text,locale)}</p><button onClick={()=>onPerson(person.id)}>{tx(['查看你们之间的事','See your story together'],locale)}</button>{next.place&&<button onClick={()=>onPlace(next.place!)}><Icon name="map"/>{tx(rooms[next.place].title,locale)}</button>}</article>})}
  {(!place||place==='gym')&&save.turnBattle?.phase==='paused'&&<article className="harbor-item"><h3>{tx(['暂停的对练','Paused bout'],locale)}</h3><p>{tx(['回拳馆找伊德里斯，06:00–17:00可继续。','Return to Idris at the gym, 06:00–17:00, to resume.'],locale)}</p><button onClick={()=>onPlace('gym')}>{tx(['查看拳馆','Find the gym'],locale)}</button><button disabled={busy} onClick={()=>onAction('battle-end',undefined,save.turnBattle!.id)}>{tx(['结束暂停练习 · 无报酬','End paused practice · no payment'],locale)}</button></article>}

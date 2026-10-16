@@ -10,17 +10,17 @@ import crops from '../src/ui/people-avatar-crops.json';
 import provenance from '../public/art/people-avatars/PROVENANCE.json';
 
 const files=[
- ['public/art/npc-gabriel.png','ce3fb4ff2557838f1d9cb9b1fb887ef326811dfd3fb9264f1e3c2af80a955090',384,512],
- ['public/art/gabriel-avatar.png','8dd9261e7fb5ae3c8b9bbc9bd7adef6c89ba424ba39ed5163ded9241fdae153d',256,256],
- ['public/art/people-avatars/gabriel.png','8dd9261e7fb5ae3c8b9bbc9bd7adef6c89ba424ba39ed5163ded9241fdae153d',256,256],
- ['public/art/gabriel-root-v2.png','d2624d420def238b1d6f1dd8b6099f6aceccb9638bf3cfa26d348d4ecddd2082',512,512],
+ ['public/art/npc-gabriel.png','190e58e02560858d0a1c5c70b3397d010e957771bf1ea46ffb75619e5df91e4f',384,512],
+ ['public/art/gabriel-avatar.png','f6e4ae15123b335221a438864275ad29195882b838895a414840b777e996e353',256,256],
+ ['public/art/people-avatars/gabriel.png','f6e4ae15123b335221a438864275ad29195882b838895a414840b777e996e353',256,256],
+ ['public/art/gabriel-root-v2.png','17f75d76727ddf146030d2922b51b06515d3c23805571a6bde08882e4175732d',256,320],
 ] as const;
 
-test('only the reviewed Gabriel consumer files replace his placeholder',()=>{
+test('the four pinned private-library R2 files replace only Gabriel art',()=>{
  for(const [path,hash,width,height] of files){const bytes=readFileSync(path);assert.equal(createHash('sha256').update(bytes).digest('hex'),hash,path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes.readUInt32BE(16),width);assert.equal(bytes.readUInt32BE(20),height)}
- assert.equal(people.gabriel.art,'gabriel');assert.equal(people.gabriel.mapArt,'gabriel');assert.equal(people.gabriel.portraitShape,'square');
+ assert.equal(people.gabriel.art,'gabriel');assert.equal(people.gabriel.mapArt,'gabriel');assert.equal(people.gabriel.portraitShape,'portrait');
  assert.equal(people.arthur.art,'arthur');assert.equal(rooms.weather.entities.find(e=>e.person==='arthur')?.person,'arthur');
- assert.deepEqual(crops.gabriel,[32,12,192,240]);
+ assert.deepEqual(crops.gabriel,[0,0,256,256]);
  assert.equal(provenance.sources.find(x=>x.person==='gabriel')?.sha256,files[1][1]);
 });
 

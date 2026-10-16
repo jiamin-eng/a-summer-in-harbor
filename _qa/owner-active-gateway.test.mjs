@@ -4,7 +4,7 @@ import {randomBytes} from 'node:crypto';
 import {handleApi} from '../worker/index.js';
 test('active clock and movement reuse signed cookie, require POST, forbid query and bound streamed bodies',async()=>{
  const origin='https://game.aiwaves.tech',base='/e78df027-7ef4-4d49-82eb-ea91f03d9fb3',root='/api/sessions/12345678-1234-1234-1234-123456789012';
- const env={HARBOR_PUBLIC_ORIGIN:origin,HARBOR_GAME_BASE:base,HARBOR_UPSTREAM_ORIGIN:'https://harbor.example.test',HARBOR_EDGE_TOKEN:randomBytes(32).toString('hex'),HARBOR_TIME_POLICY:'user-approved-budget-only-20261001',HARBOR_EXPIRES_AT:'none',HARBOR_IDENTITY_MODE:'temporary-unverified'};
+ const env={HARBOR_PUBLIC_ORIGIN:origin,HARBOR_GAME_BASE:base,HARBOR_UPSTREAM_ORIGIN:'https://harbor.example.test',HARBOR_EDGE_TOKEN:randomBytes(32).toString('hex'),HARBOR_TIME_POLICY:'user-approved-budget-only-20261001',HARBOR_EXPIRES_AT:'none',HARBOR_IDENTITY_MODE:'browser-capability-v1'};
  const old=globalThis.fetch,seen=[];globalThis.fetch=async(url,init)=>{seen.push({url,init});return Response.json({ok:true})};
  const req=(path,cookie='',method='POST',body='{}',extra={})=>new Request(origin+path,{method,headers:{origin,cookie,'Content-Type':'application/json','X-Harbor-Owner':'forged',...extra},...(method==='POST'?{body}:{}),...(body instanceof ReadableStream?{duplex:'half'}:{})});
  try{

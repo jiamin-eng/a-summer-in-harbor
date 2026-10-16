@@ -415,3 +415,60 @@ prepareAfterRainDialogue是默认关闭的localFixture-only dry adapter。调用
 ## 2026-10-10 天气四五期 owner 整合候选
 
 客户端weather/storm.ts以有效原pin和townMinutes导出rainProfileForSave，不新增保存字段；weather/scene-masks.ts仅投影美术排除区。现有后台、package/lock/public、业务规则保持391字节。完整合同见weather-owner-391/INTEGRATION.md；本轮尚未发布。
+
+
+## 2026-10-15 Gabriel R2 消费锁（本地未发布）
+
+从4451隔离接入4份既有PNG，固定character-family__gabriel/revision2/record44125733-66b7-4952-9f6a-a508a926ae30。只更新avatar crop、portraitShape与contain、provenance/artStatus及真实Gabriel十二帧视觉reservation；后者曾误指Arthur，保留原alpha>200/root64,122/scale56÷108公式。狗蟹及其余geometry逐字段不变，ground collision、日程、NPC动画、authority和Save schema不改。消费锁更正R2辅助镜像6项旧SHA；实际像素和整格镜像有效，canonical record本轮未改。28项相关测试、构建和8组实际本地Main/64受控frame核验通过；未写私库、未调用生成、未部署/推送。完整证据边界与复跑命令见doc/qa/gabriel-r2-integration-20261015/README.md。
+
+# 2026-10-15 土地二期本地候选（实际代码）
+
+## 1. 技术栈
+沿4451b92 React/TypeScript/Vite8/RPGJS/Pixi及同一Story Session/账号/clock/weather组合。依赖未安装或升级，复用既有Node22.22.2和共享node_modules。正式后端基线由协调线程给定9585；本轮只在内存/临时SQLite合成数据验证，不连接正式PG。
+
+## 2. 目录结构
+src/life/land-contract.ts集中两/四槽上限和ID；land.ts定义schema1原档、显式schema2扩地凭据、预览及确认/收回。life-{b2,plants-b2,runtime}.ts沿原host/authority做真实位置与命令准入。src/life/{save,seed-quota,rules}.ts扩大新槽可读/种植及最多7个在种来源，原采收配额规则与refs不改。src/weather/state.ts以已扩容量验证最多7个雨水计数，compact delta仍不能凭空加植株/ref。
+
+LandPanel/LandPreviewPanel消费真实预览，保留加载/陈旧态、显式扩地与空畦二次确认。src/life/land-selection.ts让暂停中的点选只生成4单位格预览，不行走或推进时间；View保留原镜头/日夜/地图，仅将土畦和作物槽扩为固定1–4并调用该输入合同。Bag中脆荚种子定位实际已访问种植地点，原三种仍去花园；原每株/每批次留种命令不改。
+
+_qa/land-phase2*含真实规则、SQLite CAS/重启、现行4000ms自然时钟、账号HTTP处理器进程内调用与React静态呈现检查。REVIEW.html为合成只读组件预览，不是实际Main/renderer或功能性应用。
+
+## 3. 核心模块
+只有显式expand-land将landV1从schema1升级schema2，记录revision/sourceAction/minute及保留原permission/plot；两地许可和先前两畦由权威验证。新菜畦仍geometryRevision1、48×24footprint及原保护/可达规则，第三/第四槽必须绑定已扩土地。clear-bed禁止有植株；删空畦不删许可、容量、采收来源或雨水计数，不退款。全部原子候选由原CAS/receipt提交；读不会升级。仅新schema2在life读取时校验土地扩展，原schema1模块读合同保持，完整runtime仍验证原土地。
+
+createLifeB2第五参数options.expansionStarts=false停止新扩容和编号3/4的新分配；原1/2槽与已有植物照料/收成/留种保持，schema2读取不能回退删除。createLifePlantsB2第三参数可透传此选项；现行装配沿默认值，独立关闭默认补丁供owner评审。
+
+新客户端请求携带公开能力头X-Harbor-Land:2。新HTTP处理器对已扩schema2旅程的会话/生活/土地读取及新的扩地/收回动作要求该头；旧两畦旅程仍服务旧客户端。写通道保持原CAS/版本检查，不插入额外数据库事务改变模糊提交结果。缺头时返回CLIENT_REFRESH_REQUIRED、terminal:false，保留待确认请求及真实head。新前端遇旧预览会保持原两畦；life投影的landPhase2能力缺失时不展示收回。此头是格式能力声明，不是身份、授权或凭据，所有动作仍按原账号/空间/版本/资源验证。
+
+自然时间先于土地/营业/收成结算，失败不提交自然分钟。新增有限业务拒绝409，未知/坏档仍503可重读。雨水每畦每天默认60分钟，不增加手浇标记、种子、腐败或死亡。
+
+## 4. 扩展点
+容量/稳定ID只在land-contract调，新增土地需独立几何及真实renderer验收；新物种仍走原不可变registry及资产准入，不由本包开放AI自动加机制。新增动作要同时维护parse/host/rules/错误/投影/UI与回执测试。前后端迁移以4451前端、9585后端逐文件对照补丁为依据；不能整份覆盖owner后续文件。schema2产生后保留新reader，优先止新和前向修复，不整库回档。
+
+本地可评审，尚未实际浏览器/Telegram/手机/PG验证或部署：普通回环listen为EPERM，Chromium启动探针提前退出；依本任务不新增权限/安装，未升级。纯规则/进程内HTTP/SSR/构建结果不能改标为真实运行画面通过。
+
+## 2026-10-15 HBQA-LAND-006 独立增量修复
+
+独立 QA 在 e1d222c 的实际浏览器 → Worker → 合成后端路径发现：client.ts 已发送 X-Harbor-Land:2，但 worker/index.js 重建白名单请求头时未转发，扩地与已扩 schema2 的重新读取均返回409 CLIENT_REFRESH_REQUIRED。直接后端200不能作为入口通过证据，原反例继续有效。
+
+本修复只让 Worker 转发精确值2；缺失、未知或合并值仍不转发。不自动给旧客户端补能力、不修改身份/来源/私有边界、不删除 server/http.ts 的兼容读取保护，也不在写入前加数据库读或改变原 CAS/回执。公开格式能力声明与身份认证无关。Worker 和具备 schema2 reader 的后端须一起保留；不能在已产生 schema2 后回退到不能读取它的旧后端。
+
+_qa/land-worker-chain.ts 执行真实 handleApi、verifiedEdgeOwner、账号 HTTP、正式 exploration assembly 与合成 SQLite；仅将上游网络传输接为进程内 Readable/Response，原 Worker 产生的头和 body 原样进入后端。fixture 默认不注入能力头。测试涵盖两/四畦读、显式扩地、同 ID 重放、不同 ID 竞争、提交后丢回包、SQLite 关闭重开、三/四槽收成留种和清空、缺头保护及跨账号隔离；另以实际 story/client.ts 在 Node 的合成宿主中检验 pending 保留、重连与投影。这是完整业务代理链证据，未覆盖浏览器渲染、TCP/TLS 或部署环境。
+
+两个历史 signed-cookie 网关测试误设 temporary-unverified，却仍要求 bootstrap 签发浏览器 cookie；原 e1 同样失败。仅将这两个 fixture 的身份模式改为原有 browser-capability-v1，与测试目的匹配；不改变产品策略。新增链路测试使用正式当前的 temporary-unverified 模式。
+
+独立候选与原始反例的清单、进程状态、回归日志及尚待 QA 的真实按钮/刷新验收见外层 QA-HANDOFF.md。官方 Chrome 启动与回环 listen 在当前沙箱均受阻，未提权、安装或接管用户窗口；HBQA-LAND-006 尚待独立浏览器 QA 关闭，HBQA-LOAD-005 由其原 owner 处理。
+
+## 2026-10-15 Owen关系后续切片（本地候选）
+
+1. 技术栈：沿用React/TypeScript/Vite与原Story Session权威事务，Node24合成SQLite测试；无依赖安装、模型调用或新后台。
+2. 目录结构：`src/story/relationship-expansion-profiles.ts`仅Owen作者profile；`relationship-growth.ts`复用原阶段、动作、问候、约定与记忆投影，按居民路由存储；`_qa/relationship-expansion-fixture.ts`为合成分钟与正常reducer路径；`.test.ts`覆盖规则/原子/旧版本/组合；`.mjs`只生成实际React组件的离线内容评审，不启浏览器或HTTP端口。
+3. 核心模块：三位原试点仍用`relationshipsV1` schema1 / relationships-v1.0，旧数值、动作、规则和根字段保留；Owen用可选`relationshipExpansionV1` schema1 / relationship-expansion-v1.0，严格名单仅owen，独立migratedAt。旧known/数值/鸟声话题读取不迁移，不补过去日期，不按高分晋级；第一次合法介绍/成长互动在同一CAS/receipt事务添加根。回滚4451不认识此字段，但实际冻结源码的reader/upgrade/原动作已测试保留它，新版再加载可继续，不恢复旧DB。lifeSnapshotKey与lifeProjectionKey都含扩展根；异步身份/旅程与内容失配仍禁用操作。自然时间由原exploration assembly先结算，关系只读提交分钟，沿原第四options参数合同，不加计时器。AI句子上下文使用本人的rules版本，仍不能选rg-*动作或修改阶段/奖励。
+4. 扩展点：后续居民仍需独立作者profile、现有日程/真实物件与完整回归；此版本不称作用户批准的后续名单。加入其它居民时须明示新规则/兼容转换方案，不把Dani等名字静默塞入本版本存档名单。旧4451对该根是保留而不展示；它不提供新阶段操作。详细范围与测试状态见本任务目录HANDOFF，扩大回归的基线失败不在此补丁顺带修改。真实renderer 320/390、Telegram/实机与理解待现有QA窗口结束后验收。
+
+## 2026-10-15 Samira目标冲突独立增量
+
+1. 技术栈沿用，未新增依赖。唯一产品修改为`src/world/chapel-layout.ts`的chapel-seat交互at/approach下移30世界单位；renderer、人物位置、道具图、静态碰撞和权威存档结构保持。
+2. `_qa/samira-approach.test.ts`从Git精确冻结4451、比较其与c9走位相关blob、验证旧/新静态世界完全相同、49当前巡游脚点、旧夹具碰撞终点、78条双版本绕行条件、原座席动作、旧三人/Owen保存及SQLite原子回放。条件采样不冒充独立UI用例。
+3. `_qa/samira-target-replay.mjs`是给独立QA新host的模块。观察实际RPG玩家/人物与底部目标，先以Samira且可互动停止，才考虑走向保守航点；实际键盘与当前人物碰撞参与规划，禁止坐标注入/force。每次新时间戳/账号/旅程/证据，拒绝在原081701证据目录运行。回归范围含原接近点、原卡住坐标和门口三起点×390中文/320英文；正式HTTP/renderer结论只能由实际执行产生。
+4. 本环境无增权条件下listen(0,127.0.0.1)返回EPERM，因此这里只执行几何/规则/SQLite合成与构建，不宣称浏览器补验通过。独立候选需QA重放再放行，不覆盖原c9或旧QA证据，不迁移/回滚真实档。

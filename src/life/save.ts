@@ -1,6 +1,8 @@
 import {legacyDefinitions,ContentRegistry} from './registry';
 import type {ContentRef,LifeSave,LifeState,Lot} from './types';
 import {assertSeedQuotaReadable,consumeSeedHarvest,pinSeedPlant,recordSeedHarvest,seedSources} from './seed-quota';
+import {landMaximum,isLifeBed} from './land-contract';
+import {assertLandReadable} from './land';
 
 export const sameRef=(a:ContentRef,b:ContentRef)=>a.id===b.id&&a.revision===b.revision&&a.hash===b.hash&&a.capability===b.capability;
 const int=(n:unknown,min=0,max=Number.MAX_SAFE_INTEGER)=>Number.isSafeInteger(n)&&(n as number)>=min&&(n as number)<=max;
@@ -61,10 +63,11 @@ export function reconcileAuthored(previous:LifeSave,next:LifeSave,r:ContentRegis
  assertLifeReadable(s,r);return s;
 }
 export function assertLifeReadable(s:LifeSave,r:ContentRegistry):void{
+ if(s.landV1?.schema===2)assertLandReadable(s);
  const bad=()=>{throw Error('UNSUPPORTED_LIFE_SAVE')};
  if(!int(s.cash,0,999)||!int(s.energy,0,100)||!int(s.townMinutes??540)||!int(s.awakeMinutes??0)||!record(s.items)||Object.values(s.items).some(n=>!int(n)))bad();
  const life=s.lifeV1;if(life===undefined){if(Object.keys(s.items).some(k=>k.startsWith('life-')&&(s.items[k]??0)>0))bad();return}
- if(!record(life)||life.schema!==1||Object.keys(life).some(k=>!['schema','lots','legacyPlotRefs','plots','collections','display','firstRewards','order','cooldownUntil','events','seedQuotaV1'].includes(k))||!Array.isArray(life.lots)||life.lots.length>64||!record(life.legacyPlotRefs)||!record(life.plots)||Object.keys(life.plots).length>2||!record(life.collections)||Object.keys(life.collections).length>64||!record(life.display)||!Array.isArray(life.firstRewards)||!int(life.cooldownUntil)||!Array.isArray(life.events)||life.events.length>128)bad();
+ if(!record(life)||life.schema!==1||Object.keys(life).some(k=>!['schema','lots','legacyPlotRefs','plots','collections','display','firstRewards','order','cooldownUntil','events','seedQuotaV1'].includes(k))||!Array.isArray(life.lots)||life.lots.length>64||!record(life.legacyPlotRefs)||!record(life.plots)||Object.keys(life.plots).length>landMaximum(s.landV1)||!record(life.collections)||Object.keys(life.collections).length>64||!record(life.display)||!Array.isArray(life.firstRewards)||!int(life.cooldownUntil)||!Array.isArray(life.events)||life.events.length>128)bad();
  const totals:Record<string,number>={},identities=new Set<string>(),now=s.townMinutes??540;
  const ref=(v:ContentRef)=>{try{if(!record(v)||Object.keys(v).sort().join(',')!=='capability,hash,id,revision')bad();r.get(v)}catch{bad()}};
  for(const l of life.lots){if(!record(l)||Object.keys(l).sort().join(',')!=='firstSource,kind,lastSource,quantity,ref'||!['seed','produce'].includes(l.kind)||!int(l.quantity,1)||!source(l.firstSource)||!source(l.lastSource))bad();ref(l.ref);if(!r.isLegacy(l.ref)&&l.quantity>9999)bad();const identity=l.ref.id+'@'+l.ref.revision+':'+l.kind;if(identities.has(identity))bad();identities.add(identity);const item=r.item(l.ref,l.kind);totals[item]=(totals[item]??0)+l.quantity;if(!int(totals[item],0,r.isLegacy(l.ref)?Number.MAX_SAFE_INTEGER:9999))bad()}
@@ -72,7 +75,7 @@ export function assertLifeReadable(s:LifeSave,r:ContentRegistry):void{
  for(const [key,n] of Object.entries(totals))if(n!==s.items[key])bad();
  for(const key of Object.keys(s.items))if(key.startsWith('life-seed:')||key.startsWith('life-produce:')){if((totals[key]??0)!==s.items[key])bad()}
  for(const key of Object.keys(s.items))if(key.startsWith('life-')&&!key.startsWith('life-seed:')&&!key.startsWith('life-produce:')&&!giftItems.includes(key as any))bad();
- for(const [id,p] of Object.entries(life.plots)){if(!/^life-bed-[12]$/.test(id)||!record(p)||Object.keys(p).sort().join(',')!=='grown,ref,updatedAt,wetUntil')bad();ref(p.ref);const d=r.get(p.ref);if(r.isLegacy(p.ref)||!int(p.grown,0,d.growMinutes)||!int(p.updatedAt,0,now)||!int(p.wetUntil,p.updatedAt,p.updatedAt+d.wetMinutes))bad()}
+ for(const [id,p] of Object.entries(life.plots)){if(!isLifeBed(id,s.landV1)||Number(id.slice(-1))>2&&!s.landV1?.plots.some(b=>b.id===id.replace('life-','land-'))||!record(p)||Object.keys(p).sort().join(',')!=='grown,ref,updatedAt,wetUntil')bad();ref(p.ref);const d=r.get(p.ref);if(r.isLegacy(p.ref)||!int(p.grown,0,d.growMinutes)||!int(p.updatedAt,0,now)||!int(p.wetUntil,p.updatedAt,p.updatedAt+d.wetMinutes))bad()}
  if(Object.keys(life.legacyPlotRefs).sort().join(',')!==Object.keys(s.plots??{}).sort().join(','))bad();
  for(const [id,v] of Object.entries(life.legacyPlotRefs)){ref(v);if(!r.isLegacy(v)||v.id!=='crop:'+s.plots![id].crop)bad()}
  assertSeedQuotaReadable(s,r);

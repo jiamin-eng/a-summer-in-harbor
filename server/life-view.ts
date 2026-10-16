@@ -45,7 +45,7 @@ export function lifeView(s:LifeSave,r:ContentRegistry,plants?:{ref:ContentRef;ne
    deliverySpatialAdmission:'not-implemented' as const}:null,
   spatialActions:'not-enabled-by-this-view' as const,
   plants:plants?{
-   ref:{...plants.ref},definition:structuredClone(r.get(plants.ref)),newStarts:plants.newStarts,
+   landPhase2:{version:1 as const,clearEmptyBeds:true},ref:{...plants.ref},definition:structuredClone(r.get(plants.ref)),newStarts:plants.newStarts,
    shopOpen:minute%1440>=360&&minute%1440<1020,blocked,
    plots:(s.landV1?.plots??[]).map(b=>{
     const id=b.id.replace('land-','life-'),status=lifePlotStatus(s,id,r);
