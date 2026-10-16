@@ -13,7 +13,7 @@ const expected={
  'wood-water':'72599acb482e2738c8365c0490c36702baad0dc4cf6e574c6ae8f9ab666d2713',
  'stone-wood':'11a5f53c57f06f4767f8c03cfdacd139646cf95b902713a459a1d639efb913c6',
  'grass-wood':'78b233560ebbffc833ac50f121ff09ddef386006266095f4753e65623a070077',
- 'three-material-junctions':'246041ae4fa9e5f7d84a7efc99cc8ce3aebbbd2065da60f8f6bb40f0a8b22cb5',
+ 'three-material-junctions':'69d7eb860921ab99d7e282eeca3ea674392afb8b962a584cc80222f731084c21',
 };
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const atlases=Object.fromEntries(Object.entries(expected).map(([name,sha])=>{
@@ -41,16 +41,32 @@ test('existing road and natural-only scenes have no added structural layer',()=>
  for(const scene of ['station','market-bazaar','hill','garden','camp','courtyard'])assert.equal(structuralContactPlan(scene).length,0,scene);
 });
 
-test('coast source-crop exits are inventoried and four missing corner signatures remain explicit HOLD',()=>{
+test('coast source-crop exits use the four delivered junctions without uncovered windows',()=>{
  const plan=structuralContactPlan('coast-beach-path'),gaps=structuralArtGaps('coast-beach-path');
- assert.deepEqual(gaps.map(j=>j.at),[{x:40,y:415},{x:40,y:535},{x:495,y:80},{x:605,y:80}]);
+ assert.deepEqual(gaps,[]);
  assert.ok(plan.some(p=>p.kind==='seam'&&p.rect.x===479&&p.rect.y===0));
  assert.ok(plan.some(p=>p.kind==='seam'&&p.rect.y===399&&p.rect.x===0));
- for(const piece of plan.filter(p=>p.kind==='seam')){
+ const expected=[
+  [{x:40,y:415},['water','grass','stone','stone'],14],
+  [{x:40,y:535},['stone','stone','grass','water'],15],
+  [{x:495,y:80},['water','stone','stone','grass'],16],
+  [{x:605,y:80},['stone','water','grass','stone'],17],
+ ];
+ for(const [at,quadrants,index] of expected){
+  const piece=plan.find(p=>p.kind==='junction'&&p.junction.at.x===at.x&&p.junction.at.y===at.y);
+  assert.ok(piece,`junction ${at.x},${at.y}`);
+  assert.equal(piece.atlas,'three-material-junctions');assert.equal(piece.index,index);
+  assert.deepEqual(piece.junction.quadrants,quadrants);
   const pixels=composeStructuralPiece('coast-beach-path',piece,plan,atlases);
-  for(const gap of gaps)for(let y=0;y<piece.rect.h;y++)for(let x=0;x<piece.rect.w;x++){
-   const gx=piece.rect.x+x+.5,gy=piece.rect.y+y+.5;
-   if(Math.abs(gx-gap.at.x)<20&&Math.abs(gy-gap.at.y)<20)assert.equal(pixels[(y*piece.rect.w+x)*4+3],0,'no guessed art under missing junction');
+  assert.ok(pixels.some((v,i)=>i%4===3&&v),`visible junction ${at.x},${at.y}`);
+  for(const seam of plan.filter(p=>p.kind==='seam')){
+   const overlap=seam.rect.x<at.x+20&&seam.rect.x+seam.rect.w>at.x-20&&seam.rect.y<at.y+20&&seam.rect.y+seam.rect.h>at.y-20;
+   if(!overlap)continue;
+   const straight=composeStructuralPiece('coast-beach-path',seam,plan,atlases);
+   for(let y=0;y<seam.rect.h;y++)for(let x=0;x<seam.rect.w;x++){
+    const gx=seam.rect.x+x+.5,gy=seam.rect.y+y+.5;
+    if(Math.abs(gx-at.x)<20&&Math.abs(gy-at.y)<20)assert.equal(straight[(y*seam.rect.w+x)*4+3],0,'junction replaces straight pixels');
+   }
   }
  }
 });

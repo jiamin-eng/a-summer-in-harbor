@@ -62,7 +62,7 @@ try{
   await p.screenshot({path:`${out}/${f.width}-${f.name}-after.png`});
   const location=await p.locator('.harbor-location').innerText();
   let saveReadback;
-  if(f.name==='harbor-quay-day'&&f.width===320){
+  if(['harbor-quay-day','coast-north-exit','coast-west-exit'].includes(f.name)&&f.width===320){
    const id=(await Promise.all(created)).map(x=>x?.id??x?.head?.id).find(Boolean);
    assert.ok(id,'synthetic new-game session ID');
    assert.ok(createdHeaders?.cookie,'synthetic browser possession cookie on create');
@@ -76,7 +76,27 @@ try{
    assert.equal(saveReadback.scene,f.scene);assert.deepEqual(saveReadback.items,{key:1});
    assert.ok(Math.hypot(saveReadback.position.x-after.x,saveReadback.position.y-after.y)<15,JSON.stringify(saveReadback));
   }
-  report.cases.push({name:f.name,width:f.width,height:f.height,minute:f.minute,before,after,location,pageErrors:errors,saveReadback});
+  let portalReadback;
+  if(process.env.TERRAIN_MAIN_PORTALS==='1'&&f.width===320&&f.name.endsWith('-exit')){
+   const portalId=f.name==='coast-north-exit'?'road-hill':'road-harbor',destination=f.name==='coast-north-exit'?'hill':'harbor';
+   assert.equal(rooms.coast.entities.find(e=>e.id===portalId)?.destination,destination);
+   const id=(await Promise.all(created)).map(x=>x?.id??x?.head?.id).find(Boolean);
+   assert.ok(id&&createdHeaders?.cookie,'synthetic session for portal readback');
+   assert.equal(await p.locator(`button[data-target="${portalId}"]`).getAttribute('data-near'),'true');
+   await p.locator('.harbor-action.is-ready').click();
+   await p.locator('.harbor-choices button.harbor-primary').click();
+   for(let attempt=0;attempt<20;attempt++){
+    const response=await fetch(server.url+'/api/sessions/'+id,{headers:createdHeaders});assert.equal(response.status,200);
+    const head=await response.json();portalReadback={scene:head.scene,position:head.position,items:head.items,version:head.version};
+    if(head.scene===destination)break;
+    await p.waitForTimeout(350);
+   }
+   assert.equal(portalReadback.scene,destination,`${portalId} ordinary click`);
+   assert.deepEqual(portalReadback.items,{key:1});
+   await p.waitForFunction(()=>!!document.querySelector('#rpg')?.__rpgClient?.getCurrentPlayer()&&!document.querySelector('.harbor-loading'));
+   await p.screenshot({path:`${out}/${f.width}-${f.name}-portal.png`});
+  }
+  report.cases.push({name:f.name,width:f.width,height:f.height,minute:f.minute,before,after,location,pageErrors:errors,saveReadback,portalReadback});
   await c.close();
  }
  assert.equal(models,0);report.passed=true;
