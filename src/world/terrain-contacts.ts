@@ -1,19 +1,18 @@
-import {outdoors,type TerrainPatch} from './outdoors';
+import {type TerrainPatch} from './outdoors';
 import {coastalMaterialAt} from './coastal-material-field';
 import {coastalContactRects} from './coastal-contact-plan';
-import {terrainAt} from './road-boundaries';
-import {COASTAL,globalPoint,zonesFor} from '../candidate/continuity';
-import type {Point,Rect} from '../engine/world';
+import {terrainSeams,seamPair} from './terrain-seam-plan';
+import {COASTAL} from '../candidate/continuity';
+import type {Rect} from '../engine/world';
 
 type Material=TerrainPatch['material'];
 export type TerrainContact={scene?:string;field?:'coastal-2d';rect:Rect;axis:'x'|'y';negative:Material;positive:Material;native:'grass-dirt'|'dirt-water'|'grass-water'};
 const cache=new Map<string,TerrainContact[]>();
-const visible=(id:string,p:Point)=>id==='coast'?!(p.x>=1235&&p.x<2035&&p.y>=260&&p.y<820)&&p.y<805:id==='beach'?p.y>=805:id==='path'?p.x>=1235:id==='market'?p.y>=650:id==='bazaar'?p.y<650:true;
-const pair=(a:Material,b:Material)=>[a,b].sort().join('/');
-// Natural shoreline and beach transitions take native cuts. Built quay,
-// boardwalk and bridge contacts keep their authored straight masonry/rail.
+// Natural shoreline and beach transitions take native cuts. Structural pairs
+// are inventoried by terrainSeams but cannot enter this renderer without
+// dedicated quay, pier and dry-join art plus three-material corner review.
 const eligible=(id:string,a:Material,b:Material)=>{
- const p=pair(a,b);return p==='sand/stone'||p==='sand/water'||p==='grass/water'||p==='grass/sand'&&!['hill','camp'].includes(id);
+ const p=seamPair(a,b);return p==='sand/stone'||p==='sand/water'||p==='grass/water'||p==='grass/sand'&&!['hill','camp'].includes(id);
 };
 const native=(a:Material,b:Material):TerrainContact['native']=>a==='water'||b==='water'?(a==='grass'||b==='grass'?'grass-water':'dirt-water'):'grass-dirt';
 
@@ -21,24 +20,7 @@ const native=(a:Material,b:Material):TerrainContact['native']=>a==='water'||b===
  * Only paint: do not extend patches, collision, portal or saved coordinates. */
 export function terrainContacts(scene:string):TerrainContact[]{
  const prior=cache.get(scene);if(prior)return prior;
- const out:TerrainContact[]=[];
- for(const id of zonesFor(scene)){
-  const l=outdoors[id];if(!l)continue;const b=l.bounds;
-  const axis=(k:'x'|'y',s:'w'|'h')=>[...new Set([b[k],b[k]+b[s],...l.patches.flatMap(p=>[Math.max(b[k],Math.min(b[k]+b[s],p[k])),Math.max(b[k],Math.min(b[k]+b[s],p[k]+p[s]))])])].sort((a,c)=>a-c);
-  const xs=axis('x','w'),ys=axis('y','h');
-  const put=(edge:number,start:number,end:number,axis:'x'|'y',negative:Material|undefined,positive:Material|undefined)=>{
-   if(!negative||!positive||negative===positive||!eligible(id,negative,positive))return;
-   // Check visibility in native-size pieces, then merge adjacent accepted pieces.
-   let run:number|undefined;
-   const emit=(until:number)=>{if(run===undefined)return;const local=axis==='x'?{x:edge-16,y:run,w:32,h:until-run}:{x:run,y:edge-16,w:until-run,h:32};
-    out.push({rect:{...globalPoint(id,local),w:local.w,h:local.h},axis,negative:negative!,positive:positive!,native:native(negative!,positive!)});run=undefined};
-   for(let at=start;at<end;at+=16){const stop=Math.min(at+16,end),mid=axis==='x'?{x:edge,y:(at+stop)/2}:{x:(at+stop)/2,y:edge};
-    if(visible(id,globalPoint(id,mid))){run??=at}else emit(at)}
-   emit(end);
-  };
-  for(let i=1;i<xs.length-1;i++)for(let j=0;j<ys.length-1;j++){const x=xs[i],y=(ys[j]+ys[j+1])/2;put(x,ys[j],ys[j+1],'x',terrainAt(l,{x:x-.5,y}),terrainAt(l,{x:x+.5,y}))}
-  for(let j=1;j<ys.length-1;j++)for(let i=0;i<xs.length-1;i++){const y=ys[j],x=(xs[i]+xs[i+1])/2;put(y,xs[i],xs[i+1],'y',terrainAt(l,{x,y:y-.5}),terrainAt(l,{x,y:y+.5}))}
- }
+ const out:TerrainContact[]=terrainSeams(scene).filter(e=>eligible(e.zone,e.negative,e.positive)).map(e=>({rect:e.rect,axis:e.axis,negative:e.negative,positive:e.positive,native:native(e.negative,e.positive)}));
  if(scene===COASTAL){
   // Keep built sand/stone treatment. All natural contacts, including bitmap
   // ownership cuts, are found from the same world field rather than seam IDs.

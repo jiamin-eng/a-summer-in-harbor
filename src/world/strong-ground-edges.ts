@@ -51,7 +51,7 @@ export function strongGroundEdges(scene:string):GroundEdge[]{
    }
   }
  }
- // Harbor/dock are deliberately unchanged until the user's screenshot seam can be located.
+ // Legacy harbor/dock dry strips remain until dedicated structural contact art is admitted.
  for(const id of zonesFor(scene))for(const e of waterBanks(id)){
   const v=e.from.x===e.to.x,len=v?e.to.y-e.from.y:e.to.x-e.from.x,dir=e.side==='E'||e.side==='S'?1:-1;
   for(let t=0,i=0;t<len;t+=32,i++){
