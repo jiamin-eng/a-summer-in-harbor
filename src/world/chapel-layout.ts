@@ -9,7 +9,7 @@ export function addChapel(rooms:Record<string,Room>){
  rooms.chapel={id:'chapel',title:['教堂大厅','Chapel Hall'],area:'hill',outdoor:false,spawn:{x:470,y:559},interior:{x:270,y:225,w:420,h:360},map:{x:1.28,y:-.1},neighbors:['hill'],entities:[
   {id:'exit',label:['山坡','The Hill'],kind:'portal',destination:'hill',at:{x:480,y:582},approach:{x:470,y:559}},
   {id:'chapel-note',label:['社区活动便条','Community activity note'],kind:'object',at:{x:625,y:525},approach:{x:617,y:559},actions:['chapel-read-notice','chapel-recall']},
-  {id:'chapel-reading',label:['阅读角','Reading corner'],kind:'object',at:{x:355,y:352},approach:{x:347,y:386},actions:['chapel-help-reading','chapel-recall']},
+  {id:'chapel-reading',label:['阅读角','Reading corner'],kind:'object',at:{x:355,y:352},approach:{x:347,y:360},actions:['chapel-help-reading','chapel-recall']},
   {id:'chapel-seat',label:['靠过道的座席','Aisle-side seats'],kind:'object',at:{x:580,y:485},approach:{x:572,y:519},actions:['chapel-listen','chapel-recall']},
  ],props:[
   {id:'bookcase',art:'interior-bookcase-v1',at:{x:335,y:280},width:65,footprint:{x:307,y:263,w:56,h:17}},

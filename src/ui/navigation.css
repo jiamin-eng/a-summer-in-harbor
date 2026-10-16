@@ -82,6 +82,6 @@
 
 /* Reuse the former white objective position for the existing person dialogue. */
 .harbor-backdrop--conversation{align-items:flex-start;justify-content:flex-start;padding-top:calc(var(--harbor-location-bottom) + 12px)}
-.harbor-panel--conversation{width:min(450px,100%);max-height:calc(100dvh - var(--harbor-location-bottom) - 24px - var(--harbor-safe-bottom));border:2px solid var(--line);box-shadow:inset 0 2px var(--paper-light),0 3px var(--edge)}
+.harbor-panel--conversation{width:min(450px,100%);max-height:calc(100dvh - var(--harbor-host-top) - var(--harbor-location-bottom) - 24px - var(--harbor-safe-bottom));border:2px solid var(--line);box-shadow:inset 0 2px var(--paper-light),0 3px var(--edge)}
 .harbor-panel--conversation>header{background:var(--paper)}
 .harbor-panel--conversation .harbor-panel__body{overflow:auto;overscroll-behavior:contain;touch-action:pan-y pinch-zoom}
