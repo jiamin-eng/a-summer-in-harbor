@@ -9,6 +9,8 @@ import {strongGroundEdges as candidateGroundEdges} from '../world/strong-ground-
 import {strongGroundEdges as formalGroundEdges} from '../world/qa-formal-ground';
 import {terrainContacts} from '../world/terrain-contacts';
 import {prepareTerrainContact,terrainContactTexture} from '../world/terrain-contact-render';
+import {structuralContactPlan} from '../world/structural-contact-plan';
+import {prepareStructuralContacts,structuralContactLayers} from '../world/structural-contact-render';
 import {sharedGroup} from './shared-admission';
 import {boundaryPieces,boundaryArtWidths,boundaryAsset} from '../world/outdoor-boundaries';
 import {prepareCropImage} from '../world/crop-art';
@@ -55,8 +57,12 @@ async function prepareEdgePixels(p:ReturnType<typeof strongGroundEdges>[number])
  const texture=await Assets.load<Texture>(canvas.toDataURL('image/png'));texture.source.scaleMode='nearest';edgeTextures.set(key,texture);
 }
 const demoMode=typeof location==='undefined'?'':new URLSearchParams(location.search).get('material-demo')??'';
-const strongGroundEdges=(id:string):ReturnType<typeof candidateGroundEdges>=>demoMode==='current'?formalGroundEdges(id):candidateGroundEdges(id);
+const structuralEnabled=(id:string)=>demoMode!=='current'&&!nativeTerrainEnabled(id)&&!(originalMapReplay&&id==='harbor');
+const hasStructuralEdges=(id:string)=>structuralEnabled(id)&&structuralContactPlan(id).length>0;
+const strongGroundEdges=(id:string):ReturnType<typeof candidateGroundEdges>=>demoMode==='current'?formalGroundEdges(id):candidateGroundEdges(id).filter(p=>!(hasStructuralEdges(id)&&['harbor','dock'].includes(id)&&p.material==='wood'&&!p.native));
 const contactEdges=(id:string)=>demoMode==='current'?[]:terrainContacts(id);
+const hasGroundLayers=(id:string)=>!!(strongGroundEdges(id).length||contactEdges(id).length||hasStructuralEdges(id));
+const structuralLayers=(id:string)=>structuralEnabled(id)?structuralContactLayers(id):[];
 const demoTextures=new Map<string,Texture>();
 const demoKey=(p:ReturnType<typeof materialDemoPieces>[number])=>JSON.stringify(p);
 async function prepareMaterialDemo(id:string){
@@ -121,7 +127,7 @@ export function adaptContinuousSpace(original:SpaceOptions,create:(o:SpaceOption
  raw=create({...original,world:renderWorld,scene:renderScene(logical),position:globalPoint(logical,original.position),spritesheets:[...original.spritesheets,ground,...boundarySheets,...railSheets],
   mapEvents:id=>[...(!clusters[id]?original.mapEvents(id):[
    ...(id===CLUSTER?[{id:'base-'+CLUSTER,x:0,y:0,event:{onInit(this:any){this.setHitbox(1,1);this.through=true;this.animationFixed=true;this.setGraphic(ground.id);this.animationName.set('stand');this.syncChanges()}}}]:[]),
-   ...clusters[id].zones.flatMap(zone=>original.mapEvents(zone).filter(e=>!e.id.startsWith('base-')).map(e=>wrappedEvent(zone,e)))]).filter(e=>nativeTerrainEnabled(id)?!e.id.startsWith('base-'):originalMapReplay&&id==='harbor'?!e.id.startsWith('base-'):!strongGroundEdges(id).length||!e.id.startsWith('base-')),...boundaryEvents(id),...railEvents(id)],
+   ...clusters[id].zones.flatMap(zone=>original.mapEvents(zone).filter(e=>!e.id.startsWith('base-')).map(e=>wrappedEvent(zone,e)))]).filter(e=>nativeTerrainEnabled(id)?!e.id.startsWith('base-'):originalMapReplay&&id==='harbor'?!e.id.startsWith('base-'):!hasGroundLayers(id)||!e.id.startsWith('base-')),...boundaryEvents(id),...railEvents(id)],
   cameraBounds:id=>clusters[id]?.canvas??original.cameraBounds?.(id)??clusters[CLUSTER].canvas,
   cameraWalkBounds:id=>clusters[id]?base.scenes[id].interior:original.cameraWalkBounds?.(id)??original.world.scenes[id].interior,
   cameraSafeArea:original.cameraSafeArea,
@@ -135,10 +141,10 @@ export function adaptContinuousSpace(original:SpaceOptions,create:(o:SpaceOption
    {texture:Assets.get('./map/beach-base.png'),crop:{x:80,y:400,w:800,h:90},at:{x:150,y:805},clip:{x:150,y:805,w:800,h:90}},
    // Existing stone pixels taper 120px coast road to the 100px path road.
    {texture:Assets.get('./map/coast-base.png'),crop:{x:100,y:415,w:180,h:120},at:{x:1210,y:415},clip:{x:1210,y:415,w:180,h:120},polygon:[{x:1210,y:415},{x:1240,y:415},{x:1240,y:419},{x:1260,y:419},{x:1260,y:423},{x:1280,y:423},{x:1280,y:425},{x:1390,y:425},{x:1390,y:525},{x:1280,y:525},{x:1280,y:527},{x:1260,y:527},{x:1260,y:531},{x:1240,y:531},{x:1240,y:535},{x:1210,y:535}]}
-  ]:strongGroundEdges(id).length||contactEdges(id).length?[{texture:Assets.get(id===CLUSTER?ground.image:'./map/'+id+'-base.png'),at:{x:0,y:0},clip:clusters[id]?.canvas??original.cameraBounds?.(id)??original.world.scenes[id].interior},...(original.floorLayers?.(id)??[])]:original.floorLayers?.(id)??[]),...strongGroundEdges(id).map(p=>({texture:edgeTextures.get(edgeKey(p))!,at:p.rect,clip:p.rect})),...contactEdges(id).map(p=>({texture:terrainContactTexture(p)!,at:p.rect,clip:p.rect})),...materialDemoLayers(id),...railFloorLayers(id)],
+  ]:hasGroundLayers(id)?[{texture:Assets.get(id===CLUSTER?ground.image:'./map/'+id+'-base.png'),at:{x:0,y:0},clip:clusters[id]?.canvas??original.cameraBounds?.(id)??original.world.scenes[id].interior},...(original.floorLayers?.(id)??[])]:original.floorLayers?.(id)??[]),...strongGroundEdges(id).map(p=>({texture:edgeTextures.get(edgeKey(p))!,at:p.rect,clip:p.rect})),...contactEdges(id).map(p=>({texture:terrainContactTexture(p)!,at:p.rect,clip:p.rect})),...structuralLayers(id),...materialDemoLayers(id),...railFloorLayers(id)],
   cameraBackdrop:original.cameraBackdrop?(id=>original.cameraBackdrop!(clusters[id]?zone():id)):undefined,
   foregroundReveal:original.foregroundReveal?.map(reveal=>({...reveal,active:(p,id)=>reveal.active?.(clusters[id]?localPoint(zone(),p):p,clusters[id]?zone():id)??true,textureForScene:id=>reveal.textureForScene(clusters[id]?zone():id),originForScene:reveal.originForScene?(id)=>{const source=clusters[id]?zone():id,origin=reveal.originForScene!(source);return clusters[id]?{...origin,...globalPoint(source,origin)}:origin}:undefined})),
-  prepareScene:async id=>{if(clusters[id]){await Promise.all(clusters[id].zones.map(zone=>original.prepareScene?.(zone)));if(id===CLUSTER)await Assets.load(ground.image)}else await original.prepareScene?.(id);await prepareMaterialDemo(id);await prepareRail(id);await prepareOriginalMap(id);await prepareNativeTerrain(id);const edges=strongGroundEdges(id);if(edges.length){for(const p of edges)await prepareEdgePixels(p)};for(const p of contactEdges(id))await prepareTerrainContact(p);await Promise.all([...new Set(boundaryPieces(id).map(p=>p.art))].map(async art=>{if(boundaryTextures.has(art))return;const asset=boundaryAsset(art),url='./art/'+asset+'.png',source=['coastal-rocks','flower-planter'].includes(asset)?await prepareCropImage(url):url;const alias='harbor-boundary-image-'+art;Assets.add({alias,src:source});const texture=await Assets.load<Texture>(alias);texture.source.scaleMode='nearest';boundaryTextures.set(art,texture)}))},
+  prepareScene:async id=>{if(clusters[id]){await Promise.all(clusters[id].zones.map(zone=>original.prepareScene?.(zone)));if(id===CLUSTER)await Assets.load(ground.image)}else await original.prepareScene?.(id);await prepareMaterialDemo(id);await prepareRail(id);await prepareOriginalMap(id);await prepareNativeTerrain(id);const edges=strongGroundEdges(id);if(edges.length){for(const p of edges)await prepareEdgePixels(p)};for(const p of contactEdges(id))await prepareTerrainContact(p);if(hasStructuralEdges(id))await prepareStructuralContacts(id);await Promise.all([...new Set(boundaryPieces(id).map(p=>p.art))].map(async art=>{if(boundaryTextures.has(art))return;const asset=boundaryAsset(art),url='./art/'+asset+'.png',source=['coastal-rocks','flower-planter'].includes(asset)?await prepareCropImage(url):url;const alias='harbor-boundary-image-'+art;Assets.add({alias,src:source});const texture=await Assets.load<Texture>(alias);texture.source.scaleMode='nearest';boundaryTextures.set(art,texture)}))},
   walkable:(p,id)=>{if(!clusters[id])return original.walkable?.(p,id)??walkable(original.world,id,p);let z=zone();const start=raw.position(),sweptWorld=original.collisionWorld?.()??original.world;let previous=start;const steps=Math.max(1,Math.ceil(Math.hypot(p.x-start.x,p.y-start.y)));for(let i=1;i<=steps;i++){const q={x:start.x+(p.x-start.x)*i/steps,y:start.y+(p.y-start.y)*i/steps};if(!clusterWalkable(sweptWorld,q,z,previous))return false;z=pointZone(q,z,previous);if(!sharedGroup(z)&&original.walkable&&!original.walkable(localPoint(z,q),z))return false;previous=q;}return true},
   // Arrival validates the preserved logical map, whose overlap can differ from
   // the combined renderer's static obstacle union. Prediction still uses its
