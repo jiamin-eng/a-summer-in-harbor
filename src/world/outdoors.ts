@@ -69,15 +69,16 @@ outdoors.coast.patches.push({x:495,y:80,w:110,h:450,material:'stone'},{x:495,y:5
 outdoors.hill.patches.push({x:305,y:110,w:100,h:160,material:'sand'},{x:955,y:110,w:100,h:180,material:'sand'});
 outdoors.beach.patches.push({x:430,y:120,w:100,h:430,material:'sand'});
 outdoors.path.patches.push({x:80,y:285,w:150,h:100,material:'stone'});
-// The east road meets a widening dry shore, rather than becoming a narrow
-// stone pier over open water. The return path on the Coast stays at 90,469.
+// The east road meets the broad stone harbor frontage before the playable
+// edge. Its sign and standing point share dry stone with the exit itself.
+// The return path on the Coast stays at 90,469.
 outdoors.harbor.patches.push(
- {x:1110,y:350,w:90,h:210,material:'sand'},
- {x:1200,y:295,w:120,h:320,material:'sand'},
- {x:40,y:395,w:1280,h:110,material:'stone'}
+ {x:1120,y:220,w:80,h:380,material:'stone'},
+ {x:1200,y:280,w:120,h:320,material:'stone'}
 );
+// Water collision is partitioned from the top material below. The old broad
+// x=1150 barrier would invisibly block this dry frontage.
 outdoors.harbor.barriers=outdoors.harbor.barriers.filter(b=>b.x!==1150);
-outdoors.harbor.barriers.push({x:1150,y:80,w:170,h:215},{x:1150,y:615,w:170,h:345});
 
 // Rocks/trees/tents already have grounded prop footprints. Old placeholder
 // rectangles here blocked empty grass and no longer represent scenery.
