@@ -1,19 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createNoParamTokenCandidateProbe} from '../server/platform-no-param-token-candidate';
+import {PLATFORM_SELF_URL} from '../server/platform-token-verifier';
 
-const endpoint='https://aigram.aiwaves.tech/candidate/current-user';
+const endpoint=PLATFORM_SELF_URL;
 const bigId='9007199254740993';
 const reply=(body:unknown,status=200,contentType='application/json')=>new Response(JSON.stringify(body),{status,headers:{'content-type':contentType}});
 const success={retcode:0,errcode:0,data:{telegram_id:bigId}};
 
-test('no-param mock sends only a synthetic Bearer and compares large ID strings exactly',async()=>{
+test('no-param mock sends only a synthetic raw token header and compares large ID strings exactly',async()=>{
  let requests=0;
  const fetchImpl=(async (input:RequestInfo|URL,init?:RequestInit)=>{
   requests++;
-  const url=new URL(String(input));assert.equal(url.origin,'https://aigram.aiwaves.tech');
+  const url=new URL(String(input));assert.equal(url.href,PLATFORM_SELF_URL);
   assert.equal(url.search,'');assert.equal(url.hash,'');assert.equal(init?.method,'GET');
-  assert.equal((init?.headers as Record<string,string>).Authorization,'Bearer synthetic-only');
+  const headers=new Headers(init?.headers);assert.equal(headers.get('token'),'synthetic-only');assert.equal(headers.get('Authorization'),null);
   assert.equal(init?.redirect,'error');assert.equal(init?.cache,'no-store');
   assert.equal(init?.credentials,'omit');
   return reply(success);

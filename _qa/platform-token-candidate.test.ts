@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {createPlatformTokenVerifier,PLATFORM_SELF_ORIGIN} from '../server/platform-token-verifier';
+import {createPlatformTokenVerifier,PLATFORM_SELF_URL} from '../server/platform-token-verifier';
 import {liveHostToken,attachIdentityHeaders,assertCandidateSameOrigin,candidatePlatformTokenEnabled,readHostAccountId} from '../src/account-link/platform-token';
 import {makeDemoServer} from './temporary-account-server';
 import {GAME_UUID} from '../src/game-id';
@@ -12,10 +12,9 @@ import {handleApi} from '../worker/index.js';
 
 const idA='9007199254740993',idB='9007199254740992';
 const tokenA='synthetic.token.A',tokenB='synthetic.token.B';
-const endpoint=PLATFORM_SELF_ORIGIN+'/candidate/current-user';
 const payload=(id:unknown)=>({retcode:0,errcode:0,data:{telegram_id:id}});
 const err=(e:unknown)=>e as Error&{code:string;status:number};
-const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>Response.json(f(new Headers(init?.headers).get('Authorization')??''))) as typeof fetch);
+const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>Response.json(f(new Headers(init?.headers).get('token')??''))) as typeof fetch);
 
 test('default build stays off; candidate reads exact live Aigram.id and token without old-host fallback',()=>{
  assert.equal(candidatePlatformTokenEnabled,false);
@@ -44,21 +43,20 @@ test('default build stays off; candidate reads exact live Aigram.id and token wi
  for(const invalid of [undefined,3,'','bad token','bad\nvalue','x'.repeat(4097)])assert.equal(liveHostToken({Aigram:{token:invalid}}),null);
 });
 
-test('verified mode requires an explicit no-query endpoint on the platform origin',()=>{
- assert.throws(()=>createPlatformTokenVerifier(),/PLATFORM_ENDPOINT_UNCONFIGURED/);
- for(const bad of [endpoint+'?telegram_id='+idA,'https://example.invalid/me','http://aigram.aiwaves.tech/me',PLATFORM_SELF_ORIGIN+'/'])
-  assert.throws(()=>createPlatformTokenVerifier({endpoint:bad,fetchImpl:mock(()=>payload(idA))}),/PLATFORM_ENDPOINT_INVALID/);
+test('verified candidate pins Wang Xing exact no-parameter self endpoint',()=>{
+ assert.equal(PLATFORM_SELF_URL,'https://aigram.aiwaves.tech/note/wallet/aigram/get/alteru/window/info');
+ const url=new URL(PLATFORM_SELF_URL);assert.equal(url.search,'');assert.equal(url.hash,'');
 });
 
-test('no-parameter GET checks Bearer subject per request and preserves ID digits',async()=>{
+test('no-parameter GET sends raw token header, checks its subject per request and preserves ID digits',async()=>{
  let calls=0;
  const fetchImpl=(async(input:URL|RequestInfo,init?:RequestInit)=>{
-  calls++;const url=new URL(String(input));assert.equal(url.href,endpoint);assert.equal(url.search,'');
+  calls++;const url=new URL(String(input));assert.equal(url.href,PLATFORM_SELF_URL);assert.equal(url.search,'');
   assert.equal(init?.method,'GET');assert.equal(init?.redirect,'error');assert.equal(init?.cache,'no-store');assert.equal(init?.credentials,'omit');
-  const bearer=new Headers(init?.headers).get('Authorization');
-  return Response.json(payload(bearer==='Bearer '+tokenA?idA:idB));
+  const headers=new Headers(init?.headers);assert.equal(headers.get('Authorization'),null);
+  return Response.json(payload(headers.get('token')===tokenA?idA:idB));
  }) as typeof fetch;
- const verify=createPlatformTokenVerifier({endpoint,fetchImpl});
+ const verify=createPlatformTokenVerifier({fetchImpl});
  assert.deepEqual(await verify(idA,'Bearer '+tokenA),{telegramId:idA,assurance:'platform-token-bound-v1'});
  await assert.rejects(verify(idA,'Bearer '+tokenB),e=>err(e).code==='PLATFORM_TELEGRAM_ID_MISMATCH');
  await verify(idA,'Bearer '+tokenA);assert.equal(calls,3,'no identity cache across requests');
@@ -66,7 +64,7 @@ test('no-parameter GET checks Bearer subject per request and preserves ID digits
 });
 
 test('HTTP, retcode, errcode, JSON, oversized, precision loss and timeout fail closed',async()=>{
- const make=(fetchImpl:typeof fetch)=>createPlatformTokenVerifier({endpoint,fetchImpl,timeoutMs:100});
+ const make=(fetchImpl:typeof fetch)=>createPlatformTokenVerifier({fetchImpl,timeoutMs:100});
  let calls=0;const noFetch=mock(()=>{calls++;return payload(idA)});
  await assert.rejects(make(noFetch)(idA,undefined),e=>err(e).code==='PLATFORM_TOKEN_REQUIRED');
  await assert.rejects(make(noFetch)(Number(idA),'Bearer '+tokenA),e=>err(e).code==='PLATFORM_ID_INVALID');
@@ -112,7 +110,7 @@ test('synthetic old journey keeps its owner; wrong Bearer subject cannot read it
  try{
   const create=await fetch(server.url+'/api/sessions',{method:'POST',headers:{...headers('temporary-unverified'),'Content-Type':'application/json'},body:JSON.stringify({enrollment_id:randomUUID(),locale:'en'})});assert.equal(create.status,200);const journey=(await create.json()).id;
   await server.close();
-  const verify=createPlatformTokenVerifier({endpoint,fetchImpl:mock(token=>payload(token==='Bearer '+tokenA?idA:idB))});
+  const verify=createPlatformTokenVerifier({fetchImpl:mock(token=>payload(token===tokenA?idA:idB))});
   server=await makeDemoServer({directory,gatewayFixture:true,accountOnly:true,mode:'platform-verified-v1',verifyPlatformToken:verify});
   const permitted=await fetch(server.url+'/api/sessions',{headers:headers('platform-verified-v1',tokenA)});assert.equal(permitted.status,200);assert.equal((await permitted.json())[0].id,journey);
   const denied=await fetch(server.url+'/api/sessions',{headers:headers('platform-verified-v1',tokenB)});assert.equal(denied.status,401);assert.equal((await denied.json()).error,'PLATFORM_TELEGRAM_ID_MISMATCH');

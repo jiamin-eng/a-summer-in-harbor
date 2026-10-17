@@ -2,16 +2,12 @@ import {createNoParamTokenCandidateProbe} from './platform-no-param-token-candid
 
 export const PLATFORM_VERIFIED_MODE='platform-verified-v1';
 export const PLATFORM_CANDIDATE_CONTRACT='candidate-token-owner-v1';
-export const PLATFORM_SELF_ORIGIN='https://aigram.aiwaves.tech';
+export const PLATFORM_SELF_URL='https://aigram.aiwaves.tech/note/wallet/aigram/get/alteru/window/info';
 
 /** Wang Xing's no-parameter GET contract was relayed by the user: data.telegram_id
- * identifies the current Bearer subject. The exact endpoint path is supplied
- * only by candidate configuration; no production mode is enabled by this file. */
-export function createPlatformTokenVerifier({endpoint,fetchImpl=fetch,timeoutMs=3000}:{endpoint?:string;fetchImpl?:typeof fetch;timeoutMs?:number}={}){
- if(!endpoint)throw Error('PLATFORM_ENDPOINT_UNCONFIGURED');
- const url=new URL(endpoint);
- if(url.origin!==PLATFORM_SELF_ORIGIN||!url.pathname.startsWith('/')||url.pathname==='/'||url.search||url.hash)throw Error('PLATFORM_ENDPOINT_INVALID');
- const probe=createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs});
+ * is the current token subject. Candidate mode remains disabled by default. */
+export function createPlatformTokenVerifier({fetchImpl=fetch,timeoutMs=3000}:{fetchImpl?:typeof fetch;timeoutMs?:number}={}){
+ const probe=createNoParamTokenCandidateProbe({endpoint:PLATFORM_SELF_URL,fetchImpl,timeoutMs});
  return async (telegramId:unknown,bearerHeader:unknown)=>{
   try{
    const result=await probe(telegramId,bearerHeader);

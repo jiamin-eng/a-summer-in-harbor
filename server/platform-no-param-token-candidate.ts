@@ -1,6 +1,6 @@
 /** Isolated contract probe. Importing this module does not enable account binding.
- * The configured endpoint must be documented by the platform as returning the
- * current Bearer subject; matching a public profile alone is not authentication. */
+ * The fixed no-parameter endpoint is documented by the platform as returning
+ * the current token subject; this module alone does not enable account binding. */
 export type NoParamTokenCandidate = Readonly<{telegramId:string;candidateMatch:true}>;
 type ProbeOptions={endpoint:string;fetchImpl:typeof fetch;timeoutMs?:number};
 
@@ -25,8 +25,8 @@ async function boundedJson(response:Response):Promise<unknown>{
  catch{throw Error('PLATFORM_JSON_INVALID')}
 }
 
-/** The endpoint is supplied explicitly, has no query parameters, and is never
- * called by production wiring. Tests inject a mock fetch and synthetic token. */
+/** The verifier supplies the fixed endpoint. This request sends only the raw
+ * host token in the platform's `token` header, never a Telegram ID parameter. */
 export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3000}:ProbeOptions){
  const url=new URL(endpoint);
  if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash)throw Error('PLATFORM_ENDPOINT_INVALID');
@@ -35,7 +35,7 @@ export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3
   if(typeof expectedTelegramId!=='string'||!idPattern.test(expectedTelegramId))throw Error('PLATFORM_ID_INVALID');
   if(typeof bearerHeader!=='string'||!bearerHeader.startsWith('Bearer ')||!tokenPattern.test(bearerHeader.slice(7)))throw Error('PLATFORM_TOKEN_REQUIRED');
   let response:Response;
-  try{response=await fetchImpl(url,{method:'GET',headers:{Authorization:bearerHeader,Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
+  try{response=await fetchImpl(url,{method:'GET',headers:{token:bearerHeader.slice(7),Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
   catch{throw Error('PLATFORM_HTTP_UNAVAILABLE')}
   if(response.status===401||response.status===403)throw Error('PLATFORM_HTTP_REJECTED');
   if(response.status!==200)throw Error('PLATFORM_HTTP_UNAVAILABLE');

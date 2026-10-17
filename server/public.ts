@@ -16,9 +16,9 @@ import {AsyncSessionAuthority,openPgAuthorityStore} from '../vendor/dynamic-runt
 import {createPlayerUsage} from '../vendor/dynamic-runtime/packages/dynamic-pipeline/player-usage.mjs';
 import {json} from './http';import {privateText,validatePublicConfig,verifiedEdgeOwner} from './public-config';import {createDialogueResolver} from './dialogue';import {createFieldNotes} from './fieldnotes';import {createNoteMedia} from './note-media';import {GAME_UUID} from '../src/game-id';
 const config=validatePublicConfig(JSON.parse(await privateText(process.env.HARBOR_CONFIG_FILE))),token=await privateText(process.env.HARBOR_EDGE_FILE);if(!/^[a-f0-9]{64}$/.test(token))throw Error('EDGE_TOKEN_INVALID');
-// Candidate mode is absent from the published config. Its no-parameter self
-// endpoint must be provided explicitly; malformed config fails before PG opens.
-const verifyPlatformToken=config.identityMode===PLATFORM_VERIFIED_MODE?createPlatformTokenVerifier({endpoint:config.platformSelfEndpoint}):undefined;
+// Candidate mode is absent from the published config. When explicitly enabled,
+// the verifier uses Wang Xing's fixed no-parameter self endpoint.
+const verifyPlatformToken=config.identityMode===PLATFORM_VERIFIED_MODE?createPlatformTokenVerifier():undefined;
 const pool=new Pool({host:config.pgHost,database:config.database,user:config.user,password:await privateText(process.env.HARBOR_PG_PASSWORD_FILE),max:4,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});
 // The frozen library retains its historical test gate. This adapter does not
 // relabel that as generic certification; public release needs the game's canary.
