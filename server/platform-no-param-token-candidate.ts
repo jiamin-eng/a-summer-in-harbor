@@ -37,7 +37,8 @@ export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3
   let response:Response;
   try{response=await fetchImpl(url,{method:'GET',headers:{Authorization:bearerHeader,Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
   catch{throw Error('PLATFORM_HTTP_UNAVAILABLE')}
-  if(response.status!==200)throw Error('PLATFORM_HTTP_REJECTED');
+  if(response.status===401||response.status===403)throw Error('PLATFORM_HTTP_REJECTED');
+  if(response.status!==200)throw Error('PLATFORM_HTTP_UNAVAILABLE');
   const payload=await boundedJson(response);
   if(!object(payload)||payload.retcode!==0)throw Error('PLATFORM_RETCODE_INVALID');
   if(payload.errcode!==0)throw Error('PLATFORM_ERRCODE_INVALID');
