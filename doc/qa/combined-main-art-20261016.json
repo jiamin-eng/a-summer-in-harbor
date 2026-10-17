@@ -1,0 +1,126 @@
+{
+  "base": "69e01b5fec7e02aa71d2a2a9074df7a3e7651bc5",
+  "portFix": "c76e03539f63aee5afa12d566d86a3f3f50c0666",
+  "sourceScope": "local integration only; preserve save schema and scene IDs",
+  "rights": "Delivery records grant local-production, necessary-revisions and internal-review; no new Library admission or third-party budget transfer inferred",
+  "modelCalls": 0,
+  "formalInventoryWrites": 0,
+  "productionWrites": 0,
+  "items": [
+    {
+      "group": "chapel",
+      "subject": "chapel-stained-glass-window",
+      "target": "public/art/chapel-stained-glass-window.png",
+      "sha256": "a3dca35645a1afdc0a0e8613edfb327ee8bc97b074771b09132d84b781586d5b",
+      "reviewSha256": "7147fe2b0c8b78b1c6448f6f399528c0f56a861346f9e10de56a7ae74eaa8c8e",
+      "geometry": {
+        "worldWidth": 32,
+        "worldHeight": 64,
+        "collider": null,
+        "attachment": "existing-north-wall"
+      },
+      "tint": "0xffffff"
+    },
+    {
+      "group": "chapel",
+      "subject": "chapel-wood-pew",
+      "target": "public/art/chapel-wood-pew.png",
+      "sha256": "35de66524ce7a40c988048222eea5dda84f682b80a0e2f97e4a55f95a1719572",
+      "reviewSha256": "7147fe2b0c8b78b1c6448f6f399528c0f56a861346f9e10de56a7ae74eaa8c8e",
+      "geometry": {
+        "worldWidth": 68,
+        "worldHeight": 25.5,
+        "footprint": [
+          64,
+          14
+        ]
+      },
+      "tint": "0xffffff"
+    },
+    {
+      "group": "chapel",
+      "subject": "chapel-altar",
+      "target": "public/art/chapel-altar.png",
+      "sha256": "233117902a5f8d2972f0f611156b74201a45ab8cac483a446a346dad5c3eab5b",
+      "reviewSha256": "7147fe2b0c8b78b1c6448f6f399528c0f56a861346f9e10de56a7ae74eaa8c8e",
+      "geometry": {
+        "worldWidth": 94,
+        "worldHeight": 47,
+        "footprint": [
+          84,
+          22
+        ]
+      },
+      "tint": "0xffffff"
+    },
+    {
+      "group": "chapel",
+      "subject": "chapel-floor-candlestick",
+      "target": "public/art/chapel-floor-candlestick.png",
+      "sha256": "e2ab753aaa0facab254e4c120c390febaaa300fc4d814efc99aa0d68b36fe495",
+      "reviewSha256": "7147fe2b0c8b78b1c6448f6f399528c0f56a861346f9e10de56a7ae74eaa8c8e",
+      "geometry": {
+        "worldWidth": 12,
+        "worldHeight": 48,
+        "footprint": [
+          10,
+          10
+        ]
+      },
+      "tint": "0xffffff"
+    },
+    {
+      "group": "garden",
+      "subject": "pedestal-sundial",
+      "target": "public/art/pedestal-sundial.png",
+      "sha256": "c6fdfc5c4b466daa9a6d5972083a79678ccf147714de56eb893b21d8f6aa0264",
+      "reviewSha256": "d3a7ddf7c808c21905d9eed7f1edcb299d6cce6788c4f4d2558137409d512164",
+      "geometry": "local slot profile in src/world/garden-static.ts; actual Main visual acceptance required"
+    },
+    {
+      "group": "garden",
+      "subject": "clay-chiminea",
+      "target": "public/art/clay-chiminea.png",
+      "sha256": "097f8e66a3bda9c8ed6ab0f4ad47ebf55c43d0f6247dcce6fd006f19bd12bd9a",
+      "reviewSha256": "d3a7ddf7c808c21905d9eed7f1edcb299d6cce6788c4f4d2558137409d512164",
+      "geometry": "local slot profile in src/world/garden-static.ts; actual Main visual acceptance required"
+    },
+    {
+      "group": "garden",
+      "subject": "nest-birdhouse",
+      "target": "public/art/nest-birdhouse.png",
+      "sha256": "ac9a4f156b07e94f4c3f940e743087d37faf3291078f9d88b505d46a2675cff6",
+      "reviewSha256": "d3a7ddf7c808c21905d9eed7f1edcb299d6cce6788c4f4d2558137409d512164",
+      "geometry": "local slot profile in src/world/garden-static.ts; actual Main visual acceptance required"
+    },
+    {
+      "group": "garden",
+      "subject": "wooden-beehive-box",
+      "target": "public/art/wooden-beehive-box.png",
+      "sha256": "20fc951549abec464a968da794dc824ddb097f47af9c39d7c9251c3ebc74b547",
+      "reviewSha256": "d3a7ddf7c808c21905d9eed7f1edcb299d6cce6788c4f4d2558137409d512164",
+      "geometry": "local slot profile in src/world/garden-static.ts; actual Main visual acceptance required"
+    },
+    {
+      "group": "rope",
+      "subject": "pier-rope-v1",
+      "target": "public/art/pier-rope-v1.png",
+      "sha256": "f163b519f49b804a8a4141ef39421cf8364e708aae9274fb329e9c142f28e5e1",
+      "reviewSha256": "900efb0ead68916b2f72bb6e66ef03054902eb220975adf4f3c50e42fb1e7c86",
+      "geometry": "src/world/pier-rope-layout.json"
+    },
+    {
+      "group": "rope",
+      "subject": "existing-C-post-5x26",
+      "target": "public/art/existing-C-post-5x26.png",
+      "sha256": "d6cce4d299c86aacf59565a1a20f1a3366c0ee2eaf4186d245f493f3a874971a",
+      "reviewSha256": "900efb0ead68916b2f72bb6e66ef03054902eb220975adf4f3c50e42fb1e7c86",
+      "geometry": "src/world/pier-rope-layout.json"
+    }
+  ],
+  "notes": [
+    "Chapel pew RGB already includes approved 0x787b85 tint; runtime remains white.",
+    "Garden four props are static local consumers; no new plant behavior or canonical identity.",
+    "Rope floor composite uses exact atlas source rectangles at 1 source pixel per world unit, display offset -23; seven old posts are through-only scene props."
+  ]
+}

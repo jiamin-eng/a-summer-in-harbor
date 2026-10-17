@@ -1,6 +1,8 @@
 import {addNeighborGathering} from './neighbor-gathering';
 import {chapelPriestPeople} from './chapel-priest';
 import {addChapel} from './chapel-layout';
+import {gardenStaticProps} from './garden-static';
+import {addPierRopePosts} from './pier-rope';
 import {nativeCrabEntities} from '../animals/native-crab-config';
 import {techPeople} from './tech-nomads';
 import {nextPeople} from './next-residents';
@@ -216,6 +218,8 @@ dressHarbor(rooms);
 organizeDailyLife(rooms);
 enrichPlanting(rooms);
 addChapel(rooms);
+rooms.garden.props.push(...gardenStaticProps);
+addPierRopePosts(rooms);
 
 export const doorways=Object.fromEntries(Object.values(rooms).filter(r=>!r.outdoor).map(r=>{
  const floorEnd=r.interior.y+r.interior.h,door={id:'exit',side:'S' as const,center:480,width:50,leafWidth:46,leafBottom:floorEnd+8,opening:{start:455,end:505},activation:{x:441,y:floorEnd-58,w:78,h:58},closedFootprint:{x:455,y:floorEnd,w:50,h:8}};

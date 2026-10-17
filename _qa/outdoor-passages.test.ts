@@ -16,9 +16,22 @@ test('outdoor trail portals have real signs, dry approaches, and reciprocal arri
   assert.ok(walkable(world,scene,p.approach));assert.ok(findPath(world,scene,rooms[scene].spawn,p.approach).length);
   const ground=outdoors[scene].patches.slice().reverse().find(t=>p.at.x>=t.x&&p.at.x<=t.x+t.w&&p.at.y>=t.y&&p.at.y<=t.y+t.h);
   assert.ok(ground&&!['water','grass'].includes(ground.material),`${scene}/${destination} uses an actual path`);
+  const signGround=outdoors[scene].patches.slice().reverse().find(t=>p.sign.x>=t.x&&p.sign.x<t.x+t.w&&p.sign.y>=t.y&&p.sign.y<t.y+t.h);
+  assert.ok(signGround&&signGround.material!=='water',`${scene}/${destination} sign stands on dry terrain`);
+  assert.ok(!outdoors[scene].barriers.some(b=>p.sign.x>=b.x&&p.sign.x<b.x+b.w&&p.sign.y>=b.y&&p.sign.y<b.y+b.h),`${scene}/${destination} sign is not inside an invisible barrier`);
   const back=rooms[destination].entities.find(e=>e.destination===scene)!;
   assert.ok(back&&walkable(world,destination,back.approach),'arrival is a safe reciprocal portal');
  }
+});
+test('harbor-to-coast road ends at the playable shore while both approaches and the sign stay usable',()=>{
+ const harbor=outdoors.harbor,p=passages.harbor.coast,back=passages.coast.harbor;
+ assert.deepEqual(p.at,{x:1280,y:450});assert.deepEqual(p.approach,{x:1244,y:444});
+ assert.deepEqual(back.at,{x:70,y:475});assert.deepEqual(back.approach,{x:90,y:469});
+ const east=harbor.bounds.x+harbor.bounds.w;
+ assert.equal(Math.max(...harbor.patches.filter(t=>t.material==='stone'&&t.y===395&&t.h===110).map(t=>t.x+t.w)),east);
+ assert.ok(findPath(world,'harbor',rooms.harbor.spawn,p.approach).length);
+ assert.ok(findPath(world,'coast',rooms.coast.spawn,back.approach).length);
+ assert.ok(walkable(world,'harbor',{x:p.sign.x-28,y:p.sign.y-6}),'sign has a dry nearby standing point');
 });
 test('coast path and beach can be entered and returned through new approaches without changing story IDs',()=>{
  let s=initial('en',randomUUID());

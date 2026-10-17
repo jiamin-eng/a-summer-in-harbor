@@ -82,6 +82,19 @@
 
 /* Reuse the former white objective position for the existing person dialogue. */
 .harbor-backdrop--conversation{align-items:flex-start;justify-content:flex-start;padding-top:calc(var(--harbor-location-bottom) + 12px)}
-.harbor-panel--conversation{width:min(450px,100%);max-height:calc(100dvh - var(--harbor-location-bottom) - 24px - var(--harbor-safe-bottom));border:2px solid var(--line);box-shadow:inset 0 2px var(--paper-light),0 3px var(--edge)}
+.harbor-panel--conversation{width:min(450px,100%);max-height:calc(100dvh - var(--harbor-host-top) - var(--harbor-location-bottom) - 24px - var(--harbor-safe-bottom));border:2px solid var(--line);box-shadow:inset 0 2px var(--paper-light),0 3px var(--edge)}
 .harbor-panel--conversation>header{background:var(--paper)}
 .harbor-panel--conversation .harbor-panel__body{overflow:auto;overscroll-behavior:contain;touch-action:pan-y pinch-zoom}
+/* Short landscape viewports need the dialogue scrollport above the bottom input strip. */
+@media (min-width:640px) and (max-height:500px){
+ .harbor-location.harbor-next-step{width:min(450px,calc(100% - 400px))}
+ .harbor-backdrop--conversation{justify-content:flex-end;padding-top:calc(var(--harbor-header-bottom) + 8px);padding-right:16px}
+ .harbor-panel--conversation{width:min(340px,100%);max-height:calc(100dvh - var(--harbor-host-top) - var(--harbor-header-bottom) - 92px - var(--harbor-safe-bottom))}
+ .harbor-panel--conversation>header{padding-block:7px}
+}
+/* Below the two-column width, give the conversation its own reading surface. */
+@media (max-width:639px) and (max-height:500px) and (orientation:landscape){
+ .harbor-backdrop--conversation{align-items:flex-start;justify-content:center;padding:10px 10px 0;background:#193b36}
+ .harbor-panel--conversation{width:min(540px,100%);max-height:calc(100dvh - var(--harbor-host-top) - 90px - var(--harbor-safe-bottom))}
+ .harbor-panel--conversation>header{padding:4px 12px}
+}
