@@ -92,3 +92,9 @@
  .harbor-panel--conversation{width:min(340px,100%);max-height:calc(100dvh - var(--harbor-host-top) - var(--harbor-header-bottom) - 92px - var(--harbor-safe-bottom))}
  .harbor-panel--conversation>header{padding-block:7px}
 }
+/* Below the two-column width, give the conversation its own reading surface. */
+@media (max-width:639px) and (max-height:500px) and (orientation:landscape){
+ .harbor-backdrop--conversation{align-items:flex-start;justify-content:center;padding:10px 10px 0;background:#193b36}
+ .harbor-panel--conversation{width:min(540px,100%);max-height:calc(100dvh - var(--harbor-host-top) - 90px - var(--harbor-safe-bottom))}
+ .harbor-panel--conversation>header{padding:4px 12px}
+}
