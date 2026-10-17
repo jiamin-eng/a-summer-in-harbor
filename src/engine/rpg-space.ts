@@ -58,13 +58,13 @@ function createRawRpgSpace(options:SpaceOptions){
  const debug=new URLSearchParams(location.search).has('debug');
  let scene=options.scene,pos={...options.position},client:RpgClientEngine|undefined,player:RpgPlayer|undefined;
  let disposed=false,frame=0;
- let loaded:string|null=null,joined:string|null=null,paused=true,changing=false,last=0,stride=0,stick={x:0,y:0},route:Point[]=[];
+ let loaded:string|null=null,joined:string|null=null,paused=true,changing=false,last=0,stride=0,stick={x:0,y:0},route:Point[]=[],routeGoal:Point|undefined,replans=0;
  let arrive:(()=>void)|undefined,engineWidth=360,engineHeight=520,scale=1,leftInset=0,predictionBlocked=false;
  const checks=new Set<()=>void>(),keys=new Set<string>();
  const input=()=>predictionBlocked?{x:0,y:0,route:[] as Point[]}:{x:stick.x+Number(keys.has('d')||keys.has('arrowright'))-Number(keys.has('a')||keys.has('arrowleft')),y:stick.y+Number(keys.has('s')||keys.has('arrowdown'))-Number(keys.has('w')||keys.has('arrowup')),route};
  const elapsed=createElapsedMotion(performance.now(),input()),changedInput=()=>elapsed.input(performance.now(),input());
  const wait=(id:string)=>new Promise<void>((resolve,reject)=>{const check=()=>{if(loaded===id&&joined===id){clearTimeout(timer);checks.delete(check);resolve()}};const timer=setTimeout(()=>{checks.delete(check);reject(new Error('MAP_LOAD_TIMEOUT'))},12000);checks.add(check);check()});
- const cancel=()=>{route=[];arrive=undefined;options.onDestination(null)};
+ const cancel=()=>{route=[];routeGoal=undefined;replans=0;arrive=undefined;options.onDestination(null)};
  const projectPlayer=()=>{const sprite=client?.getCurrentPlayer();if(!sprite||!player)return;
   // This local actor is already projected from Harbor's swept elapsed motion.
   // RPGJS also queues one interpolation frame per teleport (including network
@@ -153,7 +153,7 @@ function createRawRpgSpace(options:SpaceOptions){
  const observer=new ResizeObserver(resize);observer.observe(host.parentElement!);resize();
  const runtime:Space={dispose:()=>{if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',clearInput);document.removeEventListener('visibilitychange',visibility);checks.clear();spriteLifecycle.dispose();staticSprites.dispose();floorResources.dispose();backdrop?.destroy();backdrop=undefined;client?.renderer?.runners.prerender.remove(presentation);client?.clear();client=undefined;player=undefined},sampleMovement:()=>{if(candidateEnabled())advancePlayer(performance.now(),paused||changing||options.controlsBlocked()||document.hidden,0)},movementPending:()=>!!(stick.x||stick.y||keys.size||route.length),suspendPrediction:value=>{predictionBlocked=value;changedInput()},projectEventGraphic:(id,graphic)=>{const e=(client as any)?.sceneMap?.events?.()[id];if(e&&JSON.stringify(e.graphics())!==JSON.stringify(graphic))e.graphics.set([...graphic])},installSpritesheets:sheets=>{if(!client)throw Error("RENDERER_NOT_READY");for(const sheet of sheets)client.addSpriteSheet(sheet)},position:()=>({...pos}),scene:()=>scene,renderedScene:()=>loaded,
   move:(x,y)=>{stick={x,y};if(x||y)cancel();changedInput()},
-  walkTo:(target,callback)=>{if(paused||changing)return false;const next=options.findPath?.(pos,target,scene)??findPath(world,scene,pos,target);if(!next.length)return false;route=next;arrive=callback;options.onDestination(target);changedInput();return true},
+  walkTo:(target,callback)=>{if(paused||changing)return false;const next=options.findPath?.(pos,target,scene)??findPath(world,scene,pos,target);if(!next.length)return false;route=next;routeGoal={...target};replans=0;arrive=callback;options.onDestination(target);changedInput();return true},
   pause:value=>{paused=value;stick={x:0,y:0};keys.clear();if(value){cancel();stand()}elapsed.reset(performance.now(),input())},
   restore:async(next,p)=>{if(!(options.arrivalWalkable?.(p,next)??walkable(world,next,p)))throw new Error('INVALID_ARRIVAL');changing=true;cancel();stick={x:0,y:0};stand();try{if(next!==scene){await prepareVisualScene(next);floorResources.leave();loaded=null;joined=null;const changed=await player!.changeMap(next,p);if(!changed)throw new Error('MAP_CHANGE_REJECTED');await wait(next);spriteLifecycle.prune(client)}else await player!.teleport(p);scene=next;pos={...p};changing=false;cameraSignature='';configureCamera();player!.syncChanges();projectPlayer();options.onPosition(pos)}finally{changing=false;elapsed.reset(performance.now(),input())}},
   project:screen,toWorld:unproject,
@@ -188,10 +188,19 @@ function createRawRpgSpace(options:SpaceOptions){
    let {x,y}=slice.input;const activeRoute=slice.input.route;
    let distance=0,finished=false;const length=Math.hypot(x,y);if(length>1){x/=length;y/=length}
    const clear=(point:Point)=>!options.controlsBlocked()&&(options.walkable?.(point,scene)??walkable(world,scene,point));
-   if(!x&&!y&&activeRoute.length){const result=advanceRoute(pos,activeRoute,options.speed*slice.ms/1000,clear,options.onMotionPoint);pos=result.position;distance=result.distance;x=result.direction.x;y=result.direction.y;activeRoute.splice(0,result.consumed);finished=result.arrived&&activeRoute===route;if(result.blocked&&!options.controlsBlocked()){activeRoute.splice(0);cancel();changedInput()}}
+   if(!x&&!y&&activeRoute.length){const result=advanceRoute(pos,activeRoute,options.speed*slice.ms/1000,clear,options.onMotionPoint);pos=result.position;distance=result.distance;x=result.direction.x;y=result.direction.y;activeRoute.splice(0,result.consumed);finished=result.arrived&&activeRoute===route;if(result.blocked&&!options.controlsBlocked()){
+    // Residents and animals can step into a route after it was planned. Retry
+    // from the last checked footpoint against the current collision world;
+    // a bounded failure still stops walking, and manual input cancels it.
+    const goal=activeRoute===route&&routeGoal&&replans<3?routeGoal:undefined;
+    const next=goal?(options.findPath?.(pos,goal,scene)??findPath(world,scene,pos,goal)):[];
+    activeRoute.splice(0);
+    if(next.length){route=next;replans++;if(debug)host.dataset.routeReplans=String(Number(host.dataset.routeReplans??'0')+1);changedInput()}
+    else{cancel();changedInput()}
+   }}
    else if(x||y){const result=moveWithCollision(pos,{x:x*options.speed*slice.ms/1000,y:y*options.speed*slice.ms/1000},clear,options.onMotionPoint);x=result.position.x-pos.x;y=result.position.y-pos.y;pos=result.position;distance=result.distance}
    if(distance>1e-7){stride=(stride+distance)%options.stride;const phase=Math.floor(stride/options.stride*4);const pose=['stride-0','stride-1','stride-2','stride-1'][phase];if(player.animationName()!==pose)player.animationName.set(pose);player.direction.set(Math.abs(x)>Math.abs(y)?(x>0?Direction.Right:Direction.Left):(y>0?Direction.Down:Direction.Up));void player.teleport(pos);player.syncChanges();options.onPosition(pos)}else stand();
-   if(finished){const callback=arrive;arrive=undefined;options.onDestination(null);stand();callback?.()}
+   if(finished){const callback=arrive;arrive=undefined;routeGoal=undefined;replans=0;options.onDestination(null);stand();callback?.()}
    }
   }else elapsed.reset(time,input());
  };
