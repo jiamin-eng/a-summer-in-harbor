@@ -51,7 +51,7 @@ test('separate roots strictly reject unsupported rules, forged evidence and cros
  const s=step(fixture(),'introduce');for(const mutate of [(x:any)=>x.relationshipExpansionV1.schema=2,(x:any)=>x.relationshipExpansionV1.rules='relationships-v1.0',(x:any)=>x.relationshipExpansionV1.residents.dani=x.relationshipExpansionV1.residents.owen,(x:any)=>x.relationshipExpansionV1.residents.owen.interactions.meet.minute=999999,(x:any)=>x.relationshipExpansionV1.residents.owen.privateAt=540,(x:any)=>x.relationshipExpansionV1.residents.owen.legacy.facts=['residents:song-shared'],(x:any)=>x.relationshipsV1={...x.relationshipExpansionV1,rules:'relationships-v1.0'}]){
   const bad=structuredClone(s);mutate(bad);assert.equal(validRelationshipGrowth(bad),false);assert.throws(()=>createRuntime().assertReadable(bad),/UNSUPPORTED_SAVE/);
  }
- assert.deepEqual(relationshipPilotIds,['mara','avery','samira']);assert.deepEqual(Object.keys(relationshipProfiles).filter(p=>!relationshipPilotIds.includes(p as any)),['owen']);
+ assert.deepEqual(relationshipPilotIds,['mara','avery','samira']);assert.deepEqual(Object.keys(relationshipProfiles).filter(p=>!relationshipPilotIds.includes(p as any)),['owen','dani']);
 });
 test('semantic content and snapshot guards include expansion root; stale owner/journey view cannot become current',async()=>{
  const s=fixture(),next=step(s,'introduce');assert.notEqual(lifeProjectionKey(s),lifeProjectionKey({...s,relationshipExpansionV1:next.relationshipExpansionV1}));assert.notEqual(lifeSnapshotKey(s),lifeSnapshotKey({...s,relationshipExpansionV1:next.relationshipExpansionV1}));
