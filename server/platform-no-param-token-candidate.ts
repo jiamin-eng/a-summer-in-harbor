@@ -2,7 +2,8 @@
  * The fixed no-parameter endpoint is documented by the platform as returning
  * the current token subject; this module alone does not enable account binding. */
 export type NoParamTokenCandidate = Readonly<{telegramId:string;candidateMatch:true}>;
-type ProbeOptions={endpoint:string;fetchImpl:typeof fetch;timeoutMs?:number};
+export type PlatformCredentialHeader='token-raw'|'token-bearer'|'authorization-bearer';
+type ProbeOptions={endpoint:string;fetchImpl:typeof fetch;timeoutMs?:number;credentialHeader?:PlatformCredentialHeader};
 
 const idPattern=/^[1-9][0-9]{0,29}$/;
 const tokenPattern=/^[\x21-\x7e]{1,4096}$/;
@@ -27,15 +28,20 @@ async function boundedJson(response:Response):Promise<unknown>{
 
 /** The verifier supplies the fixed endpoint. This request sends only the raw
  * host token in the platform's `token` header, never a Telegram ID parameter. */
-export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3000}:ProbeOptions){
+export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3000,credentialHeader='token-raw'}:ProbeOptions){
  const url=new URL(endpoint);
  if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash)throw Error('PLATFORM_ENDPOINT_INVALID');
  if(!Number.isInteger(timeoutMs)||timeoutMs<100||timeoutMs>10000)throw Error('PLATFORM_TIMEOUT_INVALID');
+ if(!['token-raw','token-bearer','authorization-bearer'].includes(credentialHeader))throw Error('PLATFORM_CREDENTIAL_HEADER_INVALID');
  return async (expectedTelegramId:unknown,bearerHeader:unknown):Promise<NoParamTokenCandidate>=>{
   if(typeof expectedTelegramId!=='string'||!idPattern.test(expectedTelegramId))throw Error('PLATFORM_ID_INVALID');
   if(typeof bearerHeader!=='string'||!bearerHeader.startsWith('Bearer ')||!tokenPattern.test(bearerHeader.slice(7)))throw Error('PLATFORM_TOKEN_REQUIRED');
   let response:Response;
-  try{response=await fetchImpl(url,{method:'GET',headers:{token:bearerHeader.slice(7),Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
+  const rawToken=bearerHeader.slice(7);
+  const headers=new Headers({Accept:'application/json'});
+  if(credentialHeader==='authorization-bearer')headers.set('Authorization','Bearer '+rawToken);
+  else headers.set('token',credentialHeader==='token-bearer'?'Bearer '+rawToken:rawToken);
+  try{response=await fetchImpl(url,{method:'GET',headers,redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
   catch{throw Error('PLATFORM_HTTP_UNAVAILABLE')}
   if(response.status===401||response.status===403)throw Error('PLATFORM_HTTP_REJECTED');
   if(response.status!==200)throw Error('PLATFORM_HTTP_UNAVAILABLE');
