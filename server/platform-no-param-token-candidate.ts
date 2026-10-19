@@ -42,6 +42,7 @@ export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3
   const payload=await boundedJson(response);
   if(!object(payload)||payload.retcode!==0)throw Error('PLATFORM_RETCODE_INVALID');
   if(payload.errcode!==0)throw Error('PLATFORM_ERRCODE_INVALID');
+  if(payload.msg!=='success')throw Error('PLATFORM_MSG_INVALID');
   if(!object(payload.data)||typeof payload.data.telegram_id!=='string'||!idPattern.test(payload.data.telegram_id))throw Error('PLATFORM_TELEGRAM_ID_INVALID');
   if(payload.data.telegram_id!==expectedTelegramId)throw Error('PLATFORM_TELEGRAM_ID_MISMATCH');
   return Object.freeze({telegramId:payload.data.telegram_id,candidateMatch:true});

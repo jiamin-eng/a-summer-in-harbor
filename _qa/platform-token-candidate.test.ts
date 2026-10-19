@@ -12,7 +12,7 @@ import {handleApi} from '../worker/index.js';
 
 const idA='9007199254740993',idB='9007199254740992';
 const tokenA='synthetic.token.A',tokenB='synthetic.token.B';
-const payload=(id:unknown)=>({retcode:0,errcode:0,data:{telegram_id:id}});
+const payload=(id:unknown)=>({retcode:0,errcode:0,msg:'success',data:{telegram_id:id},task_list:['ignored-nonidentity-field']});
 const err=(e:unknown)=>e as Error&{code:string;status:number};
 const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>{const h=new Headers(init?.headers);assert.equal(h.get('token'),null);return Response.json(f((h.get('Authorization')??'').replace(/^Bearer /,'')))}) as typeof fetch);
 
@@ -76,6 +76,7 @@ test('HTTP, retcode, errcode, JSON, oversized, precision loss and timeout fail c
   [Response.json({}, {status:500}),'PLATFORM_HTTP_UNAVAILABLE'],
   [Response.json({...payload(idA),retcode:1}),'PLATFORM_RETCODE_INVALID'],
   [Response.json({...payload(idA),errcode:2}),'PLATFORM_ERRCODE_INVALID'],
+  [Response.json({...payload(idA),msg:'pending'}),'PLATFORM_MSG_INVALID'],
   [Response.json(payload(Number(idA))),'PLATFORM_TELEGRAM_ID_INVALID'],
   [Response.json(payload(idB)),'PLATFORM_TELEGRAM_ID_MISMATCH'],
   [new Response('not-json',{headers:{'content-type':'text/plain'}}),'PLATFORM_CONTENT_TYPE_INVALID'],

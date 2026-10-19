@@ -6,7 +6,7 @@ import {PLATFORM_SELF_URL} from '../server/platform-token-verifier';
 const endpoint=PLATFORM_SELF_URL;
 const bigId='9007199254740993';
 const reply=(body:unknown,status=200,contentType='application/json')=>new Response(JSON.stringify(body),{status,headers:{'content-type':contentType}});
-const success={retcode:0,errcode:0,data:{telegram_id:bigId}};
+const success={retcode:0,errcode:0,msg:'success',data:{telegram_id:bigId}};
 
 test('no-param mock sends one synthetic Authorization Bearer header and compares large ID strings exactly',async()=>{
  let requests=0;
@@ -45,7 +45,9 @@ test('HTTP, retcode, errcode, object shape and string ID must all pass',async()=
  const cases:[unknown,number,string][]=[
   [success,401,'PLATFORM_HTTP_REJECTED'],
   [{...success,retcode:1},200,'PLATFORM_RETCODE_INVALID'],
+  [{retcode:10022,errcode:10022,msg:'invalid token',data:{}},200,'PLATFORM_RETCODE_INVALID'],
   [{...success,errcode:2},200,'PLATFORM_ERRCODE_INVALID'],
+  [{...success,msg:'pending'},200,'PLATFORM_MSG_INVALID'],
   [{...success,data:null},200,'PLATFORM_TELEGRAM_ID_INVALID'],
   [{...success,data:{telegram_id:Number(bigId)}},200,'PLATFORM_TELEGRAM_ID_INVALID'],
   [{...success,data:{telegram_id:'9007199254740992'}},200,'PLATFORM_TELEGRAM_ID_MISMATCH'],
