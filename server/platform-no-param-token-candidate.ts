@@ -25,8 +25,8 @@ async function boundedJson(response:Response):Promise<unknown>{
  catch{throw Error('PLATFORM_JSON_INVALID')}
 }
 
-/** The verifier supplies the fixed endpoint. This request sends only the raw
- * host token in the platform's `token` header, never a Telegram ID parameter. */
+/** The verifier supplies the fixed endpoint. The platform's LoginFilter uses
+ * one Authorization Bearer header; no Telegram ID is sent as a parameter. */
 export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3000}:ProbeOptions){
  const url=new URL(endpoint);
  if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash)throw Error('PLATFORM_ENDPOINT_INVALID');
@@ -35,13 +35,14 @@ export function createNoParamTokenCandidateProbe({endpoint,fetchImpl,timeoutMs=3
   if(typeof expectedTelegramId!=='string'||!idPattern.test(expectedTelegramId))throw Error('PLATFORM_ID_INVALID');
   if(typeof bearerHeader!=='string'||!bearerHeader.startsWith('Bearer ')||!tokenPattern.test(bearerHeader.slice(7)))throw Error('PLATFORM_TOKEN_REQUIRED');
   let response:Response;
-  try{response=await fetchImpl(url,{method:'GET',headers:{token:bearerHeader.slice(7),Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
+  try{response=await fetchImpl(url,{method:'GET',headers:{Authorization:bearerHeader,Accept:'application/json'},redirect:'error',cache:'no-store',credentials:'omit',signal:AbortSignal.timeout(timeoutMs)})}
   catch{throw Error('PLATFORM_HTTP_UNAVAILABLE')}
   if(response.status===401||response.status===403)throw Error('PLATFORM_HTTP_REJECTED');
   if(response.status!==200)throw Error('PLATFORM_HTTP_UNAVAILABLE');
   const payload=await boundedJson(response);
   if(!object(payload)||payload.retcode!==0)throw Error('PLATFORM_RETCODE_INVALID');
   if(payload.errcode!==0)throw Error('PLATFORM_ERRCODE_INVALID');
+  if(payload.msg!=='success')throw Error('PLATFORM_MSG_INVALID');
   if(!object(payload.data)||typeof payload.data.telegram_id!=='string'||!idPattern.test(payload.data.telegram_id))throw Error('PLATFORM_TELEGRAM_ID_INVALID');
   if(payload.data.telegram_id!==expectedTelegramId)throw Error('PLATFORM_TELEGRAM_ID_MISMATCH');
   return Object.freeze({telegramId:payload.data.telegram_id,candidateMatch:true});

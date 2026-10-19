@@ -12,9 +12,9 @@ import {handleApi} from '../worker/index.js';
 
 const idA='9007199254740993',idB='9007199254740992';
 const tokenA='synthetic.token.A',tokenB='synthetic.token.B';
-const payload=(id:unknown)=>({retcode:0,errcode:0,data:{telegram_id:id}});
+const payload=(id:unknown)=>({retcode:0,errcode:0,msg:'success',data:{telegram_id:id},task_list:['ignored-nonidentity-field']});
 const err=(e:unknown)=>e as Error&{code:string;status:number};
-const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>Response.json(f(new Headers(init?.headers).get('token')??''))) as typeof fetch);
+const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>{const h=new Headers(init?.headers);assert.equal(h.get('token'),null);return Response.json(f((h.get('Authorization')??'').replace(/^Bearer /,'')))}) as typeof fetch);
 
 test('default build stays off; candidate reads exact live Aigram.telegramId and token without query fallback',()=>{
  assert.equal(candidatePlatformTokenEnabled,false);
@@ -49,13 +49,14 @@ test('verified candidate pins Wang Xing exact no-parameter self endpoint',()=>{
  const url=new URL(PLATFORM_SELF_URL);assert.equal(url.search,'');assert.equal(url.hash,'');
 });
 
-test('no-parameter GET sends raw token header, checks its subject per request and preserves ID digits',async()=>{
+test('no-parameter GET sends one Authorization Bearer header, checks subject per request and preserves ID digits',async()=>{
  let calls=0;
  const fetchImpl=(async(input:URL|RequestInfo,init?:RequestInit)=>{
   calls++;const url=new URL(String(input));assert.equal(url.href,PLATFORM_SELF_URL);assert.equal(url.search,'');
   assert.equal(init?.method,'GET');assert.equal(init?.redirect,'error');assert.equal(init?.cache,'no-store');assert.equal(init?.credentials,'omit');
-  const headers=new Headers(init?.headers);assert.equal(headers.get('Authorization'),null);
-  return Response.json(payload(headers.get('token')===tokenA?idA:idB));
+  const headers=new Headers(init?.headers);assert.equal(headers.get('token'),null);
+  assert.deepEqual([...headers.keys()].sort(),['accept','authorization']);
+  return Response.json(payload(headers.get('Authorization')==='Bearer '+tokenA?idA:idB));
  }) as typeof fetch;
  const verify=createPlatformTokenVerifier({fetchImpl});
  assert.deepEqual(await verify(idA,'Bearer '+tokenA),{telegramId:idA,assurance:'platform-token-bound-v1'});
@@ -75,6 +76,7 @@ test('HTTP, retcode, errcode, JSON, oversized, precision loss and timeout fail c
   [Response.json({}, {status:500}),'PLATFORM_HTTP_UNAVAILABLE'],
   [Response.json({...payload(idA),retcode:1}),'PLATFORM_RETCODE_INVALID'],
   [Response.json({...payload(idA),errcode:2}),'PLATFORM_ERRCODE_INVALID'],
+  [Response.json({...payload(idA),msg:'pending'}),'PLATFORM_MSG_INVALID'],
   [Response.json(payload(Number(idA))),'PLATFORM_TELEGRAM_ID_INVALID'],
   [Response.json(payload(idB)),'PLATFORM_TELEGRAM_ID_MISMATCH'],
   [new Response('not-json',{headers:{'content-type':'text/plain'}}),'PLATFORM_CONTENT_TYPE_INVALID'],
