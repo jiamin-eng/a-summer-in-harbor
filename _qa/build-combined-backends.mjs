@@ -21,6 +21,7 @@ for(const [name,contents] of [['backend-enabled',source],['backend-stop-new-fern
  await writeFile(join(folder,'BUILD-IDENTITY.json'),JSON.stringify({variant:name,sourceEntry:'server/public.ts',sourceSha256:sha(source),effectiveEntrySha256:sha(contents),onlyVariantChange:name==='backend-enabled'?null:'ornamentalFernStarts:false',bundleSha256:sha(await readFile(join(folder,'public.mjs'))),externalRuntime:'Existing vendor/dynamic-runtime; all vendor and dependency inputs unchanged from ebc',notExecuted:true},null,2)+'\n');
 }
 await writeFile(join(destination,'public-stop-new.ts'),stopped);
-const line=source.slice(0,source.indexOf(marker)).split('\n').length,oldLine=source.split('\n')[line-1],newLine=stopped.split('\n')[line-1];
-await writeFile(join(destination,'stop-new-fern.patch'),`--- a/server/public.ts\n+++ b/server/public.ts\n@@ -${line} +${line} @@\n-${oldLine}\n+${newLine}\n`);
+const lines=source.split('\n'),line=source.slice(0,source.indexOf(marker)).split('\n').length;
+const context=lines.slice(line-4,line+3).flatMap((text,index)=>index===3?['-'+text,'+'+stopped.split('\n')[line-1]]:[' '+text]).join('\n');
+await writeFile(join(destination,'stop-new-fern.patch'),`--- a/server/public.ts\n+++ b/server/public.ts\n@@ -${line-3},7 +${line-3},7 @@\n${context}\n`);
 console.log(JSON.stringify({destination,variants:['backend-enabled','backend-stop-new-fern'],executed:false}));
