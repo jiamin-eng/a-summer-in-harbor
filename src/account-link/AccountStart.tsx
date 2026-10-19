@@ -12,7 +12,7 @@ export function AccountStart({account,directory,locale,busy,error,onLogin,onCont
  {!account?<button className="harbor-primary" disabled={busy} onClick={onLogin}>{tx(['登录并开始','Sign in to start'],locale)}</button>:directory?<>
  {!!directory.journeys.length&&<button className="harbor-primary" disabled={busy} onClick={onContinue}>{tx(['继续','Continue'],locale)}</button>}
  <button className={directory.journeys.length?'':'harbor-primary'} disabled={busy||full} onClick={onNew}>{tx(['新游戏','New game'],locale)}</button>
- </>:error&&<button className="harbor-primary" disabled={busy} onClick={onRetry}>{tx(['重新读取旅程','Read journeys again'],locale)}</button>}
+ </>:error&&<><button className="harbor-primary" disabled={busy} onClick={onLogin}>{tx(['重新登录平台','Sign in again'],locale)}</button><button disabled={busy} onClick={onRetry}>{tx(['重新读取旅程','Read journeys again'],locale)}</button></>}
  </div>
  <div className="harbor-entry__feedback" aria-live="polite">
  {account&&!candidatePlatformTokenEnabled&&<p>{tx(['内部原型：宿主身份未验证。','Internal prototype: host identity is unverified.'],locale)}</p>}

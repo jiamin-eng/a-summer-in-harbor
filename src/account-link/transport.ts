@@ -14,10 +14,11 @@ export function liveShellAccount():string|null{
  // Deliberately no launch-query fallback: an empty live shell after logout must
  // not resurrect the previous account from the URL.
  const value=readHostAccountId(w,candidatePlatformTokenEnabled);
+ if(candidatePlatformTokenEnabled&&value&&value!=='__invalid_shell_identity__'&&!liveHostToken(w))return null;
  if(value&&value!=='__invalid_shell_identity__')hostIdentityReady();
  return value;
 }
-export const identityEpoch=new IdentityEpoch(liveShellAccount);
+export const identityEpoch=new IdentityEpoch(liveShellAccount,candidatePlatformTokenEnabled?()=>liveHostToken():undefined);
 // The published account policy is known before bootstrap: never bootstrap as a
 // browser first, and never turn a missing platform ID into a guest journey.
 identityEpoch.enable(true);

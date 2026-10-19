@@ -3,8 +3,10 @@
 export const candidatePlatformTokenEnabled=(import.meta as ImportMeta & {env?:Record<string,string>}).env?.VITE_HARBOR_PLATFORM_TOKEN_MODE==='candidate-token-owner-v1';
 const tokenPattern=/^[\x21-\x7e]{1,4096}$/;
 export function readHostAccountId(host:unknown,verifiedCandidate:boolean):string|null{
- const aigram=(host as {Aigram?:{id?:unknown;telegramId?:unknown}}|undefined)?.Aigram;
- const raw=verifiedCandidate?aigram?.id:aigram?.telegramId;
+ const aigram=(host as {Aigram?:{telegramId?:unknown}}|undefined)?.Aigram;
+ // GuestWeb, TelegramMiniApp and NativeApp expose the same live shell field.
+ // The backend still verifies that this claimed ID belongs to the token.
+ const raw=aigram?.telegramId;
  if(raw===undefined||raw===null||raw===''||raw==='__alteru_guest__')return null;
  if(verifiedCandidate&&typeof raw!=='string'||typeof raw==='number'&&!Number.isSafeInteger(raw))return '__invalid_shell_identity__';
  const value=String(raw);return /^[1-9][0-9]{0,19}$/.test(value)?value:'__invalid_shell_identity__';
@@ -24,7 +26,7 @@ export function attachIdentityHeaders(headers:Headers,account:string|null,host:u
  headers.delete('Authorization');
  if(account){headers.set('X-Harbor-Telegram-Id',account);headers.set('X-Harbor-Identity-Mode',verifiedCandidate?'platform-verified-v1':'temporary-unverified')}
  if(!verifiedCandidate)return null;
- if((host as {Aigram?:{id?:unknown}}|undefined)?.Aigram?.id!==account)throw Error('PLATFORM_ID_MISMATCH');
+ if((host as {Aigram?:{telegramId?:unknown}}|undefined)?.Aigram?.telegramId!==account)throw Error('PLATFORM_ID_MISMATCH');
  const token=liveHostToken(host);
  if(!account||!token)throw Error('PLATFORM_TOKEN_REQUIRED');
  headers.set('Authorization','Bearer '+token);
