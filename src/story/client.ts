@@ -2,6 +2,7 @@ import {entrySpan} from '../account-link/entry-timing';
 import {rememberReply,draftKey} from './dialogue-reading';
 import {getGameApiBase} from '../game-id';import type {Save,Action} from './state';import type {Locale} from '../world/data';
 import {identitySnapshot,identityFetch,enableAccountMode} from '../account-link/transport';
+import {recordBootstrapFailure,clearBootstrapFailure} from '../account-link/entry-diagnostics';
 import {applyMotionAck,motionActionId,type MotionAck} from '../candidate/clock-types';
 import {applyActivePlayAck,confirmActivePlay,activePlayActionId,type ActivePlayAck} from '../candidate/active-play-types';
 import {activePlayActionFence} from '../candidate/exploration-flush';
@@ -31,7 +32,7 @@ function requireBound(head:Save,s:Scope){s.assert();if(bound?.scope!==s.scope||b
 export function assertCurrentJourney(head:Save){requireBound(head,identitySnapshot())}
 export async function readEntryDirectory():Promise<JourneyChoice>{
  const s=identitySnapshot();
- const boot=await entrySpan('bootstrap',()=>request('/bootstrap',{},s));enableAccountMode(boot.mode);s.assert();
+ const boot=await entrySpan('bootstrap',()=>request('/bootstrap',{},s)).then(value=>{clearBootstrapFailure();return value},error=>{recordBootstrapFailure(error);throw error});enableAccountMode(boot.mode);s.assert();
  const journeys=await entrySpan('session-directory',()=>request('/sessions',undefined,s)),data={journeys,legacy:[]};
  s.assert();choice={scope:s.scope,data};return data;
 }
