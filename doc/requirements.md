@@ -470,3 +470,7 @@ The current local combination starts from published b13, retaining8cea safe boot
 ## 2026-10-19 Fishing F0 correction
 
 Local contract: fishing-f0-20261019.md. Four confirmed defects: pier route discovery, Ruth primary action/tutorial/hours/energy clarity, compact missing-image fish card, fresh-gesture result confirmation and persistent receipt feedback. Keep old fishing rules, economics, saves, identity and animal chapter2OFF. Harbor interaction explicitly navigates to the real dock/Ruth, does not create a new fishing location. No new art/model/resource/publication.
+
+### 2026-10-19 地图衔接及路尾独立修复
+
+用户17:03 Sentinel_0ee5ff112fd08191a4098946bacee389要求改善跨地点衔接和不可走的多余路尾。仅在c7独立候选消除边界外道路视觉延伸、补已有原生收边；显式传送清旧输入并朝向目的地内部，连续街区保留捕获的触摸。原world、碰撞、portal、准入、存档、旅行时间和连接拓扑不变。对应合同、旧修复边界与验证限制见map-seams-20261019.md；不混入已封存钓鱼动物包，不发布。

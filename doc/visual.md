@@ -232,3 +232,7 @@ Rowan/Jordan/Leila/Casey/Grant独立地图已在真实候选320×568与390×844�
 ## Fishing F0
 
 Keep existing pixel palette and map/portrait assets. Label the harbor pier's route interaction explicitly as walking to the fishing spot; at dock point to Ruth. Ruth's borrowing is the first action after introduction is read. Missing fish art uses compact text, no large image placeholder. Result panel has distinct explicit confirmation after releasing the original input; actual receipt feedback remains readable. Two mobile sizes and real renderer review belong to the exact candidate QA, not inferred from Node tests.
+
+### 2026-10-19 路尾与实际View对照
+
+以34组真实隔离RPGJS/Pixi前后图、27项实际View合成入口/边界/触摸检查核对路尾。视觉层使用原底纹相位和已有原生收边，不扩可行走区域、改素材或把连续接缝画成死路。正式基线亦出现的高频夹具停点和初次失败记录保留；不能从这些截图宣称完整Main旅程、无限切图或手机通过。
