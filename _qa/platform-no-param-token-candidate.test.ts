@@ -8,13 +8,13 @@ const bigId='9007199254740993';
 const reply=(body:unknown,status=200,contentType='application/json')=>new Response(JSON.stringify(body),{status,headers:{'content-type':contentType}});
 const success={retcode:0,errcode:0,data:{telegram_id:bigId}};
 
-test('no-param mock sends only a synthetic raw token header and compares large ID strings exactly',async()=>{
+test('no-param mock sends one synthetic Authorization Bearer header and compares large ID strings exactly',async()=>{
  let requests=0;
  const fetchImpl=(async (input:RequestInfo|URL,init?:RequestInit)=>{
   requests++;
   const url=new URL(String(input));assert.equal(url.href,PLATFORM_SELF_URL);
   assert.equal(url.search,'');assert.equal(url.hash,'');assert.equal(init?.method,'GET');
-  const headers=new Headers(init?.headers);assert.equal(headers.get('token'),'synthetic-only');assert.equal(headers.get('Authorization'),null);
+  const headers=new Headers(init?.headers);assert.equal(headers.get('token'),null);assert.equal(headers.get('Authorization'),'Bearer synthetic-only');
   assert.equal(init?.redirect,'error');assert.equal(init?.cache,'no-store');
   assert.equal(init?.credentials,'omit');
   return reply(success);
@@ -24,27 +24,21 @@ test('no-param mock sends only a synthetic raw token header and compares large I
  assert.equal(requests,1);
 });
 
-test('candidate header formats are exact and still require the same token subject',async()=>{
- for(const [credentialHeader,expectedName,expectedValue] of [
-  ['token-raw','token','synthetic-only'],
-  ['token-bearer','token','Bearer synthetic-only'],
-  ['authorization-bearer','authorization','Bearer synthetic-only'],
- ] as const){
-  let requests=0;
-  const fetchImpl=(async(input:RequestInfo|URL,init?:RequestInit)=>{
-   requests++;const url=new URL(String(input)),headers=new Headers(init?.headers);
-   assert.equal(url.href,PLATFORM_SELF_URL);assert.equal(url.search,'');
-   assert.equal(init?.method,'GET');assert.equal(init?.cache,'no-store');assert.equal(init?.redirect,'error');
-   assert.deepEqual([...headers.keys()].sort(),['accept',expectedName].sort());
-   assert.equal(headers.get(expectedName),expectedValue);
-   return reply(success);
-  }) as typeof fetch;
-  const probe=createNoParamTokenCandidateProbe({endpoint,fetchImpl,credentialHeader});
-  assert.deepEqual(await probe(bigId,'Bearer synthetic-only'),{telegramId:bigId,candidateMatch:true});
-  assert.equal(requests,1);
-  const reject=createNoParamTokenCandidateProbe({endpoint,credentialHeader,fetchImpl:async()=>reply({...success,data:{telegram_id:'9007199254740992'}})});
-  await assert.rejects(reject(bigId,'Bearer synthetic-only'),/PLATFORM_TELEGRAM_ID_MISMATCH/);
- }
+test('the platform request has exactly one credential header and still requires the token subject',async()=>{
+ let requests=0;
+ const fetchImpl=(async(input:RequestInfo|URL,init?:RequestInit)=>{
+  requests++;const url=new URL(String(input)),headers=new Headers(init?.headers);
+  assert.equal(url.href,PLATFORM_SELF_URL);assert.equal(url.search,'');
+  assert.equal(init?.method,'GET');assert.equal(init?.cache,'no-store');assert.equal(init?.redirect,'error');
+  assert.deepEqual([...headers.keys()].sort(),['accept','authorization']);
+  assert.equal(headers.get('Authorization'),'Bearer synthetic-only');assert.equal(headers.get('token'),null);
+  return reply(success);
+ }) as typeof fetch;
+ const probe=createNoParamTokenCandidateProbe({endpoint,fetchImpl});
+ assert.deepEqual(await probe(bigId,'Bearer synthetic-only'),{telegramId:bigId,candidateMatch:true});
+ assert.equal(requests,1);
+ const reject=createNoParamTokenCandidateProbe({endpoint,fetchImpl:async()=>reply({...success,data:{telegram_id:'9007199254740992'}})});
+ await assert.rejects(reject(bigId,'Bearer synthetic-only'),/PLATFORM_TELEGRAM_ID_MISMATCH/);
 });
 
 test('HTTP, retcode, errcode, object shape and string ID must all pass',async()=>{
