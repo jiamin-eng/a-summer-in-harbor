@@ -466,3 +466,7 @@ Current local combination now starts from published guest-shell hotfix d8c43cc, 
 ## 2026-10-19 final Bearer identity integration
 
 The current local combination starts from published b13, retaining8cea safe bootstrap status classification and the confirmed Authorization Bearer platform contract. Exact string identity, numeric zero-code and non-success refusal remain strict; no header fallback. Reviewed c54 Dani/Fern/Samira content and saved roots remain unchanged. Combined publication still awaits explicit approval.
+
+## 2026-10-19 Fishing F0 correction
+
+Local contract: fishing-f0-20261019.md. Four confirmed defects: pier route discovery, Ruth primary action/tutorial/hours/energy clarity, compact missing-image fish card, fresh-gesture result confirmation and persistent receipt feedback. Keep old fishing rules, economics, saves, identity and animal chapter2OFF. Harbor interaction explicitly navigates to the real dock/Ruth, does not create a new fishing location. No new art/model/resource/publication.

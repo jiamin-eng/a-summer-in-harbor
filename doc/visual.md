@@ -228,3 +228,7 @@ Rowan/Jordan/Leila/Casey/Grant独立地图已在真实候选320×568与390×844�
 
 ### 观赏蕨局部增量
 复用plant.png（陶盆蕨，SHA256 bfdec1530ac30401779cf8c5964297322ba419bb5b76e2ef2989c89991464458）；新增实例显示宽30，脚底锚点沿用prop体系，透明key用既有prepareCropImage。仅holder在房内时显示；空位不画第二盆，行囊只有holder=bag时计1。与旧橡皮树盆栽分开。新用途真实renderer、320/390中英及遮挡验收仍交原品控，不因既有素材或构建成功冒称画面已通过。
+
+## Fishing F0
+
+Keep existing pixel palette and map/portrait assets. Label the harbor pier's route interaction explicitly as walking to the fishing spot; at dock point to Ruth. Ruth's borrowing is the first action after introduction is read. Missing fish art uses compact text, no large image placeholder. Result panel has distinct explicit confirmation after releasing the original input; actual receipt feedback remains readable. Two mobile sizes and real renderer review belong to the exact candidate QA, not inferred from Node tests.
