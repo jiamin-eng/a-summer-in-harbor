@@ -1,3 +1,4 @@
+import {fernImage} from '../life/ornamental-fern-config';
 import {landClick} from '../life/land-selection';
 import {landRenderSlots} from '../life/land-contract';
 import {prepareSceneAssets} from './prepare-assets';
@@ -31,7 +32,7 @@ import {createAnimalRuntime} from '../animals/behavior';
 import {animalPresentation} from '../animals/render-contract';
 import {animalAnimation} from '../animals/rpgjs-sheet';
 import {gameAnimalContext} from '../animals/game';
-import {cropGraphic,prepareCropWorld} from './crop-art';
+import {cropGraphic,prepareCropWorld,prepareCropImage} from './crop-art';
 import {lifeCropSheets,lifeCropGraphic} from './life-crop-art';
 import type {LifeView} from '../ui/LifeBag';
 import {Icon} from '../ui/icons';
@@ -90,7 +91,7 @@ export function View({neighborChapterV1,weatherV1,weatherEcologyV1,weather='clea
   const collisionWorld=(id:string)=>({...baseWorld(),scenes:{...baseWorld().scenes,[id]:{...baseWorld().scenes[id],obstacles:[...baseWorld().scenes[id].obstacles,...dogStates.filter(s=>s.visible&&s.scene===id).map(s=>nativeDogBody(s.foot)),...(id===animalScene?animalProjection.collisions:[]),...(nativeFrame?.visible&&nativeFrame.scene===id?[nativeCrabBody({x:Math.round(nativeFrame.foot.x),y:Math.round(nativeFrame.foot.y)},nativeFrame.direction)]:[]),...(id===latest.current.scene?nativeCrabCollision(latest.current):[]),...rooms[id].entities.filter(e=>e.person&&active(id,e)).map(e=>{const p=actorPositions.get(id+'/'+e.id)??e.at;return {x:p.x-9,y:p.y-8,w:18,h:8}})]}}});
   const events=(id:string)=>[...layerEvent(id,'base'),...mintEntities(id).map(e=>event('prop-wild-mint',e.at.x,e.at.y,'prop-wild-mint')),...landRegions.filter(r=>r.scene===id).flatMap(r=>landRenderSlots.flatMap(n=>[event('prop-land-bed-'+n,r.rect.x+40,r.rect.y+40,[]),event('prop-life-bed-'+n,r.rect.x+40,r.rect.y+28,[])])),...(id==='garden'?plotIds.flatMap(plot=>{const e=rooms.garden.entities.find(e=>e.id===plot)!;return [event('prop-garden-soil-'+plot,e.at.x,e.at.y-24,'prop-garden-crop-soil'),event('prop-garden-'+plot,e.at.x,e.at.y-10,cropGraphic({...latest.current,items:{},cash:0,energy:0},plot)||[])]}):[]),...layerEvent(id,'north'),...layerEvent(id,'side'),...rooms[id].props.filter(p=>!p.floorDecoration).map(p=>event(propId(id,p),p.at.x,p.at.y+(p.depthOffset??0),p.visibleWhen&&!latest.current.flags.includes(p.visibleWhen)?[]:propId(id,p))),...extraSlots.filter(s=>s.scene===id).map(s=>event(`prop-${id}-${s.slotId}`,s.eventAt.x,s.eventAt.y,latest.current.dynamicAssets?.scene===id?`prop-${id}-${s.slotId}`:[])),...rooms[id].entities.filter(e=>e.person&&npcSheets.some(s=>s.id==='npc-'+e.person)).map(e=>personEvent(id,e)),...[...rooms[id].entities.filter(e=>e.animalId),...nativeDogEntities(id)].map(e=>animalEvent(id,e)),...layerEvent(id,'front')];
   const backdropUrl=(id:string)=>{const material=outdoors[id]?.patches[0]?.material??'grass';return './art/floor-'+(material==='grass'?'grass-v3':material)+'.png'};
-  const prepare=async(id:string)=>entrySpan('scene-assets',()=>{const crops=(async()=>{if(id==='garden'||landRegions.some(r=>r.scene===id)){const prepared=await prepareCropWorld();await Promise.all(renderSheets.map(async sheet=>{const url=prepared.get(sheet.image);if(url){sheet.image=url;const texture=await Assets.load(url);texture.source.label=sheet.id==='prop-garden-crop-soil'?'soil-marker':sheet.id+'.png';texture.source.scaleMode='nearest'}}))}})();return prepareSceneAssets([
+  const prepare=async(id:string)=>entrySpan('scene-assets',()=>{const crops=(async()=>{if(id==='home'||id==='garden'||landRegions.some(r=>r.scene===id)){const prepared=id==='home'?new Map([[fernImage,await prepareCropImage(fernImage)]]):await prepareCropWorld();await Promise.all(renderSheets.map(async sheet=>{const url=prepared.get(sheet.image);if(url){sheet.image=url;const texture=await Assets.load(url);texture.source.label=sheet.id==='prop-garden-crop-soil'?'soil-marker':sheet.id+'.png';texture.source.scaleMode='nearest'}}))}})();return prepareSceneAssets([
    ()=>Assets.load(backdropUrl(id)),
    ()=>crops,
    async()=>{if(landRegions.some(r=>r.scene===id))await Promise.all(lifeCropSheets.map(async sheet=>{const texture=await Assets.load(sheet.image);texture.source.label=sheet.id+'.png';texture.source.scaleMode='nearest'}))},

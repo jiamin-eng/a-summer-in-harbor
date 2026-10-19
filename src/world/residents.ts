@@ -1,3 +1,4 @@
+import {fernSlot,fernOwnedFlag} from '../life/ornamental-fern-config';
 import {neighborPartyActive,type NeighborChapter} from './neighbor-gathering';
 import {chapelPriest,chapelPriestId,chapelPriestRoutes} from './chapel-priest';
 import {techRoutes,nomadSchedule,nomadActivity,techNomadAdmitted} from './tech-nomads';
@@ -38,7 +39,7 @@ export const residentRoutes:Record<string,{scene:string;at:{x:number;y:number}}[
  dani:[{scene:'garden',at:{x:430,y:510}},{scene:'chapel',at:{x:355,y:405}},{scene:'courtyard',at:{x:540,y:480}}],
 };
 export function residentHere(s:Pick<TownState,'townMinutes'>&{flags?:string[];scene?:string;neighborChapterV1?:NeighborChapter;neighborPartyEnabled?:boolean},person:string,scene:string){if(neighborPartyActive(s)&&s.neighborChapterV1?.party?.people.includes(person))return s.neighborChapterV1.party.scene===scene;const nomad=nomadSchedule(person,s);if(nomad)return nomad.scene===scene;if(person==='mara'&&s.flags&&!s.flags.includes('bag-returned'))return scene==='station';const route=residentRoutes[person];return !route||route[['morning','afternoon','evening'].indexOf(townPeriod(s))]?.scene===scene}
-export function presentEntity(s:Pick<TownState,'townMinutes'|'scene'|'neighborChapterV1'|'neighborPartyEnabled'>&{flags?:string[]},e:Entity){const party=neighborPartyActive(s)&&s.neighborChapterV1?.party,guest=!!party&&!!e.person&&party.people.includes(e.person);if(e.gatheringRole==='guest')return guest&&party.scene===s.scene;if(guest)return e.gatheringRole==='routine'&&party.scene===s.scene;return !e.person||techNomadAdmitted(e.person)&&residentHere(s,e.person,s.scene)}
+export function presentEntity(s:Pick<TownState,'townMinutes'|'scene'|'neighborChapterV1'|'neighborPartyEnabled'>&{flags?:string[]},e:Entity){if(e.id===fernSlot.id&&!s.flags?.includes(fernOwnedFlag))return false;const party=neighborPartyActive(s)&&s.neighborChapterV1?.party,guest=!!party&&!!e.person&&party.people.includes(e.person);if(e.gatheringRole==='guest')return guest&&party.scene===s.scene;if(guest)return e.gatheringRole==='routine'&&party.scene===s.scene;return !e.person||techNomadAdmitted(e.person)&&residentHere(s,e.person,s.scene)}
 const activities:Record<string,Words[]>={
  avery:[['艾弗里在树荫下补画一扇窗，不时抬头看看街道。','Avery sketches a window in the shade, glancing up at the street.'],['艾弗里把速写本翻到空白页，看人们经过。','Avery turns to a blank page and watches people passing.'],['艾弗里看着水上的船，今天不必画完。','Avery watches the boats. The drawing need not be finished today.']],
  samira:[['萨米拉看了看蔬菜，又轻声哼起刚才的调子。','Samira looks over the vegetables and hums another few notes.'],['萨米拉走到海风里，手指轻轻打着拍子。','Samira steps into the sea breeze, tapping a gentle rhythm.'],['萨米拉在码头听水声，偶尔接上一小句歌。','Samira listens to the water, adding the occasional line of a song.']],

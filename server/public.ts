@@ -31,7 +31,7 @@ const server=createServer({maxHeaderSize:8192},async(req,res)=>{try{
  if(path==='/api/health')return json(res,200,{ok:true,gameId:GAME_UUID,release:'harbor-public-r1',sourceRelease:RELEASE,identity:config.identityMode,platformIdentityVerified:false,persistence:'postgresql',runtimeCandidate:'2026-10-01.2'});
  if(!['GET','POST'].includes(req.method??''))return json(res,405,{error:'METHOD_NOT_ALLOWED'});
  return await api(req,res,who);
- }catch(e:any){const error=String(e.code??e.message??'REQUEST_FAILED');const known=/^[A-Z][A-Z0-9_]{1,90}$/.test(error);json(res,req.url?.includes('/assets/')?assetHttpStatus(e):e.status??(error==='EDGE_IDENTITY_REQUIRED'?401:error==='PLAY_WINDOW_CLOSED'?410:400),{error:known?error:'SERVICE_UNAVAILABLE',terminal:error!=='MODEL_CALL_PENDING_OR_INTERRUPTED'})}});
+ }catch(e:any){const error=String(e.code??e.message??'REQUEST_FAILED');const known=/^[A-Z][A-Z0-9_]{1,90}$/.test(error);json(res,req.url?.includes('/assets/')?assetHttpStatus(e):e.status??(error==='EDGE_IDENTITY_REQUIRED'?401:error==='PLAY_WINDOW_CLOSED'?410:400),{error:known?error:'SERVICE_UNAVAILABLE',terminal:e.terminal??error!=='MODEL_CALL_PENDING_OR_INTERRUPTED'})}});
 server.requestTimeout=30000;server.headersTimeout=10000;server.keepAliveTimeout=5000;server.maxConnections=64;
 server.listen(config.port,'0.0.0.0',()=>console.log(JSON.stringify({ready:true,gameId:GAME_UUID,release:'harbor-public-r1'})));
 for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>{server.close(async()=>{await store.close();await pool.end();process.exit(0)});setTimeout(()=>process.exit(1),130000).unref()});

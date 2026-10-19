@@ -19,14 +19,16 @@ export function createApiHandler({authority,usage,noteMedia,dynamicAssets,newsPr
   // before the existing write/CAS and its ambiguous-outcome handling.
   const currentLandClient=(head?:any)=>req.headers['x-harbor-land']==='2'||head?.landV1?.schema!==2;
   const refreshLandClient=()=>json(res,409,{error:'CLIENT_REFRESH_REQUIRED',terminal:false});
+  const currentFernClient=(head:any)=>req.headers['x-harbor-fern']==='1'||!head?.ornamentalFernV1?.plant;
+  if(operation==='action'&&typeof body.action==='string'&&body.action.startsWith('fern:')&&req.headers['x-harbor-fern']!=='1')return refreshLandClient();
   if(operation==='action'&&['life:expand-land','life:clear-bed'].includes(body.action)&&req.headers['x-harbor-land']!=='2')return refreshLandClient();
 
   if(dynamicAssets?.policy.entry(who,id)&&req.headers['x-harbor-dynamic-assets']!=='1')return json(res,409,{error:'CLIENT_REFRESH_REQUIRED'});
-  if(!operation&&method==='GET')return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head))return refreshLandClient();return json(res,200,await project(dynamicAssets?await dynamicAssets.project(who,head):head))});
+  if(!operation&&method==='GET')return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head)||!currentFernClient(head))return refreshLandClient();return json(res,200,await project(dynamicAssets?await dynamicAssets.project(who,head):head))});
   if((operation==='life'||operation==='land-preview')&&method==='GET'){
    const projection=operation==='life'?lifeProject:landProject;
    if(!projection)return json(res,403,{error:'LIFE_B2_UNAVAILABLE'});
-   return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head))return refreshLandClient();return json(res,200,await projection(head,new URL(req.url!,'http://localhost').searchParams))});
+   return inContext(async()=>{const head=await authority.get(who,id);if(!currentLandClient(head)||!currentFernClient(head))return refreshLandClient();return json(res,200,await projection(head,new URL(req.url!,'http://localhost').searchParams))});
   }
   if(operation==='active-play'&&method==='POST'){if(typeof authority.activePlay!=='function')return json(res,403,{error:'CANDIDATE_ACTIVE_CLOSED',terminal:true});try{return json(res,200,await inContext(()=>authority.activePlay(who,id,body)))}catch(error){const failure=motionHttpFailure(error);return json(res,failure.status,failure.body)}}
   if(operation==='motion'&&method==='POST'){if(typeof authority.motion!=='function')return json(res,403,{error:'CANDIDATE_MOTION_CLOSED',terminal:true});try{return json(res,200,await inContext(()=>authority.motion(who,id,body)))}catch(error){const failure=motionHttpFailure(error);return json(res,failure.status,failure.body)}}
