@@ -1,3 +1,5 @@
+> Current contract correction: published b13 uses one **Authorization: Bearer** platform header plus strict success-envelope/ID checks. Earlier raw-token/header and pre-fix status descriptions below are historical and superseded; see [bearer-dani-fern-20261019.md](bearer-dani-fern-20261019.md).
+
 # Platform no-parameter token response: mock contract candidate
 
 This isolated branch now includes the full candidate chain: live host ID/token capture, same-origin client header, existing UUID Worker forwarding gate, backend per-request subject check, and original account-owner derivation. It is **off in the default build and configuration**. No real token, platform request, account lookup, or player save is involved.

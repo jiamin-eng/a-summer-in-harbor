@@ -1,3 +1,4 @@
+import {fernSlot,fernDisplayFlag} from '../life/ornamental-fern-config';
 import {addNeighborGathering} from './neighbor-gathering';
 import {chapelPriestPeople} from './chapel-priest';
 import {addChapel} from './chapel-layout';
@@ -227,6 +228,10 @@ export const doorways=Object.fromEntries(Object.values(rooms).filter(r=>!r.outdo
  return [r.id,door];
 }));
 rooms.garden.props.push({id:'visitor-notice',art:'noticeboard',at:{x:600,y:600},width:38,visibleWhen:'news:checked'});
+// Empty space has no invisible obstacle. Its one collision is projected below
+// from the strictly validated holder flag; the same target renders the plant.
+rooms.home.props.push({id:'owned-fern-display',art:'plant',at:{...fernSlot.at},width:fernSlot.width,visibleWhen:fernDisplayFlag});
+rooms.home.entities.push({id:fernSlot.id,kind:'object',label:['房间右侧的盆栽位置','Potted-plant spot on the right'],at:{...fernSlot.at},approach:{...fernSlot.approach},actions:[]});
 export const world:World={width:1440,height:1088,step:12,actor:{w:16,h:12},scenes:Object.fromEntries(Object.values(rooms).map(r=>[r.id,{interior:r.interior,spawn:r.spawn,obstacles:[...(outdoors[r.id]?waterBarriers(outdoors[r.id]):[]),...(outdoors[r.id]?.barriers??[]),...r.props.flatMap(p=>p.footprint?[p.footprint]:[])]}]))};
 const fern=rooms.garden.props.find(p=>p.art==='flora-fern-v1')!;fern.id='growing-fern';
 rooms.garden.entities.push({id:'growing-fern',kind:'object',label:['路边的小蕨','Pathside fern'],at:{...fern.at},approach:{x:fern.at.x+28,y:fern.at.y+14},actions:['water-fern']});
@@ -241,6 +246,7 @@ for(const {scene,entity} of nativeCrabEntities)rooms[scene].entities.push(entity
 export function entityAt(scene:string,id:string){return rooms[scene]?.entities.find(e=>e.id===id)}
 
 export function worldWithFlags(flags:string[]):World {
- if(flags.includes('bridge-fixed'))return world;
- return {...world,scenes:{...world.scenes,path:{...world.scenes.path,obstacles:[...world.scenes.path.obstacles,{x:452,y:285,w:52,h:48}]}}};
+ const base=flags.includes('bridge-fixed')?world:{...world,scenes:{...world.scenes,path:{...world.scenes.path,obstacles:[...world.scenes.path.obstacles,{x:452,y:285,w:52,h:48}]}}};
+ if(!flags.includes(fernDisplayFlag))return base;
+ return {...base,scenes:{...base.scenes,home:{...base.scenes.home,obstacles:[...base.scenes.home.obstacles,{...fernSlot.footprint}]}}};
 }

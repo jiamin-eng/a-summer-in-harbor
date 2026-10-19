@@ -441,3 +441,28 @@ Owen请你到旧气象站读既有记录本，注意纸上记录和此刻听见�
 
 ### 6. Sound Effects
 不改变或新增音效。
+
+
+## 已批准的观赏蕨本地接入（2026-10-19）
+
+批准来源：主对话 01a13c07 转达用户 Sentinel_9f977561eaa88191a2d1f378bfea2cfd 对整包方案的直接“同意”。仅本地开发、合成验证和交原品控验收；发布另行处理。
+
+玛拉原工具袋归还后可选赠一盆成熟蕨。先听提议，再明确接受，每旅程一次；以后再说不失去资格，旧档不自动领。领取无额外固定精力／时间／现金，现有自然时间规则保留。房间右侧仅一个独立盆位（670,350，接近662,378，盆底16×12）；放下、收回每次4精力／20游戏分钟／$0，既有疲劳照常结算。持有年龄从1440开始随同一townMinutes推导，移动不重置；无浇水、枯死、售卖、种子、产物或新增关系奖励。公共蕨与旧室内装饰保持原样。
+
+正式 ornamentalFernV1 与 fixture-only ownedFernV1 分开；原CAS／事件／receipt承载来源、holder、费用，失败不写、重复请求不复制，bag与房内互斥投影。空位无隐形碰撞，放下后使用同一16×12盆底。图片复用既有plant.png及其来源／hash，经既有透明key处理，不新生图。
+
+屏幕合同：玛拉面板的听提议→既有分页读完→明确接受／以后再说；行囊实物只计一株并展示来源／租屋入口；点击盆位只寻路，近处按互动后展示成本及放下／收回按钮。所有按钮沿用现有样式、44px触控和中英滚动布局。无额外UI层或新币种；loading、低精力、过期状态、失败恢复用既有busy／pending／error路径。
+
+三问：目标是安放自己的盆蕨；行动是放下／收回同一株；结果是位置持久保存，失败只拒绝当次、植株保留。需品控取得320/390中英真实入口、路线、摆放与刷新证据；理解仍需新玩家证据。动物第二章OFF。
+
+## 2026-10-19 local identity/Dani/fern continuation
+
+Integrate the reviewed Dani/ornamental-fern lineage on published verified identity ebc67b08, preserving its transport/build contract and all save roots. Only Samira seat interaction anchors move30 units down; no global threshold, character, collision or gameplay change. Animal chapter2 remains OFF. Scope and compatibility are recorded in identity-dani-fern-20261019.md; publishing remains separate.
+
+## 2026-10-19 guest-shell hotfix integration
+
+Current local combination now starts from published guest-shell hotfix d8c43cc, preserving live telegramId/token pairing and credential epochs. Dani/Fern/Samira content and rules are unchanged from independently passed50fc10a. Combined publication is still pending explicit approval; see guest-shell-dani-fern-20261019.md.
+
+## 2026-10-19 final Bearer identity integration
+
+The current local combination starts from published b13, retaining8cea safe bootstrap status classification and the confirmed Authorization Bearer platform contract. Exact string identity, numeric zero-code and non-success refusal remain strict; no header fallback. Reviewed c54 Dani/Fern/Samira content and saved roots remain unchanged. Combined publication still awaits explicit approval.
