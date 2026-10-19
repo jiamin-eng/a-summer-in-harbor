@@ -16,12 +16,12 @@ const payload=(id:unknown)=>({retcode:0,errcode:0,data:{telegram_id:id}});
 const err=(e:unknown)=>e as Error&{code:string;status:number};
 const mock=(f:(token:string)=>unknown)=>((async(_input:URL|RequestInfo,init?:RequestInit)=>Response.json(f(new Headers(init?.headers).get('token')??''))) as typeof fetch);
 
-test('default build stays off; candidate reads exact live Aigram.id and token without old-host fallback',()=>{
+test('default build stays off; candidate reads exact live Aigram.telegramId and token without query fallback',()=>{
  assert.equal(candidatePlatformTokenEnabled,false);
  for(const host of [
-  {kind:'GuestWeb',Aigram:{id:idA,token:tokenA,callAigramAPI:()=>{}}},
-  {kind:'TelegramMiniapp',Aigram:{id:idA,token:tokenA,isInAigram:true}},
-  {kind:'NativeApp',Aigram:{id:idA,token:tokenA},webkit:{messageHandlers:{aigram:{postMessage:()=>{}}}}},
+  {kind:'GuestWeb',Aigram:{telegramId:idA,token:tokenA,callAigramAPI:()=>{}}},
+  {kind:'TelegramMiniapp',Aigram:{telegramId:idA,token:tokenA,isInAigram:true}},
+  {kind:'NativeApp',Aigram:{telegramId:idA,token:tokenA},webkit:{messageHandlers:{aigram:{postMessage:()=>{}}}}},
  ]){
   assert.equal(liveHostToken(host),tokenA,host.kind);
   assert.equal(readHostAccountId(host,true),idA,host.kind);
@@ -34,10 +34,11 @@ test('default build stays off; candidate reads exact live Aigram.id and token wi
  assert.equal(attachIdentityHeaders(old,idA,{Aigram:{telegramId:idA,token:tokenA}},false),null);
  assert.equal(old.get('Authorization'),null,'temporary mode drops caller Bearer');
  assert.equal(readHostAccountId({Aigram:{telegramId:idA}},false),idA);
- assert.equal(readHostAccountId({Aigram:{telegramId:idA}},true),null);
- assert.equal(readHostAccountId({Aigram:{id:Number(idA)}},true),'__invalid_shell_identity__');
- assert.throws(()=>attachIdentityHeaders(new Headers(),idA,{Aigram:{id:idB,token:tokenA}},true),/PLATFORM_ID_MISMATCH/);
- assert.throws(()=>attachIdentityHeaders(new Headers(),idA,{Aigram:{telegramId:idA,token:tokenA}},true),/PLATFORM_ID_MISMATCH/);
+ assert.equal(readHostAccountId({Aigram:{telegramId:idA}},true),idA);
+ assert.equal(readHostAccountId({Aigram:{id:idA,token:tokenA}},true),null);
+ assert.equal(readHostAccountId({Aigram:{telegramId:Number(idA)}},true),'__invalid_shell_identity__');
+ assert.throws(()=>attachIdentityHeaders(new Headers(),idA,{Aigram:{telegramId:idB,token:tokenA}},true),/PLATFORM_ID_MISMATCH/);
+ assert.throws(()=>attachIdentityHeaders(new Headers(),idA,{Aigram:{id:idA,token:tokenA}},true),/PLATFORM_ID_MISMATCH/);
  assert.doesNotThrow(()=>assertCandidateSameOrigin('./api/sessions','https://game.aiwaves.tech/harbor/'));
  assert.throws(()=>assertCandidateSameOrigin('https://example.invalid/steal','https://game.aiwaves.tech/harbor/'),/PLATFORM_FETCH_ORIGIN_INVALID/);
  for(const invalid of [undefined,3,'','bad token','bad\nvalue','x'.repeat(4097)])assert.equal(liveHostToken({Aigram:{token:invalid}}),null);

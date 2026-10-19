@@ -137,7 +137,7 @@ function App(){
  const load=()=>{const epoch=++loadEpoch.current;setBusy(true);setError(null);setAccountLoading(true);void connect(locale,latest.current.save?.id).then(s=>{if(epoch!==loadEpoch.current)return;loaded(s)}).catch(e=>{if(epoch===loadEpoch.current)setError(failure(e))}).finally(()=>{if(epoch===loadEpoch.current)setBusy(false)})};
  const enter=async(kind:'login'|'continue'|'new')=>{if(entryLock.current||busy)return;entryLock.current=true;let epoch=++loadEpoch.current;setBusy(true);setError(null);
   try{
-   if(kind==='login'){await signInToPlatform();await prepareEntry();return}
+   if(kind==='login'){await signInToPlatform(!!error&&!!liveShellAccount());if(epoch===loadEpoch.current)await prepareEntry();return}
    const s=kind==='new'?await chooseJourney(locale,{kind:'new'}):await connect(locale);
    if(epoch!==loadEpoch.current)return;setAccountLoading(true);loaded(s);
   }catch(e){if(epoch===loadEpoch.current)setError(failure(e))}finally{entryLock.current=false;if(epoch===loadEpoch.current)setBusy(false)}
