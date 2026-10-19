@@ -1,8 +1,9 @@
 import {createHash} from 'node:crypto';
-import type {AnimalCommission,AnimalRef,Observation} from '../src/animal-life/types';
+import type {AnimalCommission,AnimalRef,AnimalLifeSave,Observation} from '../src/animal-life/types';
 import {acceptedAnimals} from '../src/animals/art';
 import {slotAt} from '../src/animals/behavior';
 import {animalContractLimits,animalIdSchema,contractViolations} from './animal-contract-schema';
+import type {Words} from '../src/world/data';
 import courtyardSunTurns from './content/authored-courtyard-sun-turns.json';
 
 export const canonical=(v:any):string=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).filter(k=>v[k]!==undefined).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
@@ -34,11 +35,31 @@ const freeze=(v:any):any=>{if(v&&typeof v==='object'){Object.values(v).forEach(f
 export class AnimalContentRegistry{
  private readonly entries=new Map<string,{ref:AnimalRef;definition:AnimalCommission}>();
  private readonly enabled:Set<string>;
- constructor(defs:AnimalCommission[]=builtInCommissions,enabled=defs.map(d=>d.id+'@'+d.revision)){
+ private readonly prerequisites:Readonly<Record<string,AnimalRef>>;
+ private readonly bridges:Readonly<Record<string,Words>>;
+ constructor(defs:AnimalCommission[]=builtInCommissions,enabled=defs.map(d=>d.id+'@'+d.revision),prerequisites:Readonly<Record<string,AnimalRef>>={},bridges:Readonly<Record<string,Words>>={}){
   this.enabled=new Set(enabled);for(const d of defs){validateCommission(d);const key=d.id+'@'+d.revision,hash=contentHash(d),old=this.entries.get(key);if(old&&old.ref.hash!==hash)throw Error('ANIMAL_REVISION_CONFLICT');this.entries.set(key,freeze({ref:{id:d.id,revision:d.revision,hash,capability:d.capability},definition:structuredClone(d)}));}
+  for(const [key,required] of Object.entries(prerequisites)){
+   const target=this.entries.get(key),source=this.entries.get(required.id+'@'+required.revision);
+   if(!target||!source||key===required.id+'@'+required.revision||!sameAnimalRef(source.ref,required))throw Error('ANIMAL_STORY_PREREQUISITE_INVALID');
+  }
+  for(const [key,words] of Object.entries(bridges))if(!prerequisites[key]||!Array.isArray(words)||words.length!==2||words.some(w=>typeof w!=='string'||!w.trim()||w.length>200||/[<>]/.test(w)))throw Error('ANIMAL_STORY_BRIDGE_INVALID');
+  this.prerequisites=structuredClone(prerequisites);
+  this.bridges=structuredClone(bridges);
  }
  ref(id:string,revision=1){const e=this.entries.get(id+'@'+revision);if(!e)throw Error('ANIMAL_CONTENT_UNKNOWN');return {...e.ref}}
  get(ref:AnimalRef){if(!ref||Object.keys(ref).sort().join(',')!=='capability,hash,id,revision')throw Error('ANIMAL_REF_MISMATCH');const e=this.entries.get(ref.id+'@'+ref.revision);if(!e||!sameAnimalRef(e.ref,ref))throw Error('ANIMAL_REF_MISMATCH');return e.definition}
- canStart(ref:AnimalRef){this.get(ref);return this.enabled.has(ref.id+'@'+ref.revision)}
+ isVisible(ref:AnimalRef,s?:AnimalLifeSave){this.get(ref);const required=this.prerequisites[ref.id+'@'+ref.revision];return !required||!!s?.animalNotebookV1?.pages.some(p=>sameAnimalRef(p.ref,required))}
+ canStart(ref:AnimalRef,s?:AnimalLifeSave){return this.isVisible(ref,s)&&this.enabled.has(ref.id+'@'+ref.revision)}
+ continuation(ref:AnimalRef){this.get(ref);const words=this.bridges[ref.id+'@'+ref.revision];return words?[...words] as Words:null}
+ assertSavedContinuity(s:AnimalLifeSave){
+  const pages=s.animalNotebookV1?.pages??[];
+  for(const [key,required] of Object.entries(this.prerequisites)){
+   const index=pages.findIndex(p=>p.ref.id+'@'+p.ref.revision===key);
+   if(index>=0&&!pages.slice(0,index).some(p=>sameAnimalRef(p.ref,required)))throw Error('ANIMAL_STORY_SEQUENCE_INVALID');
+   const active=s.animalNotebookV1?.active;
+   if(active&&active.ref.id+'@'+active.ref.revision===key&&!pages.some(p=>sameAnimalRef(p.ref,required)))throw Error('ANIMAL_STORY_SEQUENCE_INVALID');
+  }
+ }
  list(){return [...this.entries.values()].map(e=>({ref:{...e.ref},definition:structuredClone(e.definition)}))}
 }

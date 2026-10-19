@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "id": "animals:quiet-after-gulls",
+  "revision": 1,
+  "resident": "dani",
+  "theme": "compare-routines",
+  "observations": [
+    {"animal": "harbor-gull-3", "behavior": "shore-space", "period": "evening", "scene": "coast"},
+    {"animal": "harbor-cat-3", "behavior": "sleep", "period": "night", "scene": "courtyard"}
+  ]
+}

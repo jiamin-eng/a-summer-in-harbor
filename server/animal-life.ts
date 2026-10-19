@@ -50,6 +50,7 @@ export function assertAnimalNotebook(s:AnimalLifeSave,content:AnimalContentRegis
  if(n.sample){const a=n.sample;if(!record(a)||Object.keys(a).sort().join(',')!=='behavior,frame,minute,player,scene,sourceAction,version'||!source(a.sourceAction)||!int(a.version,0,s.version)||!int(a.minute,0,now(s))||!point(a.player)||!rooms[a.scene]||!record(a.frame))bad();
   const projected={...s,scene:a.scene,townMinutes:a.minute};try{const derived=sampleAnimal(projected,a.frame.id,a.player);if(canonical(derived.frame)!==canonical(a.frame)||derived.behavior!==a.behavior)bad()}catch{bad()}
  }
+ content.assertSavedContinuity(s);
 }
 export function parseAnimalCommand(a:Action):AnimalCommand{
  const p=a.payload as any,c=p?.command;
@@ -94,9 +95,9 @@ export function createAnimalLife(base:ReturnType<typeof createRuntime>,content=n
    }else{
     const def=content.get(c.ref);if(c.verb!=='cancel'){residentAdmission(head,a,def.resident);person=def.resident;}
     if(c.verb==='brief'){
-     if(!content.canStart(c.ref))throw Error('ANIMAL_CONTENT_CLOSED');if(!n.briefs.some(r=>sameAnimalRef(r,c.ref))){if(n.briefs.length>=16)throw Error('ANIMAL_NOTEBOOK_CAPACITY');n.briefs.push({...c.ref})}text=[...def.brief];
+     if(!content.canStart(c.ref,head))throw Error('ANIMAL_CONTENT_CLOSED');if(!n.briefs.some(r=>sameAnimalRef(r,c.ref))){if(n.briefs.length>=16)throw Error('ANIMAL_NOTEBOOK_CAPACITY');n.briefs.push({...c.ref})}text=[...def.brief];
     }else if(c.verb==='accept'){
-     if(!content.canStart(c.ref))throw Error('ANIMAL_CONTENT_CLOSED');if(!n.briefs.some(r=>sameAnimalRef(r,c.ref)))throw Error('COMMISSION_PREMISE_UNREAD');if(n.active||n.pages.some(p=>p.ref.id===c.ref.id))throw Error('COMMISSION_UNAVAILABLE');
+     if(!content.canStart(c.ref,head))throw Error('ANIMAL_CONTENT_CLOSED');if(!n.briefs.some(r=>sameAnimalRef(r,c.ref)))throw Error('COMMISSION_PREMISE_UNREAD');if(n.active||n.pages.some(p=>p.ref.id===c.ref.id))throw Error('COMMISSION_UNAVAILABLE');
      n.active={ref:{...c.ref},sourceAction:a.action_id,minute:now(head)};text=['这份观察约定已记下。你也可以先做别的事，没有期限。','Your observation plan is saved. There is no deadline; other things can come first.'];
     }else if(c.verb==='cancel'){
      if(a.target!=='animal-notebook'||!n.active||!sameAnimalRef(n.active.ref,c.ref))throw Error('COMMISSION_MISMATCH');delete n.active;text=['约定已收起，已经发现的日常仍在收藏里。','The plan is set aside. Your observations remain in Collections.'];
@@ -114,7 +115,7 @@ export function createAnimalLife(base:ReturnType<typeof createRuntime>,content=n
  };
  const animalProject=(s:AnimalLifeSave)=>{
   assertAnimalNotebook(s,content);const n=notebook(s);
-  return {schema:1 as const,snapshotVersion:s.version,commissions:content.list().filter(e=>s.known.includes(e.definition.resident)).map(e=>({...e,enabled:content.canStart(e.ref),briefed:n.briefs.some(r=>sameAnimalRef(r,e.ref)),completed:n.pages.some(p=>p.ref.id===e.ref.id),active:!!n.active&&sameAnimalRef(n.active.ref,e.ref),missing:e.definition.requirements.filter(r=>!(s as any).lifeV1?.collections[observationId(r.animal,r.behavior)])})),pages:n.pages.map(p=>({...p,title:content.get(p.ref).title,text:content.get(p.ref).page})),sample:currentAnimalSample(s)??null};
+  return {schema:1 as const,snapshotVersion:s.version,commissions:content.list().filter(e=>s.known.includes(e.definition.resident)&&content.isVisible(e.ref,s)).map(e=>({...e,...(content.continuation(e.ref)?{continuation:content.continuation(e.ref)!}:{}),enabled:content.canStart(e.ref,s),briefed:n.briefs.some(r=>sameAnimalRef(r,e.ref)),completed:n.pages.some(p=>p.ref.id===e.ref.id),active:!!n.active&&sameAnimalRef(n.active.ref,e.ref),missing:e.definition.requirements.filter(r=>!(s as any).lifeV1?.collections[observationId(r.animal,r.behavior)])})),pages:n.pages.map(p=>({...p,title:content.get(p.ref).title,text:content.get(p.ref).page})),sample:currentAnimalSample(s)??null};
  };
  return {...plants,runtime,animalProject,lifeProject:(s:AnimalLifeSave)=>({...plants.lifeProject(s),animals:animalProject(s)})};
 }

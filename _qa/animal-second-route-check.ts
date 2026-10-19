@@ -1,0 +1,12 @@
+import {writeFileSync} from 'node:fs';
+import {initial} from '../src/story/state';
+import {rooms} from '../src/world/data';
+import {periodAt,slotAt} from '../src/animals/behavior';
+import {acceptedAnimals} from '../src/animals/art';
+import {mapRoute,entranceReachable} from '../src/world/map-navigation';
+import {residentHere} from '../src/world/residents';
+const at=(id:string,minute:number)=>{const a=acceptedAnimals.find(x=>x.id===id)!;return slotAt(a,minute)};
+const save:any=initial('zh','animal-second-route-fixture');save.flags=['key','unpacked'];save.scene='coast';save.position={...rooms.coast.spawn};save.townMinutes=1260;
+const route=mapRoute(save,'courtyard');const report={periodAt1260:periodAt(1260),gull3Evening:at('harbor-gull-3',1080)?.scene,cat3Night:at('harbor-cat-3',1260)?.scene,cat3NightActivity:at('harbor-cat-3',1260)?.activity,coastToCourtyard:route.places,routeFailure:route.failure??null,firstEntranceReachable:entranceReachable(save,'courtyard'),daniGardenMorning:residentHere({...save,scene:'garden',townMinutes:540},'dani','garden'),daniCourtyardNight:residentHere({...save,scene:'courtyard',townMinutes:1260},'dani','courtyard')};
+writeFileSync('/Users/yin/code/games/harbor-animal-second-chapter-review-20261019/evidence/route-check.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+if(report.periodAt1260!=='night'||report.gull3Evening!=='coast'||report.cat3Night!=='courtyard'||report.cat3NightActivity!=='sleep'||report.routeFailure||!report.firstEntranceReachable||!report.daniGardenMorning)process.exitCode=1;

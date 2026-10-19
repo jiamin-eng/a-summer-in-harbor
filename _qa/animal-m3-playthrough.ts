@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import type {AnimalStoryChoice} from '../server/animal-grounding';
 import {contentHash} from '../server/animal-content';
+import {observationId} from '../src/animal-life/types';
 import {sampleAnimal} from '../server/animal-life';
 import {rooms} from '../src/world/data';
 import {findPath,walkable,type Point} from '../src/engine/world';
@@ -17,7 +18,7 @@ import {nativeCrabCollision} from '../src/animals/native-crab-game';
 
 /** No transport/model imports. Every change below is an original authority command.
  * The controlled server clock is a local fixture, never injected save progress. */
-export async function playStory(authority:any,assembly:any,owner:string,head:any,choice:AnimalStoryChoice,time:{value:number}){
+export async function playStory(authority:any,assembly:any,owner:string,head:any,choice:AnimalStoryChoice,time:{value:number},reuseExisting=false){
  let s=head;const original=structuredClone(s),client=randomUUID(),trace:any[]=[],counts={business:0,motion:0,active:0,observations:0};
  const get=async()=>s=await authority.get(owner,s.id);
  const liveWorld=()=>{const w=landWorld(dynamicWorld(s.flags,false),s.landV1),b=nativeCrabCollision(s);return b.length?{...w,scenes:{...w.scenes,[s.scene]:{...w.scenes[s.scene],obstacles:[...w.scenes[s.scene].obstacles,...b]}}}:w};
@@ -61,12 +62,12 @@ export async function playStory(authority:any,assembly:any,owner:string,head:any
   }throw Error('RESIDENT_AVAILABLE_WINDOW_REQUIRED');
  };
  const entry=s.animalNotebookV1?.adopted?.find((e:any)=>e.ref.id===choice.id)??assembly.animalProject(s).commissions.find((e:any)=>e.ref.id===choice.id);assert.ok(entry);const ref=entry.ref;
- await command('candidate-clock-enable','',{millisecondsPerMinute:4000});
+ if(!s.movingClock)await command('candidate-clock-enable','',{millisecondsPerMinute:4000});
  // The ordinary active clock is initialized and paused; movement cannot invent
  // a second time source. Later waits settle confirmed foreground ticks only.
  await play('candidate-active-open');await pause();
  let person=await resident();await command('animal-life:brief',person.id,{command:{verb:'brief',ref}});await command('animal-life:accept',person.id,{command:{verb:'accept',ref}});
- const ordered=[...choice.observations].sort((a,b)=>representatives[a.period]-representatives[b.period]);
+ const ordered=[...choice.observations].filter(o=>!reuseExisting||!s.lifeV1?.collections[observationId(o.animal,o.behavior)]).sort((a,b)=>representatives[a.period]-representatives[b.period]);
  for(const o of ordered){
   await ensurePeriod(o.period);await travel(o.scene);assert.equal(periodAt(s.townMinutes),o.period,'REAL_SELECTED_PERIOD');
   const animal=acceptedAnimals.find(a=>a.id===o.animal)!,slot=slotAt(animal,s.townMinutes)!;assert.equal(slot.scene,o.scene);let point:Point|undefined;
