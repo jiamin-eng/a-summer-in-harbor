@@ -472,3 +472,12 @@ _qa/land-worker-chain.ts 执行真实 handleApi、verifiedEdgeOwner、账号 HTT
 2. `_qa/samira-approach.test.ts`从Git精确冻结4451、比较其与c9走位相关blob、验证旧/新静态世界完全相同、49当前巡游脚点、旧夹具碰撞终点、78条双版本绕行条件、原座席动作、旧三人/Owen保存及SQLite原子回放。条件采样不冒充独立UI用例。
 3. `_qa/samira-target-replay.mjs`是给独立QA新host的模块。观察实际RPG玩家/人物与底部目标，先以Samira且可互动停止，才考虑走向保守航点；实际键盘与当前人物碰撞参与规划，禁止坐标注入/force。每次新时间戳/账号/旅程/证据，拒绝在原081701证据目录运行。回归范围含原接近点、原卡住坐标和门口三起点×390中文/320英文；正式HTTP/renderer结论只能由实际执行产生。
 4. 本环境无增权条件下listen(0,127.0.0.1)返回EPERM，因此这里只执行几何/规则/SQLite合成与构建，不宣称浏览器补验通过。独立候选需QA重放再放行，不覆盖原c9或旧QA证据，不迁移/回滚真实档。
+
+
+## 观赏蕨本地接缝（2026-10-19）
+
+配置与纯规则：src/life/ornamental-fern-config.ts、ornamental-fern.ts；正式根ornamentalFernV1不接受旧fixture来源。server/ornamental-fern.ts只装配一次，处于既有活动时间／天气／权威事务内；createExplorationAssembly沿用原植物、动物、新闻装配。plantStarts=false关闭新赠礼，保留既有盆蕨读／移动。两个专用flags只投影holder并由strict reader核对；worldWithFlags给同一盆位投影碰撞，presentEntity在真实拥有后才揭示该实体。Main使用原面板／阅读恢复；Bag从正式根投影唯一物品，不复制items计数。fixture-only文件与历史测试保留未启用。
+
+## 2026-10-19 verified identity composition
+
+Use VITE_HARBOR_PLATFORM_TOKEN_MODE=candidate-token-owner-v1 for the integrated build and preserve both Worker verified gates. Never ship the old8f standalone bundle as this version. The tested compatible stop-new variant adds only ornamentalFernStarts:false at the public assembly call; keep roots, existing movement, identity and the full weather/time authority. See identity-dani-fern-20261019.md.

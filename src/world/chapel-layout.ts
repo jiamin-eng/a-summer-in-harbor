@@ -10,7 +10,7 @@ export function addChapel(rooms:Record<string,Room>){
   {id:'exit',label:['山坡','The Hill'],kind:'portal',destination:'hill',at:{x:480,y:582},approach:{x:470,y:559}},
   {id:'chapel-note',label:['社区活动便条','Community activity note'],kind:'object',at:{x:625,y:525},approach:{x:617,y:559},actions:['chapel-read-notice','chapel-recall']},
   {id:'chapel-reading',label:['阅读角','Reading corner'],kind:'object',at:{x:355,y:352},approach:{x:347,y:360},actions:['chapel-help-reading','chapel-recall']},
-  {id:'chapel-seat',label:['靠过道的座席','Aisle-side seats'],kind:'object',at:{x:580,y:485},approach:{x:572,y:519},actions:['chapel-listen','chapel-recall']},
+  {id:'chapel-seat',label:['靠过道的座席','Aisle-side seats'],kind:'object',at:{x:580,y:515},approach:{x:572,y:549},actions:['chapel-listen','chapel-recall']},
  ],props:[
   {id:'bookcase',art:'interior-bookcase-v1',at:{x:335,y:280},width:65,footprint:{x:307,y:263,w:56,h:17}},
   {id:'reading-table',art:'dining-table-front-v1',at:{x:355,y:352},width:58,footprint:{x:329,y:327,w:52,h:25}},

@@ -8,7 +8,7 @@ import {Icon} from './icons';
 import {lifeItemImage} from '../world/life-crop-art';
 import {cropImage} from '../world/crop-art';
 import {CropImage} from './CropImage';
-export type LifeView=ReturnType<typeof lifeView>&{animals?:import('./AnimalNotebook').AnimalView;afterRain?:import('../../server/after-rain-runtime').AfterRainView};
+export type LifeView=ReturnType<typeof lifeView>&{animals?:import('./AnimalNotebook').AnimalView;afterRain?:import('../../server/after-rain-runtime').AfterRainView;ornamentalFern?:{enabled:true;newStarts:boolean;eligible:boolean}};
 const giftNames:Record<string,Words>={'life-gift:theo-menu':['第一篮收成的菜单小卡','A menu card for my first delivery'],'life-gift:dani-page':['我的菜园与车站猫','My garden and the station cat']};
 export function gameMinuteLabel(minute:number,locale:Locale){const clock=`${String(Math.floor(minute%1440/60)).padStart(2,'0')}:${String(minute%60).padStart(2,'0')}`;return tx([`游戏第${Math.floor(minute/1440)+1}天 ${clock}`,`Game day ${Math.floor(minute/1440)+1}, ${clock}`],locale)}
 export function LifeBag({save,view,locale,busy,reload,onCommand,projectionCurrent}:{save:Save;view:LifeView|null;projectionCurrent?:boolean;locale:Locale;busy:boolean;reload:()=>void;onCommand:(c:Command)=>void}){

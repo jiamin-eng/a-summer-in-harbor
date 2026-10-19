@@ -57,6 +57,7 @@ export async function handleApi(request,env){
  // Public save-format capability, not identity or permission. Do not upgrade
  // clients that omitted it or forward unknown/combined header values.
  if(request.headers.get('X-Harbor-Land')==='2')headers.set('X-Harbor-Land','2');
+ if(request.headers.get('X-Harbor-Fern')==='1')headers.set('X-Harbor-Fern','1');
  if(demo){const id=request.headers.get('X-Harbor-Telegram-Id');if(id!==null){if(!/^[1-9][0-9]{0,19}$/.test(id)||request.headers.get('X-Harbor-Identity-Mode')!=='temporary-unverified')return fail('INVALID_DEMO_IDENTITY',400);headers.set('X-Harbor-Telegram-Id',id);headers.set('X-Harbor-Identity-Mode','temporary-unverified')}}
  if(verified&&path!=='/api/health'){headers.set('X-Harbor-Telegram-Id',request.headers.get('X-Harbor-Telegram-Id'));headers.set('X-Harbor-Identity-Mode','platform-verified-v1');headers.set('Authorization',request.headers.get('Authorization'))}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);
