@@ -1,0 +1,11 @@
+# Final local composition: fishing, animal continuation, map ends
+
+Parent01a13c07 explicitly requests a new isolated composition of fixed fishing/animal d65a0b6602bfba835f32f21eeb150583cdc63fbb and map9d34037cc54c22235f06adb6ba0736440ac17a63. The original source/artifacts and failure evidence remain unchanged. No publication or production/player/configuration/permission/resource operation.
+
+Merge: retain both documentation sections; View keeps both fishingWaypoints and arrivalFacing imports, the map restore effect and fishing-preserving JSX. Main combines FishingAccess/receipt state and physical-map Joystick identity. There is no rule, reward, map topology, travel-time, saved-root or authority conflict. The map patch changes only presentation and local input recovery. Animal public assembly remains OFF; explicit local Arc is for QA only.
+
+Evidence reuse: original independent verified-v2 QA reports four F0 issues, real post-commit reply loss/idempotency/reopen, actual Cat3/one Dani reward/Fern roots and PG two reopens passing. Reuse those unchanged mechanics; do not rerun the whole matrix or claim these results came from this new hash.
+
+Integration checks: TypeScript and focused map/fishing/animal save seams; final exact verified frozen Main on actual Worker/account/temporary SQLite and strict local Bearer self mock. Normal home↔station Go actions must preserve arrival position, inward pose, one journey and active/completed animal/Fern/Dani roots through a bounded high-frequency sequence and reload. Existing real UI synthetic roots may be copied to new test-owned enrollment with provenance, rebinding only canonical owner and fixture spatial placement/transport lease. No new Cat3 or progression may be injected. One fishing escape/result gesture check isolates old touch release/confirmation from movement recovery without repeating the full passed fishing matrix.
+
+Main high-frequency and final combined continuous-play independent QA are still separate gates; final handoff records precise observed results, any fixture failure and fresh retest. Build must use VITE_HARBOR_PLATFORM_TOKEN_MODE=candidate-token-owner-v1 and inspect the compiled identity literal. Source/artefact hashes, patch and bundle must identify this combined commit; no swapping already-read d65 output. Final enablement and publication require the central user decision.
