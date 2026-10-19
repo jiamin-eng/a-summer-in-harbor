@@ -14,7 +14,7 @@ import {closeFriend} from './relationship-expansion-fixture';
 // @ts-expect-error frozen async authority; local synthetic SQLite, no HTTP listener
 import {AsyncSessionAuthority,openAsyncSqliteAuthorityStore} from '../vendor/dynamic-runtime/packages/authority-session/async.mjs';
 
-const base='4451b92cf901fe877988e4a37363dfd3266cb942',candidate='c9da437d728df846d045c2fb3dce288fff36b7de';
+const base='ebc67b08dcd553510a0525a11c9b0a9b83a7ee8a';
 const flags=['key','unpacked','bag-returned','route-open'];
 const state={scene:'chapel',townMinutes:780,flags,known:['samira']};
 const distance=(p:Point,q:Point)=>Math.hypot(p.x+8-q.x,p.y+6-q.y);
@@ -23,15 +23,15 @@ const residents=()=>rooms.chapel.entities.filter(e=>e.person&&presentEntity(stat
  * fixture, not a replacement implementation of the nearest-target selector. */
 function collision(baseWorld:World,x:number){return {...baseWorld,scenes:{...baseWorld.scenes,chapel:{...baseWorld.scenes.chapel,obstacles:[...baseWorld.scenes.chapel.obstacles,...residents().map(e=>({x:(e.person==='samira'?x:e.at.x)-9,y:e.at.y-8,w:18,h:8}))]}}}}
 async function original(){
- const root=resolve('.data/samira-4451');if(!existsSync(join(root,'package.json'))){mkdirSync(root,{recursive:true});const files=execFileSync('git',['ls-tree','-r','--name-only',base,'--','src','server','vendor','package.json'],{encoding:'utf8'}).trim().split('\n').filter(p=>/\.(?:[cm]?js|tsx?|json)$/.test(p));execFileSync('tar',['-x','-C',root],{input:execFileSync('git',['archive',base,...files],{maxBuffer:128*1024*1024})});symlinkSync(resolve('node_modules'),join(root,'node_modules'));writeFileSync(join(root,'BASELINE.txt'),base+'\n')}
+ const root=resolve('.data/samira-ebc');if(!existsSync(join(root,'package.json'))){mkdirSync(root,{recursive:true});const files=execFileSync('git',['ls-tree','-r','--name-only',base,'--','src','server','vendor','package.json'],{encoding:'utf8'}).trim().split('\n').filter(p=>/\.(?:[cm]?js|tsx?|json)$/.test(p));execFileSync('tar',['-x','-C',root],{input:execFileSync('git',['archive',base,...files],{maxBuffer:128*1024*1024})});symlinkSync(resolve('node_modules'),join(root,'node_modules'));writeFileSync(join(root,'BASELINE.txt'),base+'\n')}
  assert.equal(readFileSync(join(root,'BASELINE.txt'),'utf8').trim(),base);
  for(const file of ['src/world/chapel-layout.ts','src/world/View.tsx','src/engine/world.ts'])assert.deepEqual(readFileSync(join(root,file)),execFileSync('git',['show',base+':'+file]));
  return import(pathToFileURL(join(root,'src/world/data.ts')).href);
 }
-test('4451 and c9 have identical movement/chapel blobs; original exact QA spawn makes seat nearer than Samira',async()=>{
- for(const file of ['src/world/View.tsx','src/world/data.ts','src/world/residents.ts','src/world/chapel-layout.ts','src/engine/world.ts','src/engine/rpg-space.ts'])assert.equal(execFileSync('git',['rev-parse',base+':'+file],{encoding:'utf8'}),execFileSync('git',['rev-parse',candidate+':'+file],{encoding:'utf8'}));
- const old=await original(),p={x:592,y:442},npc=old.entityAt('chapel','samira'),seat=old.entityAt('chapel','chapel-seat');assert.deepEqual(npc.at,{x:600,y:400});assert.deepEqual(seat.at,{x:580,y:485});assert.equal(distance(p,npc.at),48);assert.ok(distance(p,seat.at)<distance(p,npc.at));assert.ok(distance(p,seat.at)<65);
- const report={baseline:base,candidate,fixturePosition:p,npc:npc.at,oldSeat:seat.at,newSeat:entityAt('chapel','chapel-seat')!.at,npcDistance:distance(p,npc.at),oldSeatDistance:distance(p,seat.at),newSeatDistance:distance(p,entityAt('chapel','chapel-seat')!.at),attribution:'baseline target conflict plus QA exact-goal stopping error; not introduced by c9',uiReplay:'not executed: loopback EPERM, no new permission'};mkdirSync('../evidence',{recursive:true});writeFileSync('../evidence/SAMIRA-GEOMETRY.json',JSON.stringify(report,null,2)+'\n');
+test('published identity baseline has the original nearest-seat conflict at the normal Samira approach',async()=>{
+ const old=await original(),p={x:592,y:442},npc=old.entityAt('chapel','samira'),seat=old.entityAt('chapel','chapel-seat');
+ assert.deepEqual(npc.at,{x:600,y:400});assert.deepEqual(seat.at,{x:580,y:485});
+ assert.equal(distance(p,npc.at),48);assert.ok(distance(p,seat.at)<distance(p,npc.at));assert.ok(distance(p,seat.at)<65);
 });
 test('only seat interaction anchors change; static world, NPC poses, scenery and every old legal saved foot remain identical',async()=>{
  const old=await original();assert.deepEqual(world,old.world);assert.deepEqual(rooms.chapel.props,old.rooms.chapel.props);assert.deepEqual(rooms.chapel.spawn,old.rooms.chapel.spawn);assert.deepEqual(rooms.chapel.interior,old.rooms.chapel.interior);
@@ -58,7 +58,7 @@ test('corrected QA helper stops on actual Samira readiness before exact-coordina
  const r=await walkUntilSamira(d,module,'Samira Bell',[],{read:async()=>snapshot,input:async()=>{keys++},head:{flags}});assert.equal(r.reason,'actual-Samira-target-ready');assert.equal(keys,0);assert.equal(plans,0);
  await assert.rejects(walkUntilSamira(d,module,'Samira Bell',[],{read:async()=>({...snapshot,label:'Aisle-side seats'}),input:async()=>{keys++},head:{flags},maxSteps:1}),/EXACT_GOAL_MUST_NOT_BE_PLANNED/);assert.equal(keys,0);assert.equal(plans,1);
 });
-test('collision-aware keyboard detour reaches a sole Samira interaction spot on both unchanged baseline and fixed layout',async()=>{
+test('collision-aware keyboard detour reaches a sole Samira interaction spot on published identity baseline and fixed layout',async()=>{
  const old=await original(),goals=[{x:536,y:448},{x:536,y:402},{x:558,y:402}],starts=[{x:592,y:442},{x:599.8399999983309,y:400.072800001335},rooms.chapel.spawn];let paths=0;
  for(const w of [old.worldWithFlags(flags),worldWithFlags(flags)])for(let x=576;x<=624;x+=4)for(const start of starts){const live=collision(w,x);let from=start;assert.ok(walkable(live,'chapel',from));for(const goal of goals){const path=findPath(live,'chapel',from,goal);assert.ok(path.length,JSON.stringify({start,from,goal,x}));for(const q of path)assert.ok(walkable(live,'chapel',q));from=goal}
   assert.ok(distance(from,{x,y:400})<65);assert.ok(distance(from,entityAt('chapel','chapel-seat')!.at)>65);assert.ok(distance(from,old.entityAt('chapel','chapel-seat').at)>65);paths++;
