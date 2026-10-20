@@ -1,10 +1,10 @@
+import {terrainZoneVisible as visible} from './terrain-ownership';
 import {outdoors,type TerrainPatch} from './outdoors';
 import {terrainAt} from './road-boundaries';
 import {globalPoint,localPoint,zonesFor} from '../candidate/continuity';
 import type {Point,Rect} from '../engine/world';
 export type RoadMaterial='stone'|'sand'|'wood';
 export type RoadEndPiece={zone:string;rect:Rect;kind:'tail'|'cap';material:RoadMaterial;background:TerrainPatch['material'];side?:'N'|'E'|'S'|'W'};
-const visible=(id:string,p:Point)=>id==='coast'?!(p.x>=1235&&p.x<2035&&p.y>=260&&p.y<820)&&p.y<805:id==='beach'?p.y>=805:id==='path'?p.x>=1235:id==='market'?p.y>=650:id==='bazaar'?p.y<650:true;
 const inside=(r:Rect,p:Point)=>p.x>=r.x&&p.y>=r.y&&p.x<r.x+r.w&&p.y<r.y+r.h;
 /** Presentation ownership only. Never imported by authority/collision. */
 export function roadEndVisible(scene:string,zone:string,p:Point){return visible(zone,p)&&!zonesFor(scene).some(id=>id!==zone&&outdoors[id]&&inside(outdoors[id].bounds,localPoint(id,p)))}

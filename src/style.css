@@ -38,3 +38,5 @@
 
 /* Keep internal navigation reachable in narrow English layouts. */
 .harbor-panel__return{min-width:44px;flex-shrink:0}
+
+.harbor-shore-action{position:absolute;right:16px;bottom:calc(130px + env(safe-area-inset-bottom));z-index:7;max-width:calc(100% - 32px);min-width:132px;min-height:48px;background:var(--paper);border:2px solid var(--gold);font-size:14px}.harbor-fishing-kit{border:1px solid var(--gold);padding:10px;margin-bottom:12px}.harbor-fishing-kit h3{font-size:18px;margin:0 0 6px}.harbor-fishing-kit p,[data-shore-fishing] p{font-size:14px;margin:8px 0}.harbor-fishing-kit button{min-height:48px}
