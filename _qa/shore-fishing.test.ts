@@ -10,6 +10,7 @@ test('water admission comes from all terrain areas and shared-map ownership, not
  assert.deepEqual(checkShore('station',world.scenes.station.spawn,world),{ok:false,reason:'NO_WATER'});
  assert.deepEqual(checkShore('dock',{x:470,y:600},world,{x:90,y:200}),{ok:false,reason:'WATER_TOO_FAR'});
  assert.deepEqual(checkShore('dock',{x:340,y:500},world,{x:360,y:500}),{ok:false,reason:'NO_WATER'});
+ const overWater=structuredClone(world);overWater.scenes.dock.obstacles.push({x:310,y:500,w:10,h:25});assert.deepEqual(checkShore('dock',{x:340,y:500},overWater,{x:300,y:506}),{ok:false,reason:'CAST_BLOCKED'});
  const blocked=structuredClone(world);blocked.scenes.dock.obstacles.push({x:330,y:490,w:8,h:40});assert.deepEqual(checkShore('dock',{x:340,y:500},blocked,{x:300,y:506}),{ok:false,reason:'CAST_BLOCKED'});
 });
 test('unseeded gear claim is free/idempotent; cast and reward are authority committed once and survive reopen',async()=>{

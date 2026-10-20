@@ -1,8 +1,7 @@
-import {outdoors} from './outdoors';
+import {outdoors,waterBarriers} from './outdoors';
 import {terrainAt} from './road-boundaries';
 import {terrainZoneVisible} from './terrain-ownership';
 import {globalPoint,localPoint,zonesFor,renderScene} from '../candidate/continuity';
-import {rooms} from './data';
 import {walkable,type Point,type Rect,type World} from '../engine/world';
 export const castReach=96;
 export type WaterKind='saltwater'|'stream';
@@ -29,9 +28,13 @@ export function shoreWaterCells(scene:string):WaterCell[]{
  for(let j=0;j<yy.length-1;j++)for(let i=0;i<xx.length-1;i++){const r={x:xx[i],y:yy[j],w:xx[i+1]-xx[i],h:yy[j+1]-yy[j]},at={x:r.x+r.w/2,y:r.y+r.h/2},w=waterAt(scene,localPoint(scene,at));if(w)out.push({...r,...w})}
  cells.set(key,out);return out;
 }
+const waterObstacleKeys=new Map<string,Set<string>>();
+const rectKey=(r:Rect)=>[r.x,r.y,r.w,r.h].join(',');
 function clearCast(scene:string,from:Point,to:Point,world:World){
- const blockers=zonesFor(scene).flatMap(z=>rooms[z]?.props.filter(p=>p.footprint&&p.footprint.w>0&&p.footprint.h>0).map(p=>{const q=globalPoint(z,p.footprint!);return {...q,w:p.footprint!.w,h:p.footprint!.h}})??[]),a=globalPoint(scene,from),b=globalPoint(scene,to),steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));
- for(let i=1;i<=steps;i++){const gp={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(blockers.some(r=>inside(r,gp)))return false;const p=localPoint(scene,gp);if(!waterAt(scene,p)&&world.scenes[scene]?.obstacles.some(o=>inside(o,p)))return false;}
+ // Water collision prevents walking, not casting. All other current collision
+ // (including dynamic assets and planted beds) still occludes a cast.
+ const blockers=zonesFor(scene).flatMap(zone=>{let water=waterObstacleKeys.get(zone);if(!water){water=new Set(outdoors[zone]?waterBarriers(outdoors[zone]).map(rectKey):[]);waterObstacleKeys.set(zone,water)}return (world.scenes[zone]?.obstacles??[]).filter(o=>!water!.has(rectKey(o))).map(o=>({...globalPoint(zone,o),w:o.w,h:o.h,zone}))}),a=globalPoint(scene,from),b=globalPoint(scene,to),steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));
+ for(let i=1;i<=steps;i++){const gp={x:a.x+(b.x-a.x)*i/steps,y:a.y+(b.y-a.y)*i/steps};if(blockers.some(r=>terrainZoneVisible(r.zone,gp)&&inside(r,gp)))return false;}
  return true;
 }
 export function checkShore(scene:string,standing:Point,world:World,aim?:Point):ShoreCheck{
