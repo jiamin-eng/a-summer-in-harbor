@@ -44,4 +44,4 @@ test('merged actual SQLite keeps fern provenance and Dani root through fishing, 
   await store.close();store=openAsyncSqliteAuthorityStore(config);authority=new AsyncSessionAuthority(store,assembly.runtime);assert.deepEqual(await authority.get(owner,s.id),s);assembly.runtime.assertReadable(s);
  }finally{await store.close();rmSync(dir,{recursive:true,force:true})}
 });
-test('merged public entry continues to use only the original animal chapter',()=>{const s=readFileSync('server/public.ts','utf8');assert.match(s,/createLife:createReviewedAnimalLife/);assert.doesNotMatch(s,/createReviewedAnimalArcLife/)});
+test('authorized public entry selects the reviewed animal continuation registry',()=>{const s=readFileSync('server/public.ts','utf8');assert.match(s,/createLife:createReviewedAnimalArcLife/);assert.doesNotMatch(s,/createLife:createReviewedAnimalLife[,}]/)});

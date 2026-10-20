@@ -1,5 +1,5 @@
 import {withWildMint} from './wild-mint';
-import {createReviewedAnimalLife} from './reviewed-animal-life';
+import {createReviewedAnimalArcLife} from './reviewed-animal-life';
 import {withBasilPlantUses} from './plant-basil';
 import {createExplorationAssembly} from './exploration-assembly';
 import {configuredNews} from './news/configured';
@@ -24,7 +24,7 @@ const pool=new Pool({host:config.pgHost,database:config.database,user:config.use
 // relabel that as generic certification; public release needs the game's canary.
 const store=await openPgAuthorityStore({pool,schema:config.schema,worldId:GAME_UUID,gameId:GAME_UUID,environment:'test'});
 await mkdir('.data/rules',{recursive:true});
-const assembly=createExplorationAssembly({resolveDialogue:await createDialogueResolver(store,{afterRain:true}),notes:await createFieldNotes(store),defaultRate:4000,afterRain:true,weather:{enabled:true,ecology:true},crabEnabled:true,createLife:createReviewedAnimalLife,decorateLife:(r:any)=>withWildMint(withBasilPlantUses(r,{enabled:true,newStarts:true}),{enabled:true,newStarts:true}),decorateRuntime:(r:any)=>configuredNews(r,process.env.HARBOR_NEWS_CATALOG)});
+const assembly=createExplorationAssembly({resolveDialogue:await createDialogueResolver(store,{afterRain:true}),notes:await createFieldNotes(store),defaultRate:4000,afterRain:true,weather:{enabled:true,ecology:true},crabEnabled:true,createLife:createReviewedAnimalArcLife,decorateLife:(r:any)=>withWildMint(withBasilPlantUses(r,{enabled:true,newStarts:true}),{enabled:true,newStarts:true}),decorateRuntime:(r:any)=>configuredNews(r,process.env.HARBOR_NEWS_CATALOG)});
 const {runtime,newsProject}=assembly;
 const authority=assembly.decorateAuthority(new AsyncSessionAuthority(store,runtime),store);
 const dynamicAssets=await createDynamicAssets({pool,authority,config,edgeToken:token});
