@@ -4,6 +4,7 @@ import {terrainZoneVisible} from './terrain-ownership';
 import {globalPoint,localPoint,zonesFor,renderScene} from '../candidate/continuity';
 import {walkable,type Point,type Rect,type World} from '../engine/world';
 export const castReach=96;
+const castOffsets=[0,...Array.from({length:32},(_,i)=>(i+1)*3).flatMap(n=>[-n,n])];
 export type WaterKind='saltwater'|'stream';
 export type ShoreTarget={at:Point;water:WaterKind;zone:string;distance:number};
 export type ShoreCheck={ok:true;target:ShoreTarget}|{ok:false;reason:'NO_WATER'|'WATER_TOO_FAR'|'CAST_BLOCKED'|'INVALID_STANDING'};
@@ -43,7 +44,7 @@ export function checkShore(scene:string,standing:Point,world:World,aim?:Point):S
  const foot={x:standing.x+world.actor.w/2,y:standing.y+world.actor.h/2};
  if(aim){if(!Number.isFinite(aim.x)||!Number.isFinite(aim.y)||!waterAt(scene,aim))return {ok:false,reason:'NO_WATER'};const distance=Math.hypot(aim.x-foot.x,aim.y-foot.y);if(distance>castReach)return {ok:false,reason:'WATER_TOO_FAR'};if(!clearCast(scene,foot,aim,world))return {ok:false,reason:'CAST_BLOCKED'};return {ok:true,target:{at:{...aim},...waterAt(scene,aim)!,distance}}}
  const gf=globalPoint(scene,foot),candidates:ShoreTarget[]=[];
- for(const r of water){const x=Math.max(r.x+.25,Math.min(r.x+r.w-.25,gf.x)),y=Math.max(r.y+.25,Math.min(r.y+r.h-.25,gf.y));for(const offset of [0,-24,24,-48,48])for(const axis of ['x','y']as const){const gp={x:Math.max(r.x+.25,Math.min(r.x+r.w-.25,x+(axis==='x'?offset:0))),y:Math.max(r.y+.25,Math.min(r.y+r.h-.25,y+(axis==='y'?offset:0)))},p=localPoint(scene,gp),distance=Math.hypot(gp.x-gf.x,gp.y-gf.y);if(distance<=castReach&&waterAt(scene,p))candidates.push({at:p,zone:r.zone,water:r.water,distance})}}
+ for(const r of water){const x=Math.max(r.x+.25,Math.min(r.x+r.w-.25,gf.x)),y=Math.max(r.y+.25,Math.min(r.y+r.h-.25,gf.y));if(Math.hypot(x-gf.x,y-gf.y)>castReach)continue;for(const offset of castOffsets)for(const axis of ['x','y']as const){const gp={x:Math.max(r.x+.25,Math.min(r.x+r.w-.25,x+(axis==='x'?offset:0))),y:Math.max(r.y+.25,Math.min(r.y+r.h-.25,y+(axis==='y'?offset:0)))},p=localPoint(scene,gp),distance=Math.hypot(gp.x-gf.x,gp.y-gf.y);if(distance<=castReach&&waterAt(scene,p))candidates.push({at:p,zone:r.zone,water:r.water,distance})}}
  candidates.sort((a,b)=>a.distance-b.distance);for(const target of candidates)if(clearCast(scene,foot,target.at,world))return {ok:true,target};
  return {ok:false,reason:candidates.length?'CAST_BLOCKED':'WATER_TOO_FAR'};
 }

@@ -1,10 +1,11 @@
+import {checkShore} from '../src/world/shore-water';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {mkdtempSync,rmSync,readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import type {Save,Action} from '../src/story/state';
-import {entityAt,rooms} from '../src/world/data';
+import {entityAt,rooms,worldWithFlags} from '../src/world/data';
 import {fernInBag,fernQaAssembly,fernCommand} from './ornamental-fern-fixture';
 import {createReviewedAnimalArcLife} from '../server/reviewed-animal-life';
 import {observationId,type AnimalRef} from '../src/animal-life/types';
@@ -17,7 +18,7 @@ import second from '../server/content/phase2-quiet-after-gulls.json';
 // @ts-expect-error frozen async authority
 import {AsyncSessionAuthority,openAsyncSqliteAuthorityStore} from '../vendor/dynamic-runtime/packages/authority-session/async.mjs';
 
-test('merged actual SQLite keeps fern provenance and Dani root through fishing, chapter share, move, replay and reopen',async()=>{
+test('merged actual SQLite keeps fern provenance and Dani root through legacy/shore fishing, chapter share, move, replay and reopen',async()=>{
  const template=await fernInBag();template.scene='garden';template.position={...entityAt('garden','dani')!.approach};template.visited=Object.keys(rooms);
  const prep=fernQaAssembly({createLife:createReviewedAnimalArcLife});let save=template;
  for(const verb of ['introduce','talk:rg-personal'])save=(await prep.runtime.prepare(save,{action_id:randomUUID(),expected_version:save.version,scene:save.scene,position:save.position,target:'dani',action:verb})).head;
@@ -36,11 +37,15 @@ test('merged actual SQLite keeps fern provenance and Dani root through fishing, 
   let f=fishingInitial();const fishing:FishingRun[]=[];while(f.result==='playing'){const hold=f.tension<.7;recordFishing(fishing,hold);f=fishingStep(f,hold)}
   const finish=command(s.activeChallenge!.id,'challenge-finish',{fishing}),caught=await authority.action(owner,s.id,finish);s=caught.head;assert.deepEqual(await authority.action(owner,s.id,finish),caught);
   assert.deepEqual([s.items.fish,s.energy,s.cash],[100,beforeEnergy-2,cash]);assert.deepEqual(s.ornamentalFernV1,fern);assert.deepEqual(s.relationshipNextV1,dani);assert.deepEqual(s.animalNotebookV1,animal);
+  const ruthAfterBorrow=s.relations.ruth;
+  s=(await authority.action(owner,s.id,command('fishing-kit','fishing-kit:claim'))).head;const shore=checkShore(s.scene,s.position,worldWithFlags(s.flags));assert.ok(shore.ok);
+  s=(await authority.action(owner,s.id,command('shore-water','fishing:start',{cast:shore.target.at}))).head;let line=fishingInitial();const runs:FishingRun[]=[];while(line.result==='playing'){recordFishing(runs,true);line=fishingStep(line,true,'first')}assert.equal(line.result,'caught');
+  const shoreFinish=command(s.activeChallenge!.id,'challenge-finish',{shore:{hookTick:45,waitTicks:45,runs}}),shoreReceipt=await authority.action(owner,s.id,shoreFinish);s=shoreReceipt.head;assert.deepEqual(await authority.action(owner,s.id,shoreFinish),shoreReceipt);assert.equal(s.items.fish,101);assert.equal(s.energy,beforeEnergy-4);assert.equal(s.relations.ruth,ruthAfterBorrow);assert.deepEqual(s.ornamentalFernV1,fern);assert.deepEqual(s.relationshipNextV1,dani);assert.deepEqual(s.animalNotebookV1,animal);
   s=(await authority.action(owner,s.id,command('garden','travel-map'))).head;const share=command('dani','animal-life:share',{command:{verb:'share',ref:second.ref}}),shared=await authority.action(owner,s.id,share);s=shared.head;assert.deepEqual(await authority.action(owner,s.id,share),shared);
-  assert.equal(s.relations.dani,beforeDani+1);assert.equal(s.items.fish,100);assert.deepEqual(s.relationshipNextV1,dani);assert.deepEqual(s.ornamentalFernV1,fern);assert.equal(s.animalNotebookV1!.pages.length,2);
+  assert.equal(s.relations.dani,beforeDani+1);assert.equal(s.items.fish,101);assert.deepEqual(s.relationshipNextV1,dani);assert.deepEqual(s.ornamentalFernV1,fern);assert.equal(s.animalNotebookV1!.pages.length,2);
   await assert.rejects(authority.action(owner,s.id,command('dani','animal-life:share',{command:{verb:'share',ref:second.ref}})),/COMMISSION_MISMATCH/);
   s=(await authority.action(owner,s.id,command('home','travel-map'))).head;const energy=s.energy,now=s.townMinutes??540,move=fernCommand(s,'place'),placed=await authority.action(owner,s.id,move);s=placed.head;assert.deepEqual(await authority.action(owner,s.id,move),placed);
-  assert.deepEqual(s.ornamentalFernV1!.plant!.source,fern!.plant!.source);assert.deepEqual(s.relationshipNextV1,dani);assert.equal(s.items.fish,100);assert.equal(s.energy,energy-4);assert.equal(s.townMinutes,now+20);assert.equal(s.cash,cash);
+  assert.deepEqual(s.ornamentalFernV1!.plant!.source,fern!.plant!.source);assert.deepEqual(s.relationshipNextV1,dani);assert.equal(s.items.fish,101);assert.equal(s.energy,energy-4);assert.equal(s.townMinutes,now+20);assert.equal(s.cash,cash);
   await store.close();store=openAsyncSqliteAuthorityStore(config);authority=new AsyncSessionAuthority(store,assembly.runtime);assert.deepEqual(await authority.get(owner,s.id),s);assembly.runtime.assertReadable(s);
  }finally{await store.close();rmSync(dir,{recursive:true,force:true})}
 });
