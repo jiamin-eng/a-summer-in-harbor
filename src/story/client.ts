@@ -43,7 +43,7 @@ export async function connect(locale:Locale,selectedId?:string):Promise<Save>{
  const id=selectedId??directory.journeys[0]?.id;
  if(!id)throw Error('JOURNEY_EMPTY');
  if(!directory.journeys.some(j=>j.id===id))throw Error('JOURNEY_NOT_FOUND');
- s.assert();storage().setItem(key('harbor-journey',s),id);choice=undefined;
+ s.assert();try{storage().setItem(key('harbor-journey',s),id)}catch{/* Optional presentation pointer; the account directory owns journey selection. */}choice=undefined;
  // Preserve historical pending envelopes by journey; never submit one as another account.
  const oldKey=key('harbor-pending-v1',s),old=storage().getItem(oldKey);if(old&&JSON.parse(old).id===id&&!storage().getItem(pendingKey(s,id!))){storage().setItem(pendingKey(s,id!),old);storage().removeItem(oldKey)}
  const pending=storage().getItem(pendingKey(s,id!));if(pending){const p=JSON.parse(pending);if(p.id===id){try{const recovered=await request('/sessions/'+id+(p.channel==='motion'?'/motion':p.channel==='active-play'?'/active-play':'/action'),p.action,s);if(p.channel==='motion')confirmMotion(recovered,id!,p.action);if(p.channel==='active-play')confirmActivePlay(recovered,id!,p.action);const entry=recovered.head?.history.find((h:{id:string})=>h.id===p.action.action_id);if(entry){rememberReply(storage(),recovered.head,entry,locale);if(entry.person&&entry.question&&storage().getItem(draftKey(id!,entry.person))?.trim()===entry.question)storage().removeItem(draftKey(id!,entry.person))};s.assert();storage().removeItem(pendingKey(s,id!))}catch(e:any){s.assert();if(['motion','active-play'].includes(p.channel)?resolvedMotionFailure(e):resolvedFailure(e))storage().removeItem(pendingKey(s,id!));else throw e}}}
@@ -77,6 +77,15 @@ export async function send(head:Save,a:Action):Promise<{head:Save;text:[string,s
  const work=async()=>{requireBound(head,s);if(storage().getItem(pending))throw Error('PENDING_ACTION');storage().setItem(pending,JSON.stringify({id:head.id,action:a}));
   try{const result=await request('/sessions/'+head.id+'/action',a,s);requireBound(head,s);const entry=result.head.history.find((h:{id:string})=>h.id===a.action_id);if(entry)rememberReply(storage(),result.head,entry,(a.payload as {locale?:Locale})?.locale??head.locale);s.assert();storage().removeItem(pending);const latest=await request('/sessions/'+head.id,undefined,s);requireBound(head,s);return {...result,head:bind(s,latest)}}catch(e:any){s.assert();if(resolvedFailure(e))storage().removeItem(pending);throw e}
  };return navigator.locks?navigator.locks.request('harbor-authority-writer:'+s.scope,work):work();
+}
+const shoreRequests=new Map<string,Action>();
+export async function sendShoreRecovery(head:Save,action:Action):Promise<{head:Save;text:[string,string]}>{
+ const s=identitySnapshot();requireBound(head,s);const active=head.activeChallenge;
+ if(!active?.fishing||!['fishing:land','challenge-finish'].includes(action.action)||action.target!==active.id)throw Error('CHALLENGE_MISMATCH');
+ const lane=action.action==='fishing:land'?'land':(action.payload as {withdraw?:boolean})?.withdraw?'withdraw':'confirm',scope=s.scope+':'+head.id+':'+active.id+':'+lane;
+ let a=shoreRequests.get(scope);if(!a){a={...action};if(head.activePlayClock)a={...a,activePlay:activePlayActionFence(head)??{client:activePlayClientId(),activeMs:0,...(head.activePlayClock.lease?{lease:head.activePlayClock.lease.id}:{})}};shoreRequests.set(scope,a)}
+ const work=async()=>{requireBound(head,s);if(hasPendingAction())throw Error('PENDING_ACTION');try{const result=await request('/sessions/'+head.id+'/action',a,s);requireBound(head,s);const latest=await request('/sessions/'+head.id,undefined,s);requireBound(head,s);shoreRequests.delete(scope);return {...result,head:bind(s,latest)}}catch(e:any){if(resolvedFailure(e))shoreRequests.delete(scope);throw e}};
+ return navigator.locks?navigator.locks.request('harbor-authority-writer:'+s.scope,work):work();
 }
 export async function checkpoint(head:Save,position:{x:number;y:number}){const s=identitySnapshot();requireBound(head,s);if(storage().getItem(pendingKey(s,head.id)))return;await request('/sessions/'+head.id+'/checkpoint',{expected_version:head.version,sceneId:head.scene,position},s)}
 /** New channel shares the original single persistent pending and identity-scoped writer lock. Old envelopes still recover via /action. */
