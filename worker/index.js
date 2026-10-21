@@ -18,7 +18,8 @@ export async function handleApi(request,env){
  const landRead=lifeRead&&path.endsWith('/land-preview');
  const entries=[...url.searchParams],keys=entries.map(([key])=>key);
  const landQuery=landRead&&entries.length<=3&&new Set(keys).size===keys.length&&keys.every(key=>['region','x','y'].includes(key))&&/^[a-z][a-z0-9-]{0,63}$/.test(url.searchParams.get('region')??'')&&url.searchParams.has('x')===url.searchParams.has('y')&&['x','y'].every(key=>!url.searchParams.has(key)||/^-?\d{1,5}(?:\.\d{1,6})?$/.test(url.searchParams.get(key)));
- if(!demoRoute&&!lifeRead&&!clockWrite&&!/^\/api\/(?:health|bootstrap|usage|sessions(?:\/[a-f0-9-]{36}(?:\/(?:action|checkpoint|events|assets\/(?:home|cafe|garden)\/(?:prepare|package|check|manifest|blob)|media\/workshop-annex-[12](?:\/(?:status|prepare))?))?)?)$/.test(path)||clockWrite&&(request.method!=='POST'||url.search)||lifeRead&&request.method!=='GET'||landRead&&!landQuery||!landRead&&url.search&&(lifeRead||!/^\?after=\d{1,12}$/.test(url.search)))return fail('NOT_FOUND',404);
+ if(!demoRoute&&!lifeRead&&!clockWrite&&!/^\/api\/(?:health|client-contract|bootstrap|usage|sessions(?:\/[a-f0-9-]{36}(?:\/(?:action|checkpoint|events|assets\/(?:home|cafe|garden)\/(?:prepare|package|check|manifest|blob)|media\/workshop-annex-[12](?:\/(?:status|prepare))?))?)?)$/.test(path)||clockWrite&&(request.method!=='POST'||url.search)||lifeRead&&request.method!=='GET'||landRead&&!landQuery||!landRead&&url.search&&(lifeRead||!/^\?after=\d{1,12}$/.test(url.search)))return fail('NOT_FOUND',404);
+ if(path==='/api/client-contract'&&request.method!=='GET')return fail('METHOD_NOT_ALLOWED',405);
  if(!['GET','POST'].includes(request.method))return fail('METHOD_NOT_ALLOWED',405);
  if(request.headers.get('Origin')&&request.headers.get('Origin')!==origin||request.headers.get('Sec-Fetch-Site')==='cross-site')return fail('ORIGIN_FORBIDDEN',403);
  if(request.method==='POST'&&(request.headers.get('Origin')!==origin||!request.headers.get('Content-Type')?.startsWith('application/json')))return fail('INVALID_WRITE_ORIGIN',403);
@@ -58,6 +59,7 @@ export async function handleApi(request,env){
  // clients that omitted it or forward unknown/combined header values.
  if(request.headers.get('X-Harbor-Land')==='2')headers.set('X-Harbor-Land','2');
  if(request.headers.get('X-Harbor-Fern')==='1')headers.set('X-Harbor-Fern','1');
+ if(request.headers.get('X-Harbor-Fishing')==='2')headers.set('X-Harbor-Fishing','2');
  if(demo){const id=request.headers.get('X-Harbor-Telegram-Id');if(id!==null){if(!/^[1-9][0-9]{0,19}$/.test(id)||request.headers.get('X-Harbor-Identity-Mode')!=='temporary-unverified')return fail('INVALID_DEMO_IDENTITY',400);headers.set('X-Harbor-Telegram-Id',id);headers.set('X-Harbor-Identity-Mode','temporary-unverified')}}
  if(verified&&path!=='/api/health'){headers.set('X-Harbor-Telegram-Id',request.headers.get('X-Harbor-Telegram-Id'));headers.set('X-Harbor-Identity-Mode','platform-verified-v1');headers.set('Authorization',request.headers.get('Authorization'))}
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);

@@ -1,5 +1,8 @@
 import type {Words} from '../world/data';
 const messages:Record<string,Words>={
+ CLIENT_REFRESH_REQUIRED:['请重新载入游戏；已保存的钓获仍保留。','Reload the game; your saved catch is kept.'],
+ SERVER_UPDATE_REQUIRED:['服务正在更新，请稍后重新载入。','The service is updating. Reload shortly.'],
+ FISHING_NEW_STARTS_CLOSED:['暂时不能开始新一竿。已有钓获仍可确认入包。','New casts are paused. You can still confirm an existing catch.'],
  PLATFORM_LOGIN_REQUIRED:['请先登录账号，再开始或继续旅程。','Sign in before starting or continuing a journey.'],
  login_required:['登录已取消。准备好时可以再试。','Sign-in was cancelled. Try again when you are ready.'],
  PLATFORM_ID_UNAVAILABLE:['登录窗口已关闭，但平台账号信息尚未同步。请稍后再试；已有旅程不变。','The sign-in window closed, but platform account information has not arrived. Try again shortly; saved journeys stay.'],

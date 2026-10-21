@@ -1,3 +1,5 @@
+import {FISHING_PROTOCOL} from '../fishing-release';
+import {clientCompatibilityIssue,requireClientUpdate,checkFishingContract} from './client-compatibility';
 import {entrySpan} from '../account-link/entry-timing';
 import {rememberReply,draftKey} from './dialogue-reading';
 import {getGameApiBase} from '../game-id';import type {Save,Action} from './state';import type {Locale} from '../world/data';
@@ -19,9 +21,10 @@ function confirmMotion(ack:MotionAck,id:string,a:Action){const c=ack?.fields?.cl
 }
 export const hasPendingAction=()=>!!storage().getItem(pendingKey(identitySnapshot()));
 async function request(path:string,body?:unknown,s=identitySnapshot()){
+ if(clientCompatibilityIssue())requireClientUpdate(clientCompatibilityIssue());
  if(!s.account)throw Error('PLATFORM_LOGIN_REQUIRED');
  if(!/^[1-9][0-9]{0,19}$/.test(s.account))throw Error('INVALID_SHELL_IDENTITY');
- const r=await identityFetch(getGameApiBase()+'/api'+path,{method:body===undefined?'GET':'POST',headers:{'X-Harbor-Land':'2','X-Harbor-Fern':'1','X-Harbor-Dynamic-Assets':'1',...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})},s);const data=await r.json();s.assert();if(!r.ok)throw Object.assign(Error(data.error??'REQUEST_FAILED'),{status:r.status,terminal:data.terminal,retryAfterMs:data.retryAfterMs});return data;
+ const r=await identityFetch(getGameApiBase()+'/api'+path,{method:body===undefined?'GET':'POST',headers:{'X-Harbor-Fishing':FISHING_PROTOCOL,'X-Harbor-Land':'2','X-Harbor-Fern':'1','X-Harbor-Dynamic-Assets':'1',...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})},s);const data=await r.json();s.assert();if(!r.ok&&data.error==='CLIENT_REFRESH_REQUIRED')requireClientUpdate();if(!r.ok)throw Object.assign(Error(data.error??'REQUEST_FAILED'),{status:r.status,terminal:data.terminal,retryAfterMs:data.retryAfterMs});return data;
 }
 export type JourneyChoice={browserClaimed?:boolean;journeys:{id:string;version:number;scene:string;updated?:number}[];legacy:{id:string;version:number;scene:string;updated?:number}[]};
 let choice:{scope:string;data:JourneyChoice;management?:boolean}|undefined;let bound:{scope:string;id:string}|undefined;
@@ -32,6 +35,8 @@ function requireBound(head:Save,s:Scope){s.assert();if(bound?.scope!==s.scope||b
 export function assertCurrentJourney(head:Save){requireBound(head,identitySnapshot())}
 export async function readEntryDirectory():Promise<JourneyChoice>{
  const s=identitySnapshot();
+ // Read-only negotiation before bootstrap/enrollment or replay of any saved request.
+ try{checkFishingContract(await request('/client-contract',undefined,s))}catch(e:any){if(e.status===404||e.message==='NOT_FOUND')requireClientUpdate('SERVER_UPDATE_REQUIRED');throw e}
  const boot=await entrySpan('bootstrap',()=>request('/bootstrap',{},s)).then(value=>{clearBootstrapFailure();return value},error=>{recordBootstrapFailure(error);throw error});enableAccountMode(boot.mode);s.assert();
  const journeys=await entrySpan('session-directory',()=>request('/sessions',undefined,s)),data={journeys,legacy:[]};
  s.assert();choice={scope:s.scope,data};return data;
@@ -81,8 +86,10 @@ export async function send(head:Save,a:Action):Promise<{head:Save;text:[string,s
 const shoreRequests=new Map<string,Action>();
 export async function sendFishingRecovery(head:Save,action:Action):Promise<{head:Save;text:[string,string]}>{
  const s=identitySnapshot();requireBound(head,s);const active=head.activeChallenge;
- if(active?.kind!=='fishing'||!['fishing:land','challenge-finish'].includes(action.action)||action.target!==active.id)throw Error('CHALLENGE_MISMATCH');
- const lane=action.action==='fishing:land'?'land':(action.payload as {withdraw?:boolean})?.withdraw?'withdraw':'confirm',scope=s.scope+':'+head.id+':'+active.id+':'+lane;
+ // Unique wire verbs fail closed on an old backend, even if it replaces the server after entry negotiation.
+ if(action.action==='challenge-finish')action={...action,action:(action.payload as {withdraw?:boolean})?.withdraw?'fishing:withdraw':'fishing:confirm'};
+ if(active?.kind!=='fishing'||!['fishing:land','fishing:confirm','fishing:withdraw'].includes(action.action)||action.target!==active.id)throw Error('CHALLENGE_MISMATCH');
+ const lane=action.action==='fishing:land'?'land':action.action==='fishing:withdraw'?'withdraw':'confirm',scope=s.scope+':'+head.id+':'+active.id+':'+lane;
  let a=shoreRequests.get(scope);if(!a){a={...action};if(head.activePlayClock)a={...a,activePlay:activePlayActionFence(head)??{client:activePlayClientId(),activeMs:0,...(head.activePlayClock.lease?{lease:head.activePlayClock.lease.id}:{})}};shoreRequests.set(scope,a)}
  const work=async()=>{requireBound(head,s);if(hasPendingAction())throw Error('PENDING_ACTION');try{const result=await request('/sessions/'+head.id+'/action',a,s);requireBound(head,s);const latest=await request('/sessions/'+head.id,undefined,s);requireBound(head,s);shoreRequests.delete(scope);return {...result,head:bind(s,latest)}}catch(e:any){if(resolvedFailure(e))shoreRequests.delete(scope);throw e}};
  return navigator.locks?navigator.locks.request('harbor-authority-writer:'+s.scope,work):work();

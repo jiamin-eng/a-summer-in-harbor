@@ -56,6 +56,8 @@ export async function landWorkerChain(template:LifeSave,options:{databasePath?:s
   async response(path:string,options:CallOptions={}){
    const headers=new Headers(options.headers),method=options.method??(options.body===undefined?'GET':'POST');
    if(!headers.has('Origin'))headers.set('Origin',env.HARBOR_PUBLIC_ORIGIN);
+   // This fixture models the current client; callers can explicitly supply an old fishing protocol.
+   if(!headers.has('X-Harbor-Fishing'))headers.set('X-Harbor-Fishing','2');
    if(options.account!==null){headers.set('X-Harbor-Telegram-Id',options.account??optionsIdentity?.id??'99101561');headers.set('X-Harbor-Identity-Mode',env.HARBOR_IDENTITY_MODE);if(optionsIdentity&&!headers.has('Authorization'))headers.set('Authorization','Bearer '+optionsIdentity.token)}
    if(method==='POST'&&!headers.has('Content-Type'))headers.set('Content-Type','application/json');
    return gateway(new Request(env.HARBOR_PUBLIC_ORIGIN+path,{method,headers,...(options.body===undefined?{}:{body:JSON.stringify(options.body)})}),env);

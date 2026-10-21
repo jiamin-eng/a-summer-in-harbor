@@ -21,6 +21,7 @@ for(const code of ['CHAPEL_WRONG_PLACE','CHAPEL_NOT_JOINED','CHAPEL_READ_NOTE_FI
 // Seed policy gameplay rejections; malformed saved provenance stays nonterminal.
 for(const code of ['SEED_QUOTA_SPENT','HARVEST_BATCH_UNAVAILABLE','HARVEST_RECORD_CAPACITY'])gameplay.add(code);
 for(const code of ['LAND_EXPANSION_CLOSED','LAND_EXPANSION_PERMISSION','LAND_EXPANSION_NOT_READY','LAND_ALREADY_EXPANDED','LAND_BED_MISSING','LAND_BED_OCCUPIED'])gameplay.add(code);
+for(const code of ['FISHING_NEW_STARTS_CLOSED','FISHING_CONFIRM_REQUIRED','FISHING_RESULT_AWAITING_CONFIRMATION','FISHING_RESULT_LOCKED'])gameplay.add(code);
 class ActiveBusinessRejection extends Error{readonly terminal=true;readonly status=409;constructor(readonly code:string){super(code)}}
 export function brandActivePrepareFailure(error:unknown){return error instanceof Error&&gameplay.has(error.message)?new ActiveBusinessRejection(error.message):error}
 export function activeBusinessHttpFailure(error:unknown){

@@ -1,3 +1,4 @@
+import {assertFishingStartAllowed,FISHING_NEW_STARTS} from '../src/fishing-release';
 import {validFishingMemory} from '../src/challenges/shore-fishing';
 import {validNeighborChapter} from '../src/story/neighbor-chapter';
 import {validPriestState} from '../src/story/chapel-priest';
@@ -20,7 +21,7 @@ import {initial,applyAction,validateQuestion,type Save,type Action,type Dialogue
 import {world,worldWithFlags} from '../src/world/data';import {walkable} from '../src/engine/world';
 import type {createFieldNotes} from './fieldnotes';
 type Notes=Awaited<ReturnType<typeof createFieldNotes>>;
-export const createRuntime=(resolveDialogue?:(s:Save,a:Action,owner:string)=>Promise<DialogueResolution>,notes?:Notes,motion?:ReturnType<typeof createMovingClock>,options:{relationshipClock?:(s:Save)=>number;afterRainResolve?:(s:Save,a:Action,person:string)=>[string,string]}={})=>({
+export const createRuntime=(resolveDialogue?:(s:Save,a:Action,owner:string)=>Promise<DialogueResolution>,notes?:Notes,motion?:ReturnType<typeof createMovingClock>,options:{fishingNewStarts?:boolean;relationshipClock?:(s:Save)=>number;afterRainResolve?:(s:Save,a:Action,person:string)=>[string,string]}={})=>({
  initial,upgrade:(s:Save)=>s,scene:(s:Save)=>s.scene,
  assertReadable(s:Save){if(!s||!validFishingMemory(s)||!validNeighborChapter(s)||!validChapelState(s)||!validPriestState(s)||!validClock(s)||!validRelationshipGrowth(s)||!validNomadMemory(s)||!validAnimalSave(s.animalsV1,animals,s.townMinutes??540)||!validTurnBattle(s)||!validNewsState(s)||!validPlots(s)||(s.awakeMinutes!==undefined&&(!Number.isSafeInteger(s.awakeMinutes)||s.awakeMinutes<0))||(s.townMinutes!==undefined&&(!Number.isSafeInteger(s.townMinutes)||s.townMinutes<0))||(s.fernStartedAt!==undefined&&(!Number.isSafeInteger(s.fernStartedAt)||s.fernStartedAt<0||s.fernStartedAt>(s.townMinutes??540)))||s.mapVersion!==1||!s.id||!Number.isSafeInteger(s.version)||!world.scenes[s.scene]||!Array.isArray(s.flags)||!Array.isArray(s.known)||!walkable(dynamicWorld(s.flags,!!requestContext.getStore()?.dynamicGeometry),s.scene,s.position))throw Error('UNSUPPORTED_SAVE')},
  spatialContext(s:Save){if(s.movingClock)throw Error('MOTION_CHECKPOINT_REQUIRED');return s},
@@ -39,6 +40,7 @@ export const createRuntime=(resolveDialogue?:(s:Save,a:Action,owner:string)=>Pro
   spatialBinding.assertTransition(spatialSnapshot(s),spatialSnapshot(head),bound,s.scene);
   return {head,text,kind:'action',accepted:true,actionId:a.action};
  }
+ assertFishingStartAllowed(a.action,options.fishingNewStarts??FISHING_NEW_STARTS);
  const boundKey=admitSpatialAction(s,a,actionWorld);if(a.action==='notes-generate'||a.action==='notes-observe'){if(!notes)throw Error('NOTES_UNAVAILABLE');return a.action==='notes-generate'?notes.generate(s,a,context!.owner):notes.observe(s,a,context!.owner)}const question=a.action==='ask'?validateQuestion(s,a):undefined;const defer=question?nomadDeferral(question.person,s):undefined;const resolution=a.action==='ask'&&!defer?(resolveDialogue?await resolveDialogue(s,a,context!.owner):undefined):undefined;const result=applyAction(s,defer?{...a,action:'talk:nomads-v1-defer'}:a,resolution,actionWorld,options.relationshipClock??townMinutes);if(defer)result.head.history.at(-1)!.question=question!.question;if(notes&&result.head.scene!==s.scene)await notes.travel(s,result.head,context!.owner);if(a.action!=='travel-map'&&!a.action.startsWith('battle-')&&a.action!=='snack-eat')spatialBinding.assertTransition(spatialSnapshot(s),spatialSnapshot(result.head),boundKey,s.scene);return {...result,kind:'action',accepted:true,actionId:a.action}},
  preserveConcurrent(next:Save,_current:Save){return next},
 });

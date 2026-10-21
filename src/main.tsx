@@ -1,3 +1,4 @@
+import {ClientCompatibility} from './ui/ClientCompatibility';
 import {sendFishingRecovery} from './story/client';
 import {FishingKit,ShoreFishingAccess,shoreErrors} from './ui/ShoreFishingAccess';
 import {checkShore,shoreWaterCells,type ShoreCheck} from './world/shore-water';
@@ -238,4 +239,4 @@ function App(){
 }
 
 document.documentElement.dataset.harborRelease=RELEASE;
-createRoot(document.getElementById('root')!).render(location.hostname.endsWith('.github.io')?<Mirror/>:<App/>);
+createRoot(document.getElementById('root')!).render(location.hostname.endsWith('.github.io')?<Mirror/>:<><App/><ClientCompatibility/></>);

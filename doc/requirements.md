@@ -492,3 +492,10 @@ Local contract: fishing-f0-20261019.md. Four confirmed defects: pier route disco
 blur、pagehide、freeze及hidden均暂停；focus/pageshow/resume只在页面可见且真正有焦点时恢复，恢复清除旧手势及累计帧时间。分别验证等待/咬钩/收线状态，不能用无头浏览器仍visible的切页动作冒充真实后台验收。
 
 同一恢复协议也覆盖Ruth旧借竿入口：旧难度、营业/介绍/借竿规则与Ruth关系奖励不变；只是结果先权威暂存、确认后原奖励一次。旧入口未确认结果不会因没有岸线 encounter 而在重载后重开小游戏。
+
+
+## Fishing release compatibility — 2026-10-21
+
+Protocol 2 negotiates through a read-only client-contract before bootstrap/replay. The account/API boundary rejects older protocol requests before authority access with a nonterminal CLIENT_REFRESH_REQUIRED response and bilingual reload guidance. Already-running historical JS cannot gain a new message renderer; it fails closed and must be reloaded through the host. New clients show a reload dialog and stop further requests on incompatibility. Unique fishing confirm/withdraw wire verbs cannot be mistaken for old-backend challenge-finish. Existing uncertain envelopes are never rewritten.
+
+Paired open/stop-new builds share the same save reader and confirmation authority. Stop-new rejects free kit/shore start/borrow start while existing challenges may finish, cancel before catch, or reserve/confirm a catch exactly once. Pending caught fish cannot be discarded. Animal chapter two remains readable/enabled. No schema migration or database restore is part of deployment/rollback. The public release and mode identify both frontend and backend; exact commit/tree/file hashes are pinned separately. Old bf19e20 backend rollback is unsupported after new fishing state is exposed.

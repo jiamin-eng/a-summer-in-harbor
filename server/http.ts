@@ -1,8 +1,10 @@
+import {fishingClientContract} from './fishing-client-contract';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {motionHttpFailure} from './motion-failure';
 import {activeBusinessHttpFailure} from './active-business-failure';
 export const json=(res:ServerResponse,status:number,data:unknown)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data))};
 export function createApiHandler({authority,usage,noteMedia,dynamicAssets,newsProject,lifeProject,landProject}:any){return async(req:IncomingMessage,res:ServerResponse,who:string)=>{const path=new URL(req.url!,'http://localhost').pathname,method=req.method;
+  if(fishingClientContract(req,res))return;
   let body:any={};if(method==='POST'){let size=0,parts:Buffer[]=[];for await(const c of req){size+=c.length;if(size>(path.includes('/assets/')||(path.endsWith('/motion')||path.endsWith('/active-play'))?16384:1500000))return json(res,413,{error:'REQUEST_TOO_LARGE',...((path.endsWith('/motion')||path.endsWith('/active-play'))?{terminal:true}:{})});parts.push(c)}body=JSON.parse(Buffer.concat(parts).toString()||'{}')}
   const project=async(head:any):Promise<any>=>{if(head?.head)return {...head,head:await project(head.head)};return newsProject?newsProject(head):head};
   if(path==='/api/usage'&&method==='GET')return json(res,200,await usage.status(who));

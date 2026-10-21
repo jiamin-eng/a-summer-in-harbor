@@ -1,3 +1,4 @@
+import {FISHING_PROTOCOL} from '../fishing-release';
 import {entryTimer} from './entry-timing';
 const hostIdentityReady=entryTimer('host-identity');
 import {isInAigramNow} from '../shared/runtime/bridge';import {GAME_UUID} from '../game-id';import {IdentityEpoch} from './epoch';
@@ -27,7 +28,7 @@ export function enableAccountMode(mode:string){if(candidatePlatformTokenEnabled&
 export function subscribeIdentityChange(fn:()=>void){const stop=identityEpoch.subscribe(fn);const poll=()=>{try{identityEpoch.observe()}catch{/* request reports malformed shell identity without choosing a new account */}};const t=setInterval(poll,100);window.addEventListener('focus',poll);document.addEventListener('visibilitychange',poll);return()=>{stop();clearInterval(t);window.removeEventListener('focus',poll);document.removeEventListener('visibilitychange',poll)}}
 export async function identityFetch(input:RequestInfo|URL,init:RequestInit={},snapshot=identitySnapshot()){
  if(candidatePlatformTokenEnabled)assertCandidateSameOrigin(input,window.location.href);
- snapshot.assert();const headers=new Headers(init.headers);headers.set('X-Harbor-Game',GAME_UUID);
+ snapshot.assert();const headers=new Headers(init.headers);headers.set('X-Harbor-Game',GAME_UUID);headers.set('X-Harbor-Fishing',FISHING_PROTOCOL);
  const platformToken=attachIdentityHeaders(headers,snapshot.account,window,candidatePlatformTokenEnabled);
  const signal=init.signal?AbortSignal.any([snapshot.signal,init.signal]):snapshot.signal;
  const r=await fetch(input,{...init,headers,signal,credentials:'same-origin'});snapshot.assert();if(candidatePlatformTokenEnabled&&liveHostToken()!==platformToken)throw Error('IDENTITY_CHANGED');return r;

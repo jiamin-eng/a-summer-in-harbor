@@ -1,3 +1,4 @@
+import {fishingClientContract} from './fishing-client-contract';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 // @ts-expect-error local candidate, same authority database
 import {createAccountJourneyService} from './account-journeys.mjs';
@@ -12,6 +13,7 @@ export function createTemporaryAccountTransport({mode,gameId,store,runtime,usage
  const service=createAccountJourneyService({enabled:true,store,runtime,decorateAuthority,resolveActor:async(a:object)=>contexts.has(a)?a:null});
  const api=createAccountApiHandler({service,usage,noteMedia,dynamicAssets,newsProject,lifeProject,landProject,allowLegacyClaim:!accountOnly});
  return async(req:IncomingMessage,res:ServerResponse,browserOwner:string)=>{
+  if(fishingClientContract(req,res))return;
   const a=mode===TEMPORARY_IDENTITY_MODE?temporaryActor(req,res,{mode,gameId,browserOwner}):platformVerifiedActor(req,res,{gameId,browserOwner,verified:await verifyPlatformToken(req.headers['x-harbor-telegram-id'],req.headers.authorization)});contexts.add(a);
   if(accountOnly&&a.kind!=='account')throw Object.assign(Error('PLATFORM_LOGIN_REQUIRED'),{status:401});
   const path=new URL(req.url!,'http://localhost').pathname;
