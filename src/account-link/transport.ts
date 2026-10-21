@@ -1,3 +1,4 @@
+import {assertClientCompatible,clientCompatibilitySignal,requireClientUpdate} from '../story/client-compatibility';
 import {FISHING_PROTOCOL} from '../fishing-release';
 import {entryTimer} from './entry-timing';
 const hostIdentityReady=entryTimer('host-identity');
@@ -27,9 +28,15 @@ export const identitySnapshot=()=>identityEpoch.capture();
 export function enableAccountMode(mode:string){if(candidatePlatformTokenEnabled&&mode!=='platform-verified-v1'||!candidatePlatformTokenEnabled&&mode==='platform-verified-v1')throw Error('PLATFORM_MODE_MISMATCH');identityEpoch.enable(mode==='temporary-unverified'||mode==='platform-verified-v1')}
 export function subscribeIdentityChange(fn:()=>void){const stop=identityEpoch.subscribe(fn);const poll=()=>{try{identityEpoch.observe()}catch{/* request reports malformed shell identity without choosing a new account */}};const t=setInterval(poll,100);window.addEventListener('focus',poll);document.addEventListener('visibilitychange',poll);return()=>{stop();clearInterval(t);window.removeEventListener('focus',poll);document.removeEventListener('visibilitychange',poll)}}
 export async function identityFetch(input:RequestInfo|URL,init:RequestInit={},snapshot=identitySnapshot()){
+ assertClientCompatible();
  if(candidatePlatformTokenEnabled)assertCandidateSameOrigin(input,window.location.href);
  snapshot.assert();const headers=new Headers(init.headers);headers.set('X-Harbor-Game',GAME_UUID);headers.set('X-Harbor-Fishing',FISHING_PROTOCOL);
  const platformToken=attachIdentityHeaders(headers,snapshot.account,window,candidatePlatformTokenEnabled);
- const signal=init.signal?AbortSignal.any([snapshot.signal,init.signal]):snapshot.signal;
- const r=await fetch(input,{...init,headers,signal,credentials:'same-origin'});snapshot.assert();if(candidatePlatformTokenEnabled&&liveHostToken()!==platformToken)throw Error('IDENTITY_CHANGED');return r;
+ const signal=AbortSignal.any([snapshot.signal,clientCompatibilitySignal(),...(init.signal?[init.signal]:[])]);
+ let r:Response;try{r=await fetch(input,{...init,headers,signal,credentials:'same-origin'})}catch(error){assertClientCompatible();throw error}
+ snapshot.assert();assertClientCompatible();if(candidatePlatformTokenEnabled&&liveHostToken()!==platformToken)throw Error('IDENTITY_CHANGED');
+ // Side lanes also latch a format refusal. Clone only the bounded error response;
+ // leave the original body available to the caller on all other outcomes.
+ if(r.status===409){const error=await r.clone().json().catch(()=>null);snapshot.assert();assertClientCompatible();if(error?.error==='CLIENT_REFRESH_REQUIRED')requireClientUpdate()}
+ return r;
 }
