@@ -79,9 +79,9 @@ export async function send(head:Save,a:Action):Promise<{head:Save;text:[string,s
  };return navigator.locks?navigator.locks.request('harbor-authority-writer:'+s.scope,work):work();
 }
 const shoreRequests=new Map<string,Action>();
-export async function sendShoreRecovery(head:Save,action:Action):Promise<{head:Save;text:[string,string]}>{
+export async function sendFishingRecovery(head:Save,action:Action):Promise<{head:Save;text:[string,string]}>{
  const s=identitySnapshot();requireBound(head,s);const active=head.activeChallenge;
- if(!active?.fishing||!['fishing:land','challenge-finish'].includes(action.action)||action.target!==active.id)throw Error('CHALLENGE_MISMATCH');
+ if(active?.kind!=='fishing'||!['fishing:land','challenge-finish'].includes(action.action)||action.target!==active.id)throw Error('CHALLENGE_MISMATCH');
  const lane=action.action==='fishing:land'?'land':(action.payload as {withdraw?:boolean})?.withdraw?'withdraw':'confirm',scope=s.scope+':'+head.id+':'+active.id+':'+lane;
  let a=shoreRequests.get(scope);if(!a){a={...action};if(head.activePlayClock)a={...a,activePlay:activePlayActionFence(head)??{client:activePlayClientId(),activeMs:0,...(head.activePlayClock.lease?{lease:head.activePlayClock.lease.id}:{})}};shoreRequests.set(scope,a)}
  const work=async()=>{requireBound(head,s);if(hasPendingAction())throw Error('PENDING_ACTION');try{const result=await request('/sessions/'+head.id+'/action',a,s);requireBound(head,s);const latest=await request('/sessions/'+head.id,undefined,s);requireBound(head,s);shoreRequests.delete(scope);return {...result,head:bind(s,latest)}}catch(e:any){if(resolvedFailure(e))shoreRequests.delete(scope);throw e}};

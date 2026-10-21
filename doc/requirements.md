@@ -490,3 +490,5 @@ Local contract: fishing-f0-20261019.md. Four confirmed defects: pier route disco
 结果在权威 activeChallenge 中先暂存经过确定性回放的待确认输入与结果，不发鱼、不扣精力；重新读取优先采用服务端结果，只有新的确认手势才结算一次。仅此岸线挑战的恢复请求使用原身份、同一writer lock/authority/CAS/receipt；浏览器不能写缓存时，仍可发送保存/确认并通过权威head恢复。原先旅程指针只是可选显示缓存，其写入失败不阻断读取。其它玩法的存储政策不作扩展。服务器尚未确认保存且设备存储也拒写时明确提示保持页面，不声称双重不可用时能恢复尚未传出的数据。
 
 blur、pagehide、freeze及hidden均暂停；focus/pageshow/resume只在页面可见且真正有焦点时恢复，恢复清除旧手势及累计帧时间。分别验证等待/咬钩/收线状态，不能用无头浏览器仍visible的切页动作冒充真实后台验收。
+
+同一恢复协议也覆盖Ruth旧借竿入口：旧难度、营业/介绍/借竿规则与Ruth关系奖励不变；只是结果先权威暂存、确认后原奖励一次。旧入口未确认结果不会因没有岸线 encounter 而在重载后重开小游戏。
