@@ -3,6 +3,13 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      fishing_mode:
+        description: Fishing release mode (stop-new retains pending catch confirmation)
+        required: true
+        default: open
+        type: choice
+        options: [open, stop-new]
 permissions:
   contents: read
   pages: write
@@ -26,6 +33,7 @@ jobs:
       - run: npm run build
         env:
           VITE_HARBOR_PLATFORM_TOKEN_MODE: candidate-token-owner-v1
+          HARBOR_FISHING_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.fishing_mode || 'open' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
