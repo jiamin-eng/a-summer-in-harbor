@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "31aa484ec0de77a2f39950ce1e7aa605434cc7a7",
+  "sourceTree": "56249e20eb585d759555d9ecb7f746eab08da522",
+  "sourceArtifact": "build-final/open/backend/qa-runtime.mjs",
+  "sourceSHA256": "e7540f702c9c96012bf4d370ffa298dca3ccb9b7ef4b863c6309faca578b7d57",
+  "vendoredSHA256": "08dd152bb793536d2963be31e02841bba9a4a5a2f7370c57c352cf4897b97f4c",
+  "transformation": "Only 4 static imports from ./vendor/ changed to ../../vendor/; same pinned repository authority vendor unchanged between old and4097.",
+  "purpose": "Self-contained historical V1 reader/writer compatibility test; never bundled into product frontend/backend",
+  "bytes": 891031
+}
