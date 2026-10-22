@@ -1,3 +1,4 @@
+import {fishingDockBudget} from '../ui/fishing-layout';
 import type {CameraInsets} from '../engine/exploration-camera';
 /** Measure the game HUD and reserve space for the visible external visitor bar. */
 export function explorationLayout(world:HTMLElement){
@@ -13,13 +14,17 @@ export function explorationLayout(world:HTMLElement){
   set('--harbor-host-top',overlaps?Math.max(0,Math.ceil(b!.bottom)+4):0);
   const shifted=app.getBoundingClientRect(),header=box('.harbor-header');
   if(header)set('--harbor-header-bottom',header.bottom-shifted.top);
+  const budget=fishingDockBudget(shifted.height,header?header.bottom-shifted.top:0);
+  set('--harbor-fishing-max-height',budget.maxDock);
+  const dock=box('.harbor-backdrop--fishing .harbor-panel');
+  set('--harbor-fishing-dock-height',dock?.height??0);
   const location=box('.harbor-location');
   if(location)set('--harbor-location-bottom',location.bottom-shifted.top);
   const w=world.getBoundingClientRect(),objective=box('.harbor-objective'),controls=box('.harbor-controls');
   insets={left:12,top:Math.max(0,(objective?.bottom??location?.bottom??header?.bottom??w.top)-w.top)+12,right:12,bottom:Math.max(0,w.bottom-(controls?.top??w.bottom))+12};
  };
  const observer=new ResizeObserver(measure);
- const observe=()=>{observer.disconnect();for(const selector of ['.harbor-header','.harbor-location','.harbor-objective','.harbor-controls']){const e=app.querySelector(selector);if(e)observer.observe(e)}observer.observe(world);measure()};
+ const observe=()=>{observer.disconnect();for(const selector of ['.harbor-header','.harbor-location','.harbor-objective','.harbor-controls','.harbor-backdrop--fishing .harbor-panel']){const e=app.querySelector(selector);if(e)observer.observe(e)}observer.observe(world);measure()};
  const mutations=new MutationObserver(observe);mutations.observe(app,{childList:true,subtree:true});
  const bannerResize=new ResizeObserver(measure);
  const bannerAttributes=new MutationObserver(measure);
