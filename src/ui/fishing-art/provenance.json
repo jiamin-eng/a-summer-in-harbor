@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "scope": "local game candidate integration only; not formal asset admission",
+  "sourceRoot": "/Users/yin/code/games/rpg-asset-library/production-candidates/fishing-items-20261022-v1/cloud-review-v1",
+  "sourceRecords": {
+    "OWNER-CANDIDATE-REVIEW.json": "73a80352a5f2ba6560da674d5e2820b94dabce4cb2b1aa1c11ded01c1a9b38cf",
+    "LOCAL-RECEIVE-AUDIT.json": "84d73feb26a9b8c7ab86696b38a7525773e0f5c68ed6f4509530f87493cdef64",
+    "ui/RUN-RECEIPT.json": "a5df5d014fb0954c0e78ecdaab09c9fe67beb91a49fb92cf9d6fe993e0e9b8ab"
+  },
+  "items": [
+    {
+      "itemId": "basic-fishing-rod",
+      "file": "basic-fishing-rod.png",
+      "sha256": "d942a18c5044db3952e977b5c63f28423a57e29dd4516616251b38a3d98a5678",
+      "bytes": 17013,
+      "sourceRevision": 1,
+      "operationId": "c645653fe708015e38efd8c4e85c8fe7d325945e0a9c9fe82766dd1a8fc9d99b",
+      "queueJobId": "ac280a7b1e9b73a0080b93be972067fe891d4e7b656a39bedfb4653434c7bd9a",
+      "aiVerdict": "READY",
+      "formalAdmitted": false
+    },
+    {
+      "itemId": "bait-worm",
+      "file": "bait-worm.png",
+      "sha256": "f04725b207f45b8eb33ee11f8f2171904e954940c6161b20eb17657261ef4f13",
+      "bytes": 36379,
+      "sourceRevision": 1,
+      "operationId": "b8b340fb4335f4927c01cd64e253cd4f0aaf3819540371d36c4450dce0062437",
+      "queueJobId": "876323a5c40bea2d1f11e8567380806d5fbc78a0f9e788db0b922aa9862f747b",
+      "aiVerdict": "READY",
+      "formalAdmitted": false
+    },
+    {
+      "itemId": "bait-shrimp",
+      "file": "bait-shrimp.png",
+      "sha256": "cf631d92c227421e898922f1828b9f339c5af9af68072dbe9479fca955e2bf61",
+      "bytes": 46371,
+      "sourceRevision": 1,
+      "operationId": "7d0ccc3d8dfe0f326441d9199f138f7476a25c3caa2f01a8d743b1ac40d6cfd0",
+      "queueJobId": "9a10bc6276fe31bfa580cbdd0d8b8e10d11a617d36e93d55e641d6a4fb3d494b",
+      "aiVerdict": "READY",
+      "formalAdmitted": false
+    },
+    {
+      "itemId": "bait-fish-chunk",
+      "file": "bait-fish-chunk.png",
+      "sha256": "908e6b5c51adfa72ddce1c7d86dc075c91d2f0f41032e3e7e8435454088b888e",
+      "bytes": 48516,
+      "sourceRevision": 1,
+      "operationId": "c1a5cd2f1f8f2ac8d659bd318c6bf045d864dc6f9e4136630433b5396a459897",
+      "queueJobId": "fc858cccd9c48c997728c951f52ebf819f0d83562342f8a1e49c27c197f01995",
+      "aiVerdict": "READY",
+      "formalAdmitted": false
+    }
+  ],
+  "excluded": {
+    "reusable-fishing-lure": "HOLD; revision UNKNOWN; not imported or regenerated",
+    "fish-*": "12 fish images not produced; no fake art"
+  }
+}

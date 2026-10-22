@@ -1,9 +1,11 @@
+import {fishingItemImages} from './fishing-art';
 import manifest from './bag-art.json';
 import snapPea from '../world/snap-pea-art.json';
 import {mintArtAccepted,wildMintAssets} from '../world/wild-mint-art';
 import type {ContentRef} from '../life/types';
 
 export function itemArt(item:string):string|undefined{
+ if(Object.hasOwn(fishingItemImages,item))return fishingItemImages[item];
  const key=item==='wild:harbor-mint-leaf'?'wild-mint-leaf':item;
  if(key==='wild-mint-leaf'&&!mintArtAccepted(wildMintAssets))return;
  return manifest.assets[key as keyof typeof manifest.assets]?.image;
