@@ -34,14 +34,14 @@ def prepare():
     for old,new in substitutions.items():
       if host.count(old)!=1:raise RuntimeError('FROZEN_HOST_IMPORT_DRIFT '+old)
       host=host.replace(old,new,1)
-    host=host.replace("'X-Harbor-Fern':'1'","'X-Harbor-Fern':'1','X-Harbor-Fishing':'2'")
+    host=host.replace("'X-Harbor-Fern':'1'","'X-Harbor-Fern':'1','X-Harbor-Fishing':'3'")
     marker="const actualReplayRef=identity.version;"
     guard="const qaExpected=identity.expectedContract;if(identity.mode!==FISHING_MODE||JSON.stringify(fishingContract())!==JSON.stringify(qaExpected))throw Error('COMPILED_QA_MODE_PIN_MISMATCH');writeFileSync('reports/compiled-mode-at-boot.json',JSON.stringify({candidate:identity.version,mode:FISHING_MODE,contract:fishingContract()}));"
     if host.count(marker)!=1:raise RuntimeError('FROZEN_HOST_PIN_DRIFT')
     host=host.replace(marker,marker+guard,1)
     marker="qaBootMark('artifact_pin_complete');"
     # Runs only when the parent later authorizes a supervised dynamic launch.
-    live="const qaContractResponse=await originalFetch(apiServer.url+'/'+GAME_UUID+'/api/client-contract',{headers:{'X-Harbor-Telegram-Id':'98765001','X-Harbor-Identity-Mode':'platform-verified-v1','Authorization':'Bearer '+qaTokenFor('98765001'),'X-Harbor-Fishing':'2'}});const qaLiveContract=await qaContractResponse.json();if(!qaContractResponse.ok||JSON.stringify(qaLiveContract)!==JSON.stringify(identity.expectedContract))throw Error('ACTUAL_HTTP_CONTRACT_MODE_MISMATCH');writeFileSync('reports/actual-http-contract.json',JSON.stringify(qaLiveContract));"
+    live="const qaContractResponse=await originalFetch(apiServer.url+'/'+GAME_UUID+'/api/client-contract',{headers:{'X-Harbor-Telegram-Id':'98765001','X-Harbor-Identity-Mode':'platform-verified-v1','Authorization':'Bearer '+qaTokenFor('98765001'),'X-Harbor-Fishing':'3'}});const qaLiveContract=await qaContractResponse.json();if(!qaContractResponse.ok||JSON.stringify(qaLiveContract)!==JSON.stringify(identity.expectedContract))throw Error('ACTUAL_HTTP_CONTRACT_MODE_MISMATCH');writeFileSync('reports/actual-http-contract.json',JSON.stringify(qaLiveContract));"
     if host.count(marker)!=1:raise RuntimeError('FROZEN_HOST_ARTIFACT_DRIFT')
     host=host.replace(marker,marker+live,1)
     if 'fishingNewStarts:false' in host or 'fishingNewStarts:true' in host:raise RuntimeError('SOURCE_ONLY_MODE_OVERRIDE_FORBIDDEN')

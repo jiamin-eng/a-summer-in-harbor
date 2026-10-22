@@ -1,3 +1,4 @@
+import {speciesIds} from '../challenges/fishing-catalog';
 import {neighborTopicIds} from './neighbor-chapter';
 import {priestTopicIds} from './chapel-priest';
 import {chapelTopicIds} from './chapel';
@@ -18,7 +19,7 @@ const key=(scene:string,entity:string,verb:string)=>scene+'/'+entity+'/'+verb;
 const rpgChapelActor=(e:Entity)=>rooms.chapel.entities.includes(e)&&['dani','samira'].includes(e.person??'');
 function verbs(e:Entity):string[]{
  if(e.kind==='portal')return ['travel'];
- if(e.person)return ['introduce','ask',...(e.person==='june'&&rooms.workshop.entities.includes(e)?['notes-generate']:[]),...(topics[e.person]??[]).map(t=>'talk:'+t.id),...[...(relationshipProfiles[e.person]?growthTopicIds:[]),...lifeTopicIds(e.person),...priestTopicIds(e.person),...(rpgChapelActor(e)?chapelTopicIds:[]),...nextTopicIds(e.person),...nomadTopicIds(e.person),...neighborTopicIds(e.person)].map(id=>'talk:'+id),...(e.person==='idris'?['talk:class-invite']:[]),...(e.person==='dani'?newsTopicIds.map(id=>'talk:'+id):[]),...(e.person==='idris'?['sparring','footwork','endurance']:e.person==='ruth'?['fishing']:[]).map(id=>'challenge-start:'+id)];
+ if(e.person)return ['introduce','ask',...(e.person==='theo'?speciesIds.map(id=>'fishing:sell:'+id):[]),...(e.person==='june'&&rooms.workshop.entities.includes(e)?['notes-generate']:[]),...(topics[e.person]??[]).map(t=>'talk:'+t.id),...[...(relationshipProfiles[e.person]?growthTopicIds:[]),...lifeTopicIds(e.person),...priestTopicIds(e.person),...(rpgChapelActor(e)?chapelTopicIds:[]),...nextTopicIds(e.person),...nomadTopicIds(e.person),...neighborTopicIds(e.person)].map(id=>'talk:'+id),...(e.person==='idris'?['talk:class-invite']:[]),...(e.person==='dani'?newsTopicIds.map(id=>'talk:'+id):[]),...(e.person==='idris'?['sparring','footwork','endurance']:e.person==='ruth'?['fishing']:[]).map(id=>'challenge-start:'+id)];
  return [...growthObservationVerbs(e.id),...(e.actions??[]),...(e.id==='terrace'?['challenge-start:repair']:e.id==='old-map'?['challenge-start:map']:[])];
 }
 const entityDefs=Object.values(rooms).flatMap(r=>r.entities.map(e=>({
@@ -40,7 +41,7 @@ export const spatialBinding=compileSpatialBinding({id:GAME_UUID,initialMap,chara
 // A deferred resident can remain in an old save without belonging to this release's map.
 export const spatialSnapshot=(s:Save):SpatialSnapshot=>({cartridgeId:GAME_UUID,map:initialMap.map(r=>({id:r.id,current:r.id===s.scene})),characters:s.known.filter(id=>people[id]).map(id=>({id}))});
 export function admitSpatialAction(s:Save,a:Action,spatialWorld?:World){
- if(a.action.startsWith('battle-')||a.action==='snack-eat'||['travel-map','challenge-finish','fishing:confirm','fishing:withdraw','fishing-kit:claim','fishing:start','fishing:land'].includes(a.action))return null; // domain-specific gates remain authoritative
+ if(a.action.startsWith('battle-')||a.action==='snack-eat'||['travel-map','challenge-finish','fishing:confirm','fishing:withdraw','fishing-kit:claim','fishing:bait','fishing:start','fishing:land'].includes(a.action))return null; // domain-specific gates remain authoritative
  const e=rooms[s.scene].entities.find(e=>e.id===a.target);if(e&&!presentEntity(s,e))throw Error('PERSON_AWAY');
  const actionKey=key(s.scene,a.target,a.action);
  if(e?.animalId)gameAnimalInteraction(s,a,spatialWorld);

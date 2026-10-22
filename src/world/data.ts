@@ -1,3 +1,4 @@
+import {fishingShopVerbs} from '../challenges/fishing-catalog';
 import {fernSlot,fernDisplayFlag} from '../life/ornamental-fern-config';
 import {addNeighborGathering} from './neighbor-gathering';
 import {chapelPriestPeople} from './chapel-priest';
@@ -240,7 +241,7 @@ addNeighborGathering(rooms);
 const cropSideRose=rooms.garden.props.find(p=>p.art==='flora-rose-v1'&&p.at.x===742);if(cropSideRose)cropSideRose.at.x=850;
 for(let i=0;i<3;i++)object('garden','crop-bed-'+(i+1),['菜畦 '+(i+1),'Growing bed '+(i+1)],630+i*70,630,cropVerbs);
 rooms.garden.entities.push({id:'visitor-note',kind:'object',label:['游客便条','Visitor note'],at:{x:600,y:600},approach:{x:592,y:634},actions:[]});
-object('grocery','crop-counter',['种子与收获柜台','Seeds & harvest counter'],455,365,shopVerbs);
+object('grocery','crop-counter',['种子与收获柜台','Seeds & harvest counter'],455,365,[...shopVerbs,...fishingShopVerbs]);
 for(const {scene,entity} of authoredAnimalEntities(acceptedAnimals))rooms[scene].entities.push(entity);
 for(const {scene,entity} of nativeCrabEntities)rooms[scene].entities.push(entity);
 export function entityAt(scene:string,id:string){return rooms[scene]?.entities.find(e=>e.id===id)}
