@@ -4,7 +4,7 @@ export function explorationLayout(world:HTMLElement){
  const app=world.closest<HTMLElement>('.harbor-app')!;
  let insets:CameraInsets={left:12,top:0,right:12,bottom:0};
  let banner:HTMLElement|null=null;
- const box=(selector:string)=>app.querySelector<HTMLElement>(selector)?.getBoundingClientRect();
+ const box=(selector:string)=>{const node=app.querySelector<HTMLElement>(selector);if(!node||getComputedStyle(node).visibility==='hidden')return undefined;return node.getBoundingClientRect()};
  const measure=()=>{
   const set=(name:string,value:number)=>{const px=`${value}px`;if(app.style.getPropertyValue(name)!==px)app.style.setProperty(name,px)};
   const a=app.getBoundingClientRect(),b=banner?.getBoundingClientRect();

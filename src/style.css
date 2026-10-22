@@ -44,3 +44,40 @@
 .harbor-shore-preview{position:absolute;left:0;top:0;z-index:3;visibility:hidden;width:20px;height:20px;pointer-events:none}
 .harbor-shore-preview svg{position:absolute;inset:0;overflow:visible;pointer-events:none}.harbor-shore-preview circle{fill:none;stroke:var(--paper);stroke-width:2}.harbor-shore-preview line{stroke:var(--paper);stroke-width:1;opacity:.7}
 .harbor-shore-preview span{position:absolute;left:0;top:0;width:max-content;max-width:min(160px,calc(100vw - 32px));white-space:normal;background:var(--ink);color:var(--paper);font-size:12px;line-height:1.4;padding:3px 6px;border:1px solid var(--gold);pointer-events:none}
+
+/* Fishing stays in the existing Harbor scene. The control dock owns the lower half. */
+.harbor-app[data-fishing-scene=true] .harbor-world{inset:var(--harbor-header-bottom,90px) 0 52dvh}
+.harbor-app[data-fishing-scene=true] .harbor-next-step{visibility:hidden;pointer-events:none}
+.harbor-backdrop.harbor-backdrop--fishing{background:transparent;align-items:flex-end;padding:0;pointer-events:none}
+.harbor-backdrop--fishing>.harbor-challenge{width:min(100%,560px);max-width:560px;pointer-events:auto}
+.harbor-backdrop--fishing .harbor-panel{width:100%;max-height:52dvh;border-radius:0;border-top:3px solid var(--gold);box-shadow:0 -8px 24px #071d3230;pointer-events:auto}
+.harbor-backdrop--fishing>.harbor-panel{width:min(100%,560px)}
+.harbor-backdrop--fishing .harbor-panel>header{padding:10px 16px;min-height:60px;flex:none}
+.harbor-fishing-dock h2{font-size:23px;line-height:1.15}
+.harbor-fishing-dock header small{letter-spacing:0;font-size:12px;margin-bottom:3px}
+.harbor-fishing-dock .harbor-panel__body{padding:8px 16px;min-height:0}
+.harbor-fishing-dock p{font-size:14px;line-height:1.4;margin:8px 0}
+.harbor-fishing-dock .harbor-fishing__cue{font-size:16px;font-weight:600;color:var(--ink)}
+.harbor-fishing__actions{padding:8px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);flex:none;background:var(--paper)}
+.harbor-fishing__actions button{min-height:56px;font-weight:600;line-height:1.25}
+.harbor-fishing__actions .harbor-fishing__reel{height:64px;touch-action:none;-webkit-user-select:none;user-select:none}
+.harbor-fishing__meters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 14px}
+.harbor-fishing__meters .harbor-fishing__meter{margin:4px 0;min-width:0}
+.harbor-fishing__meters p{grid-column:1/-1;margin:2px 0}
+.harbor-fishing-dock [data-fishing-result]{padding:4px 0;border:0}
+.harbor-fishing-dock [data-fishing-result] h3{margin:0;color:var(--ink);font-size:23px}
+.harbor-fishing-dock [data-fishing-saved]{font-size:13px}
+.harbor-fishing-dock[data-fishing-phase=bite]{border-top-color:var(--coral)}
+.harbor-fishing-dock[data-fishing-phase=bite] header{background:#e7bb7040}
+.harbor-fishing__bite{border-left:5px solid var(--coral);padding:8px 12px;font-size:20px!important;font-weight:700}
+.harbor-fishing-dock[data-fishing-paused-state=true] [data-fishing-bite]{opacity:.55}
+.harbor-backdrop--fishing [data-fishing-receipt]{margin:0 0 12px;border-left:4px solid #477f78;padding:8px 10px}
+.harbor-backdrop--fishing [data-shore-fishing] .harbor-fishing-kit{border:0;border-bottom:1px solid var(--line);padding:0 0 8px;margin-bottom:8px}
+.harbor-backdrop--fishing [data-shore-fishing] .harbor-fishing-kit h3{font-size:16px}
+.harbor-backdrop--fishing [data-shore-cast]{min-height:52px;position:sticky;bottom:0;z-index:1;box-shadow:0 4px 0 var(--paper)}
+@media(min-width:700px){.harbor-app[data-fishing-scene=true] .harbor-world{inset:var(--harbor-header-bottom,90px) 0 45dvh}.harbor-backdrop--fishing .harbor-panel{max-height:45dvh}}
+@media(max-height:550px){.harbor-app[data-fishing-scene=true] .harbor-world{inset:var(--harbor-header-bottom,70px) 0 58dvh}.harbor-backdrop--fishing .harbor-panel{max-height:58dvh}.harbor-fishing-dock .harbor-panel__body{padding:4px 12px}.harbor-fishing-dock p{margin:4px 0}.harbor-fishing__first{display:none}.harbor-fishing__actions{padding-top:4px;padding-bottom:calc(6px + env(safe-area-inset-bottom))}}
+.harbor-app[data-fishing-phase=waiting] .harbor-shore-preview circle{fill:#e7bb7080;stroke:var(--paper)}
+.harbor-app[data-fishing-phase=bite] .harbor-shore-preview circle{fill:var(--coral);stroke:var(--paper);stroke-width:3;animation:harbor-bite-cue .6s ease-in-out 3}
+@keyframes harbor-bite-cue{50%{stroke-width:7}}
+@media(prefers-reduced-motion:reduce){.harbor-app[data-fishing-phase=bite] .harbor-shore-preview circle{animation:none}}
