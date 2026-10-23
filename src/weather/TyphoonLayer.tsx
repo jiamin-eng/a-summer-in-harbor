@@ -1,7 +1,0 @@
-import {useEffect,useState} from 'react';import type {WeatherQuality} from './WeatherLayer';import './typhoon.css';
-/** Explicit preview only. No save/weather enum, scheduler or destructive rule. */
-export function TyphoonLayer({quality,paused,reduced}:{quality:WeatherQuality;paused:boolean;reduced:boolean}){
- const [hidden,setHidden]=useState(document.hidden),[systemReduced,setSystemReduced]=useState(matchMedia('(prefers-reduced-motion: reduce)').matches);
- useEffect(()=>{const visibility=()=>setHidden(document.hidden),q=matchMedia('(prefers-reduced-motion: reduce)'),change=()=>setSystemReduced(q.matches);document.addEventListener('visibilitychange',visibility);q.addEventListener('change',change);return()=>{document.removeEventListener('visibilitychange',visibility);q.removeEventListener('change',change)}},[]);
- const low=quality==='low';return <div className="harbor-typhoon" data-quality={quality} data-motion={!paused&&!hidden&&!reduced&&!systemReduced} aria-hidden="true"><div className="harbor-typhoon__mist"/>{Array.from({length:low?2:6},(_,i)=><i key={'wind'+i} className="harbor-typhoon__wind" style={{top:`${18+i*11}%`,left:`${8+i*13}%`,animationDelay:`${-i*.23}s`}}/>)}{Array.from({length:low?2:8},(_,i)=><span key={'foam'+i} className="harbor-weather__anchor harbor-typhoon__foam" data-weather-empty="true" data-world-x="0" data-world-y="0"><b style={{animationDelay:`${-i*.19}s`}}/></span>)}</div>
-}
