@@ -2,9 +2,11 @@ import {neighborPartyActive,type NeighborChapter} from './neighbor-gathering';
 import {chapelPriest,chapelPriestId,chapelPriestRoutes} from './chapel-priest';
 import {techRoutes,nomadSchedule,nomadActivity,techNomadAdmitted} from './tech-nomads';
 import {nextRoutes,nextResidents} from './next-residents';
+import {bindHarborLoop,harborLoopIds,harborLoopScene} from '../npc/harbor-cast';
+import {harborAnchors,harborDoings,harborResidents} from '../npc/harbor-residents';
 import type {NewsState} from '../story/news-edition';
 import type {Words,Entity} from './data';
-export type TownState={neighborChapterV1?:NeighborChapter;neighborPartyEnabled?:boolean;townMinutes?:number;scene:string;flags:string[];known:string[];relations:Record<string,number>};
+export type TownState={neighborChapterV1?:NeighborChapter;neighborPartyEnabled?:boolean;townMinutes?:number;scene:string;flags:string[];known:string[];relations:Record<string,number>;npcLoopV1?:import('../npc/town').NpcTownState};
 export const townMinutes=(s:Pick<TownState,'townMinutes'>)=>s.townMinutes??540;
 export type TownPeriod='morning'|'afternoon'|'evening'|'night';
 export function townPeriod(s:Pick<TownState,'townMinutes'>):TownPeriod{const m=townMinutes(s)%1440;return m<360||m>=1260?'night':m<720?'morning':m<1020?'afternoon':'evening'}
@@ -17,35 +19,32 @@ export function fernStage(s:PlantState){return s.fernStartedAt===undefined?'youn
 export function fernDescription(s:PlantState):Words{return s.fernStartedAt===undefined?['一株小蕨刚种下，叶尖还卷着。旁边留着水壶，你可以帮它浇第一次水。','A newly planted fern has curled tips. A watering can stands nearby. You could give it its first drink.']:fernStage(s)==='grown'?['新叶已经完全展开。昨天还是卷着的叶尖，如今在风里轻轻摇动。','The new fronds have opened. Yesterday’s curled tips now sway in the breeze.']:fernStage(s)==='unfurling'?['几小时过去，卷着的叶尖正在舒展开。再过一夜，还会长大一些。','After a few hours, the curled tips are opening. Another night will give them room to grow.']:['土已经湿润，小叶还卷着。过些游戏时间再回来看看吧，不必守在这里。','The soil is damp; the tips are still curled. Come back after spending some time in town. There is no need to wait here.']}
 // Dedicated resident art families; generation provenance and local QA: doc/residents-art-20261004.
 export const residentPeople:Record<string,{name:Words;unknown:Words;intro:Words;art:string}>={
- avery:{name:['艾弗里','Avery Reed'],unknown:['翻着速写本的居民','Resident with a sketchbook'],intro:['“艾弗里。今天不送包裹，轮到我慢慢看街上了。”对方把一页没画完的小船压在本子里。','“Avery. No parcels today. My turn to look around slowly.” They tuck an unfinished drawing of a boat into a notebook.'],art:'avery'},
- samira:{name:['萨米拉','Samira Bell'],unknown:['轻轻哼歌的居民','Resident humming softly'],intro:['“萨米拉，我在学校食堂做饭。今天不用听打饭铃。”她笑了一下，又把刚才哼到一半的调子咽回去。','“Samira. I cook at the school. No lunch bell today.” She smiles, then swallows the tune she was humming.'],art:'samira'},
- owen:{name:['欧文','Owen Price'],unknown:['侧耳听海鸟的居民','Resident listening for birds'],intro:['“欧文。以前修公交车，现在练习分清海鸟的叫声。两样都得先听，别急着拆。”','“Owen. Used to repair buses. Now I try to tell seabirds apart. Both start with listening, before taking anything to pieces.”'],art:'owen'},
- dani:{name:['丹妮','Dani Costa'],unknown:['收好一片叶子的居民','Resident saving a fallen leaf'],intro:['“丹妮，在图书馆工作。我想做本小册子，收一点街坊种花的故事。今天这页只有一片叶子，也挺好。”','“Dani. I work at the library. I’m making a little book of neighbors’ garden stories. Today’s page has just one leaf. That’s fine too.”'],art:'dani'},
+ avery:{name:['艾弗里','Avery Reed'],unknown:['刚到海湾的居民','Resident newly arrived'],intro:['“艾弗里。我刚到，想先做成一件能和别人一起做的事，再谈留下。”','“Avery. I just arrived. I want one real piece of work with someone else before I talk about staying.”'],art:'avery'},
+ samira:{name:['萨米拉','Samira Bell'],unknown:['看着收成的居民','Resident watching a harvest'],intro:['“萨米拉。地里有一批快过期的收成。我想卖出去，也想有一条能做下去的销路。”','“Samira. A harvest is about to turn. I want it sold, and I want a way to keep selling.”'],art:'samira'},
+ owen:{name:['欧文','Owen Price'],unknown:['张罗工坊材料的居民','Resident gathering workshop material'],intro:['“欧文。我在攒工坊扩建的材料。东西够了，事情才由我自己排。”','“Owen. I’m gathering material to expand the workshop. Once I have it, I can set the work myself.”'],art:'owen'},
+ dani:{name:['丹妮','Dani Costa'],unknown:['跑交付的居民','Resident carrying a delivery'],intro:['“丹妮。我把别人的货按时送到。大家还愿意经过我，我才站得住。”','“Dani. I get other people’s goods there on time. I keep my place only while they still come through me.”'],art:'dani'},
 };
+const harborPlaces=harborAnchors();
 export const residentRoutes:Record<string,{scene:string;at:{x:number;y:number}}[]>={...nextRoutes,...techRoutes,...chapelPriestRoutes,
- mara:[{scene:'station',at:{x:565,y:685}},{scene:'courtyard',at:{x:365,y:500}},{scene:'market',at:{x:560,y:650}}],
- theo:[{scene:'cafe',at:{x:579,y:330}},{scene:'cafe',at:{x:579,y:330}},{scene:'harbor',at:{x:500,y:640}}],
- june:[{scene:'workshop',at:{x:510,y:358}},{scene:'workshop',at:{x:510,y:358}},{scene:'dock',at:{x:370,y:490}}],
- idris:[{scene:'gym',at:{x:443,y:380}},{scene:'gym',at:{x:443,y:380}},{scene:'coast',at:{x:670,y:580}}],
- luis:[{scene:'grocery',at:{x:552,y:376}},{scene:'grocery',at:{x:552,y:376}},{scene:'market',at:{x:690,y:650}}],
- nell:[{scene:'secondhand',at:{x:510,y:380}},{scene:'secondhand',at:{x:510,y:380}},{scene:'courtyard',at:{x:350,y:500}}],
- ruth:[{scene:'dock',at:{x:390,y:350}},{scene:'dock',at:{x:390,y:350}},{scene:'coast',at:{x:520,y:650}}],
+ gabriel:harborPlaces.gabriel,
+ mara:harborPlaces.mara,
+ theo:harborPlaces.theo,
+ june:harborPlaces.june,
+ idris:harborPlaces.idris,
+ luis:harborPlaces.luis,
+ nell:harborPlaces.nell,
+ ruth:harborPlaces.ruth,
  elena:[{scene:'courtyard',at:{x:495,y:370}},{scene:'garden',at:{x:535,y:510}},{scene:'courtyard',at:{x:495,y:370}}],
  arthur:[{scene:'weather',at:{x:510,y:365}},{scene:'weather',at:{x:510,y:365}},{scene:'hill',at:{x:700,y:620}}],
- avery:[{scene:'station',at:{x:520,y:490}},{scene:'market',at:{x:650,y:520}},{scene:'dock',at:{x:560,y:450}}],
- samira:[{scene:'market',at:{x:550,y:430}},{scene:'chapel',at:{x:600,y:400}},{scene:'dock',at:{x:505,y:450}}],
- owen:[{scene:'harbor',at:{x:680,y:540}},{scene:'path',at:{x:360,y:480}},{scene:'coast',at:{x:600,y:600}}],
- dani:[{scene:'garden',at:{x:430,y:510}},{scene:'chapel',at:{x:355,y:405}},{scene:'courtyard',at:{x:540,y:480}}],
+ avery:harborPlaces.avery,
+ samira:harborPlaces.samira,
+ owen:harborPlaces.owen,
+ dani:harborPlaces.dani,
 };
-export function residentHere(s:Pick<TownState,'townMinutes'>&{flags?:string[];scene?:string;neighborChapterV1?:NeighborChapter;neighborPartyEnabled?:boolean},person:string,scene:string){if(neighborPartyActive(s)&&s.neighborChapterV1?.party?.people.includes(person))return s.neighborChapterV1.party.scene===scene;const nomad=nomadSchedule(person,s);if(nomad)return nomad.scene===scene;if(person==='mara'&&s.flags&&!s.flags.includes('bag-returned'))return scene==='station';const route=residentRoutes[person];return !route||route[['morning','afternoon','evening'].indexOf(townPeriod(s))]?.scene===scene}
-export function presentEntity(s:Pick<TownState,'townMinutes'|'scene'|'neighborChapterV1'|'neighborPartyEnabled'>&{flags?:string[]},e:Entity){const party=neighborPartyActive(s)&&s.neighborChapterV1?.party,guest=!!party&&!!e.person&&party.people.includes(e.person);if(e.gatheringRole==='guest')return guest&&party.scene===s.scene;if(guest)return e.gatheringRole==='routine'&&party.scene===s.scene;return !e.person||techNomadAdmitted(e.person)&&residentHere(s,e.person,s.scene)}
-const activities:Record<string,Words[]>={
- avery:[['艾弗里在树荫下补画一扇窗，不时抬头看看街道。','Avery sketches a window in the shade, glancing up at the street.'],['艾弗里把速写本翻到空白页，看人们经过。','Avery turns to a blank page and watches people passing.'],['艾弗里看着水上的船，今天不必画完。','Avery watches the boats. The drawing need not be finished today.']],
- samira:[['萨米拉看了看蔬菜，又轻声哼起刚才的调子。','Samira looks over the vegetables and hums another few notes.'],['萨米拉走到海风里，手指轻轻打着拍子。','Samira steps into the sea breeze, tapping a gentle rhythm.'],['萨米拉在码头听水声，偶尔接上一小句歌。','Samira listens to the water, adding the occasional line of a song.']],
- owen:[['欧文在分辨头顶两种不同的鸟叫。','Owen listens for two different calls overhead.'],['欧文停在路边，让一只小鸟先过去。','Owen pauses at the path edge to let a small bird pass.'],['欧文合上记录本，最后看了一眼海面。','Owen closes his notebook and takes one last look at the sea.']],
- dani:[['丹妮把落叶夹进本子，没有摘下还活着的叶子。','Dani presses a fallen leaf into the book, leaving living leaves alone.'],['丹妮在旧街记下刚刚听到的一个小故事。','Dani writes down a small story heard along Market Lane.'],['丹妮在院子里小声说话，留出住户休息的安静。','Dani speaks softly in the courtyard, leaving room for the residents’ quiet.']],
-};
-export function residentActivity(s:Pick<TownState,'townMinutes'>&NewsState&{scene?:string;flags?:string[];known?:string[];neighborChapterV1?:NeighborChapter},person:string):Words|undefined{if(neighborPartyActive(s)&&s.neighborChapterV1?.party?.people.includes(person))return ['对方在你们留出的位置稍作停留，想听听今天的小事。','They pause in the space you made together, ready to hear about your day.'];const nomad=nomadSchedule(person,s);if(nomad&&nomad.scene===s.scene)return nomadActivity(person,s);const added=nextResidents.find(p=>p.id===person);if(added&&residentHere(s,person,s.scene??''))return added.activity;if(person===chapelPriestId)return residentHere(s,person,s.scene??'')?chapelPriest.activities[['morning','afternoon','evening'].indexOf(townPeriod(s))]:undefined;if(s.scene==='chapel'&&residentHere(s,person,'chapel'))return person==='dani'?['她在书桌旁给下一个邻居留出空位。','She leaves room by the book table for the next neighbor.']:['她低声试着衔接几句小调，没有办成演出。','She softly joins a few lines, without turning them into a performance.'];if(person==='dani'&&s.flags?.includes('news:checked')&&s.newsEdition?.template==='finance-budget-v1')return ['丹妮把你核对过的预算便条留在花园告示处，保留了$3备用的建议。','Dani keeps your checked budget note at the garden noticeboard, including the suggestion to keep $3 in reserve.'];if(person==='dani'&&s.flags?.includes('news:checked'))return ['丹妮把你核对过的营业便条留在本子里，另抄了一份贴在花园告示板上。','Dani keeps your checked hours in the notebook, with a copy on the garden noticeboard.'];const specific=activities[person]?.[['morning','afternoon','evening'].indexOf(townPeriod(s))];if(specific)return specific;if(!residentRoutes[person])return;return ['对方停下手里的事，转身听你说话。','They pause what they are doing and turn to listen.']}
+export function residentHere(s:Pick<TownState,'townMinutes'|'npcLoopV1'>&{flags?:string[];scene?:string;neighborChapterV1?:NeighborChapter;neighborPartyEnabled?:boolean},person:string,scene:string){if(neighborPartyActive(s)&&s.neighborChapterV1?.party?.people.includes(person))return s.neighborChapterV1.party.scene===scene;const nomad=nomadSchedule(person,s);if(nomad)return nomad.scene===scene;if(person==='mara'&&s.flags&&!s.flags.includes('bag-returned'))return scene==='station';if(harborLoopIds.includes(person)){if(townPeriod(s)==='night')return false;const lived=s.npcLoopV1?.residents.find(r=>r.id===person);return (lived?lived.scene:harborLoopScene(person,townMinutes(s)))===scene}const route=residentRoutes[person];return !route||route[['morning','afternoon','evening'].indexOf(townPeriod(s))]?.scene===scene}
+export function presentEntity(s:Pick<TownState,'townMinutes'|'npcLoopV1'|'scene'|'neighborChapterV1'|'neighborPartyEnabled'>&{flags?:string[]},e:Entity){const party=neighborPartyActive(s)&&s.neighborChapterV1?.party,guest=!!party&&!!e.person&&party.people.includes(e.person);if(e.gatheringRole==='guest')return guest&&party.scene===s.scene;if(guest)return e.gatheringRole==='routine'&&party.scene===s.scene;return !e.person||techNomadAdmitted(e.person)&&residentHere(s,e.person,s.scene)}
+const sandboxAims:Record<string,Words>=harborDoings();
+export function residentActivity(s:Pick<TownState,'townMinutes'|'npcLoopV1'>&NewsState&{scene?:string;flags?:string[];known?:string[];neighborChapterV1?:NeighborChapter},person:string):Words|undefined{if(neighborPartyActive(s)&&s.neighborChapterV1?.party?.people.includes(person))return ['对方在你们留出的位置稍作停留，想听听今天的小事。','They pause in the space you made together, ready to hear about your day.'];const nomad=nomadSchedule(person,s);if(nomad&&nomad.scene===s.scene)return nomadActivity(person,s);const added=nextResidents.find(p=>p.id===person);if(added&&residentHere(s,person,s.scene??''))return added.activity;if(harborLoopIds.includes(person)){const resident=s.npcLoopV1?.residents.find(r=>r.id===person);return resident?.doing??sandboxAims[person]}if(person===chapelPriestId)return residentHere(s,person,s.scene??'')?chapelPriest.activities[['morning','afternoon','evening'].indexOf(townPeriod(s))]:undefined;if(s.scene==='chapel'&&residentHere(s,person,'chapel'))return ['她低声试着衔接几句小调，没有办成演出。','She softly joins a few lines, without turning them into a performance.'];if(person==='dani'&&s.flags?.includes('news:checked')&&s.newsEdition?.template==='finance-budget-v1')return ['丹妮把你核对过的预算便条留在花园告示处，保留了$3备用的建议。','Dani keeps your checked budget note at the garden noticeboard, including the suggestion to keep $3 in reserve.'];if(person==='dani'&&s.flags?.includes('news:checked'))return ['丹妮把你核对过的营业便条留在本子里，另抄了一份贴在花园告示板上。','Dani keeps your checked hours in the notebook, with a copy on the garden noticeboard.'];if(!residentRoutes[person])return;return ['对方停下手里的事，转身听你说话。','They pause what they are doing and turn to listen.']}
 export const shopScenes=['cafe','grocery','workshop','gym','secondhand'];
 export function openingNotice(scene:string,s:Pick<TownState,'townMinutes'>):Words|undefined{if(!shopScenes.includes(scene))return;const open=['morning','afternoon'].includes(townPeriod(s));return open?['营业至17:00。傍晚店主外出，明早06:00回来。','Open until 17:00. The owner goes out in the evening and returns at 06:00.']:['店主已休息，明早06:00恢复营业。可以先回家睡到09:00，再来办事。','The owner is away. Business resumes at 06:00. Sleep at home until 09:00 and return.']}
 
@@ -77,3 +76,5 @@ export function residentClearOfPlayer(e:Entity,current:{x:number;y:number},playe
 }
 
 export function openingBadge(scene:string,s:Pick<TownState,'townMinutes'>):Words|undefined{if(!shopScenes.includes(scene))return;return ['morning','afternoon'].includes(townPeriod(s))?['营业至17:00','Open until 17:00']:['06:00恢复营业','Reopens 06:00']}
+
+bindHarborLoop(harborResidents());

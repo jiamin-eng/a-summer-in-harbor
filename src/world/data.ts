@@ -10,6 +10,7 @@ import {acceptedAnimals} from '../animals/art';
 import {authoredAnimalEntities} from '../animals/harbor-adapter';
 import {cropVerbs,shopVerbs} from '../story/crops';
 import {residentPeople,residentRoutes} from './residents';
+import {registerTownScenes} from '../npc/places';
 import {enrichPlanting} from './planting';
 import {organizeDailyLife} from './scene-use';
 import {dressHarbor} from './dressing';
@@ -239,6 +240,7 @@ object('grocery','crop-counter',['种子与收获柜台','Seeds & harvest counte
 for(const {scene,entity} of authoredAnimalEntities(acceptedAnimals))rooms[scene].entities.push(entity);
 for(const {scene,entity} of nativeCrabEntities)rooms[scene].entities.push(entity);
 export function entityAt(scene:string,id:string){return rooms[scene]?.entities.find(e=>e.id===id)}
+registerTownScenes(Object.values(rooms).map(room=>({scene:room.id,title:room.title,at:room.spawn})));
 
 export function worldWithFlags(flags:string[]):World {
  if(flags.includes('bridge-fixed'))return world;

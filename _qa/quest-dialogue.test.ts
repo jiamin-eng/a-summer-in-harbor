@@ -49,6 +49,25 @@ test('real resolver prompt uses current projection; selected completed-stage top
  const resolver=dialogueResolver(async r=>{request=r;return JSON.stringify({topic:'settle',reply:['忽略这句','ignored in favor of canonical reply']})});const a=intent(c.save,'mara','ask',{text:'What should I do nearby?'});
  const r=await createRuntime(resolver).prepare(c.save,a,undefined,{owner:'qa-owner'});assert.match(r.text[1],/safely back/);assert.match(request.payload.messages[0].content,/Mara has received her tool bag/);assert.doesNotMatch(request.payload.messages[0].content,/"introduction":/);assert.equal(r.head.items.toolbag,undefined);
 });
+test('a harbor resident free question is prompted only from the new memory',async()=>{
+ const c=scenario();c.go('cafe');c.step('theo','introduce');
+ const memory={persona:'Repairer building a reputation one tool at a time.',aim:'Finish tool repairs and build a reputation of his own.',doing:['西奥在等下一件需要他亲手修的工具。','Theo is waiting for the next tool that needs his hands.'],worry:['Owen is waiting, and Theo still has not handed Owen the plane.','Owen is waiting, and Theo still has not handed Owen the plane.'],ledger:{cash:0,locked:0,items:[],loans:[{tool:'plane',owner:'theo',holder:'owen',held:false,has:'theo'}],venues:[]}};
+ let request:any;const resolver=dialogueResolver(async r=>{request=r;return JSON.stringify({topic:'settle',reply:['刨子还在我手里。欧文还在等。','The plane is still in my hands. Owen is still waiting.']})},{npcContext:async()=>memory});
+ const answer=await resolver(c.save,intent(c.save,'theo','ask',{text:'最近怎么样'}),'qa-owner');
+ assert.equal(answer.topic,null);assert.match(answer.reply[0],/刨子还在我手里/);
+ const content=request.payload.messages.map((message:{content:string})=>message.content).join('\n');
+ assert.match(content,/Owen is waiting/);assert.match(content,/npcMemory is the only source/);
+ assert.doesNotMatch(content,/residentLife|currentObjective|availableTopics|tool bag/);
+});
+test('a free reply may name someone who is only in this resident memory',async()=>{
+ const c=scenario();c.go('cafe');c.step('theo','introduce');assert.equal(c.save.known.includes('owen'),false);
+ const memory={aim:'Finish tool repairs and build a reputation of his own.',worry:['Owen is waiting, and Theo still has not handed Owen the plane.','Owen is waiting, and Theo still has not handed Owen the plane.'],ledger:{loans:[{tool:'plane',owner:'theo',holder:'owen',held:false,has:'theo'}]}};
+ const resolver=dialogueResolver(async()=>JSON.stringify({topic:null,reply:['刨子是我的，现在在我手里。欧文还在等。','The plane is mine, and it is in my hands. Owen is still waiting.']}),{npcContext:async()=>memory});
+ const answer=await resolver(c.save,intent(c.save,'theo','ask',{text:'这是谁的刨子？'}),'qa-owner');
+ assert.match(answer.reply[0],/欧文/);
+ const blocked=dialogueResolver(async()=>JSON.stringify({topic:null,reply:['琼还没来拿。','June has not come for it.']}),{npcContext:async()=>memory});
+ await assert.rejects(blocked(c.save,intent(c.save,'theo','ask',{text:'琼来了吗？'}),'qa-owner'),/DIALOGUE_INVALID/);
+});
 test('reading cache preserves historical wording without making it current task state',()=>{
  const c=scenario();c.arrive();const old=c.step('mara','talk:settle').head.history.at(-1)!;c.collect();c.step('mara','talk:return-bag');const map=new Map<string,string>(),cache={getItem:(k:string)=>map.get(k)??null,setItem:(k:string,v:string)=>{map.set(k,v)},removeItem:(k:string)=>{map.delete(k)}};
  rememberReply(cache,c.save,old,'en');const read=restoreReading(cache,c.save,'mara','en')!;assert.match(read.entry.text[1],/Bring it back/);assert.equal(questProgress(c.save).toolbag,'returned');assert.ok(!availableTopics(c.save,'mara').some(t=>t.id==='settle'));cache.setItem(readingKey(c.save.id,'mara'),JSON.stringify({...read.cursor,finished:true}));assert.equal(restoreReading(cache,c.save,'mara','en'),null);

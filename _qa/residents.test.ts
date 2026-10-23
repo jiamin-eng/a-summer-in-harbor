@@ -13,6 +13,11 @@ test('old save defaults do not mutate it; clock monotonic with four periods and 
  advanceTown(s,180);assert.equal(s.townMinutes,720);assert.throws(()=>advanceTown(s,-1));s.townMinutes=1430;sleepToMorning(s);assert.equal(s.townMinutes,1980);s.townMinutes=1500;sleepToMorning(s);assert.equal(s.townMinutes,1980);sleepToMorning(s);assert.equal(s.townMinutes,3420);
  assert.throws(()=>runtime.assertReadable({...s,townMinutes:-1}));assert.throws(()=>runtime.assertReadable({...s,fernStartedAt:9000}));
 });
+test('a configured resident stays where the live loop left them',()=>{
+ const evening={townMinutes:1093,npcLoopV1:{minute:1080,residents:[{id:'theo',scene:'cafe'}]} as Save['npcLoopV1']};
+ assert.equal(residentHere({townMinutes:1093},'theo','cafe'),false);
+ assert.equal(residentHere(evening,'theo','cafe'),true);
+});
 test('each resident occupies one location in each daytime period, none at night; full stroll and approach are reachable',()=>{
  for(const [person,routes] of Object.entries(residentRoutes))for(const [i,r] of routes.entries()){
   const clock={townMinutes:[540,780,1080][i]};assert.equal(Object.keys(rooms).filter(scene=>residentHere(clock,person,scene)).length,1);assert.ok(residentHere(clock,person,r.scene));

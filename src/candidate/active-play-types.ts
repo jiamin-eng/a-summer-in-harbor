@@ -2,7 +2,7 @@ import {applyWeatherPatch,type WeatherPatch} from '../weather/state';
 import {validNativeCrabField} from '../animals/native-crab-game';
 export type ActivePlayRate=2000|4000;
 export type ActivePlayClock={schema:1;millisecondsPerMinute:ActivePlayRate;remainderMs:number;lease?:{id:string;client:string;boot:string;sequence:number;lastAt:number};transport?:{last:{digest:string;ack:ActivePlayAck}}};
-export type ActivePlayAck={schema:1;channel:'active-play';id:string;mapVersion:1;baseVersion:number;version:number;cursor:number;ordinal:number;actionId:string;token:string;fields:{weather?:WeatherPatch;nativeCrabV1?:import('../animals/native-crab-game').NativeCrabSave;townMinutes:number;awakeMinutes:number;energy:number;clock:Omit<ActivePlayClock,'transport'>}};
+export type ActivePlayAck={schema:1;channel:'active-play';id:string;mapVersion:1;baseVersion:number;version:number;cursor:number;ordinal:number;actionId:string;token:string;fields:{weather?:WeatherPatch;nativeCrabV1?:import('../animals/native-crab-game').NativeCrabSave;townMinutes:number;awakeMinutes:number;energy:number;clock:Omit<ActivePlayClock,'transport'>;npcLoopV1?:import('../npc/town').NpcTownState}};
 export const activePlayActionId=(id:string,ordinal:number)=>`play-${id}-${ordinal}`;
 export function confirmActivePlay(ack:ActivePlayAck,id:string,a:{action_id:string;expected_version:number;action:string;payload?:unknown}){
  const p=a.payload as any,c=ack?.fields?.clock,l=c?.lease;

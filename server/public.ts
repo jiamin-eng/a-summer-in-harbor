@@ -13,14 +13,14 @@ import {createServer} from 'node:http';import {mkdir} from 'node:fs/promises';im
 import {AsyncSessionAuthority,openPgAuthorityStore} from '../vendor/dynamic-runtime/packages/authority-session/async.mjs';
 // @ts-expect-error pinned library
 import {createPlayerUsage} from '../vendor/dynamic-runtime/packages/dynamic-pipeline/player-usage.mjs';
-import {json} from './http';import {privateText,validatePublicConfig,verifiedEdgeOwner} from './public-config';import {createDialogueResolver} from './dialogue';import {createFieldNotes} from './fieldnotes';import {createNoteMedia} from './note-media';import {GAME_UUID} from '../src/game-id';
+import {json} from './http';import {privateText,validatePublicConfig,verifiedEdgeOwner} from './public-config';import {createDialogueResolver} from './dialogue';import {createFieldNotes} from './fieldnotes';import {createNoteMedia} from './note-media';import {createNpcConverse,createNpcDecision,createNpcNarrate,createNpcReview,playerMemoryFacts,selectPapers} from './npc-chat';import {GAME_UUID} from '../src/game-id';
 const config=validatePublicConfig(JSON.parse(await privateText(process.env.HARBOR_CONFIG_FILE))),token=await privateText(process.env.HARBOR_EDGE_FILE);if(!/^[a-f0-9]{64}$/.test(token))throw Error('EDGE_TOKEN_INVALID');
 const pool=new Pool({host:config.pgHost,database:config.database,user:config.user,password:await privateText(process.env.HARBOR_PG_PASSWORD_FILE),max:4,connectionTimeoutMillis:5000,idleTimeoutMillis:30000});
 // The frozen library retains its historical test gate. This adapter does not
 // relabel that as generic certification; public release needs the game's canary.
 const store=await openPgAuthorityStore({pool,schema:config.schema,worldId:GAME_UUID,gameId:GAME_UUID,environment:'test'});
 await mkdir('.data/rules',{recursive:true});
-const assembly=createExplorationAssembly({resolveDialogue:await createDialogueResolver(store,{afterRain:true}),notes:await createFieldNotes(store),defaultRate:4000,afterRain:true,weather:{enabled:true,ecology:true},crabEnabled:true,createLife:createReviewedAnimalLife,decorateLife:(r:any)=>withWildMint(withBasilPlantUses(r,{enabled:true,newStarts:true}),{enabled:true,newStarts:true}),decorateRuntime:(r:any)=>configuredNews(r,process.env.HARBOR_NEWS_CATALOG)});
+const assembly=createExplorationAssembly({resolveDialogue:await createDialogueResolver(store,{afterRain:true,npcContext:(s,person,question)=>playerMemoryFacts(s.npcLoopV1,person,question,selectPapers)}),notes:await createFieldNotes(store),npcDecide:createNpcDecision(),npcConverse:createNpcConverse(),npcNarrate:createNpcNarrate(),npcReview:createNpcReview(),defaultRate:4000,afterRain:true,weather:{enabled:true,ecology:true},crabEnabled:true,createLife:createReviewedAnimalLife,decorateLife:(r:any)=>withWildMint(withBasilPlantUses(r,{enabled:true,newStarts:true}),{enabled:true,newStarts:true}),decorateRuntime:(r:any)=>configuredNews(r,process.env.HARBOR_NEWS_CATALOG)});
 const {runtime,newsProject}=assembly;
 const authority=assembly.decorateAuthority(new AsyncSessionAuthority(store,runtime),store);
 const dynamicAssets=await createDynamicAssets({pool,authority,config,edgeToken:token});

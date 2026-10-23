@@ -7,7 +7,7 @@ export const chapelPriest={
  name:['加布里埃尔·沃德神父','Father Gabriel Ward'] as Words,
  unknown:['整理椅子的神父','Priest arranging the chairs'] as Words,
  intro:['“我叫加布里埃尔·沃德，在这里做神父。小时候住在海湾，后来去了内陆十八年。现在又回来了。”他把椅子往旁边挪了一点。“叫我加布里埃尔就好。进来坐坐？”','“Gabriel Ward. I’m the priest here. I grew up by the bay, then spent eighteen years inland. Now I’m back.” He moves a chair aside. “Gabriel is fine. Would you like to sit?”'] as Words,
- role:['教堂的神父。重回故乡，喜欢修旧收音机，也在学着把空闲留给自己。','The chapel priest, home again. He repairs old radios and is learning to leave himself some time off.'] as Words,
+ role:['教堂的神父。推动共同照护，靠调解得到认可，不掌管全镇。','The chapel priest. He encourages shared care and earns trust by mediating. He does not run the town.'] as Words,
  art:'gabriel',mapArt:'gabriel',avatarArt:'gabriel',portraitShape:'portrait' as const,
  artStatus:'private-library-r2-admitted-local-game-candidate',
  libraryAsset:{assetId:'character-family__gabriel',revision:2,recordId:'44125733-66b7-4952-9f6a-a508a926ae30'},

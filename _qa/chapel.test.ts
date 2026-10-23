@@ -45,7 +45,7 @@ test('real SQLite authority replay, CAS, restore and owner isolation keep a sing
 
 test('church introduction is the existing identity, and a locked participation survives ordinary zero-cost doors',()=>{
  let s={...seed(),known:[] as string[],movingClock:{version:2 as const,millisecondsPerMinute:4000 as const,remainderMs:0}};
- const samira=rooms.chapel.entities.find(e=>e.person==='samira')!;s=applyAction(s,{...command(s,'introduce',samira.id),actorPosition:samira.at}).head as typeof s;assert.deepEqual(s.known,['samira']);assert.match(s.history.at(-1)!.text[1],/school/);
+ const samira=rooms.chapel.entities.find(e=>e.person==='samira')!;s=applyAction(s,{...command(s,'introduce',samira.id),actorPosition:samira.at}).head as typeof s;assert.deepEqual(s.known,['samira']);assert.match(s.history.at(-1)!.text[1],/harvest/);
  s=act(act(s,'chapel-read-notice','chapel-note'),'chapel-listen','chapel-seat') as typeof s;const minute=s.townMinutes;
  s=act(s,'travel','exit') as typeof s;assert.equal(s.scene,'hill');assert.deepEqual(s.position,{x:502,y:397});s=act(s,'travel','to-chapel') as typeof s;assert.equal(s.scene,'chapel');assert.equal(s.townMinutes,minute);assert.ok(s.flags.includes('chapel:participation:listening'));assert.equal(availableTopics(s,'samira').some(t=>t.id==='chapel-memory'),true);
 });
