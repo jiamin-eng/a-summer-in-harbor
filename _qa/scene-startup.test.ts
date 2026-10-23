@@ -37,3 +37,7 @@ test('visible failure details retain only the current sanitized codes in both la
  const a=beginSceneStartup();a.phase('renderer');a.fail(Error('Current environment does not allow unsafe-eval private-value'));
  for(const locale of ['zh','en'] as const){const html=renderToStaticMarkup(createElement(SceneStartupDetails,{locale}));assert.match(html,/RENDERER_EVAL_UNAVAILABLE/);assert.match(html,/scene-start-v1/);assert.ok(!html.includes('private-value'));assert.ok(!html.includes('token='));assert.match(html,locale==='zh'?/启动详情/:/Startup details/)}
 });
+
+test('asset timeout offers explicit page reload rather than pretending cached pending textures recovered',()=>{
+ const a=beginSceneStartup();a.fail(Error('SCENE_ASSET_TIMEOUT'));const html=renderToStaticMarkup(createElement(SceneStartupDetails,{locale:'en'}));assert.match(html,/Reload game/);assert.match(html,/SCENE_ASSET_TIMEOUT/);assert.equal(readSceneStartup()?.status,'failed');
+});
