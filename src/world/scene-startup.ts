@@ -1,8 +1,9 @@
+import {rendererFailure,type RendererFailure} from './renderer-capability';
 /** In-memory, allowlisted diagnostics only: never retain exception text, URLs,
  * account IDs, request bodies or storage. Each mount/scene owns its attempt. */
 export type StartupStage='scene-assets'|'renderer'|'map'|'ready';
 export type StartupCode='NONE'|'SCENE_ASSET_TIMEOUT'|'SCENE_ASSET_FAILED'|'SCENE_LOAD_TIMEOUT'|'MAP_LOAD_TIMEOUT'|'RENDERER_EVAL_UNAVAILABLE'|'WASM_POLICY_BLOCKED'|'RENDERER_UNAVAILABLE'|'RENDERER_FAILED'|'TEXTURE_WORKER_FAILED'|'SCENE_START_CANCELLED';
-export type StartupSnapshot={schema:'scene-start-v1';status:'loading'|'ready'|'failed'|'cancelled';stage:StartupStage;code:StartupCode;textureLoader:'main-thread';evalMode:'static-polyfills'};
+export type StartupSnapshot={schema:'scene-start-v1';status:'loading'|'ready'|'failed'|'cancelled';stage:StartupStage;code:StartupCode;textureLoader:'main-thread';evalMode:'static-polyfills';rendererFailure?:RendererFailure};
 const codes=new Set<StartupCode>(['NONE','SCENE_ASSET_TIMEOUT','SCENE_ASSET_FAILED','SCENE_LOAD_TIMEOUT','MAP_LOAD_TIMEOUT','RENDERER_EVAL_UNAVAILABLE','WASM_POLICY_BLOCKED','RENDERER_UNAVAILABLE','RENDERER_FAILED','TEXTURE_WORKER_FAILED','SCENE_START_CANCELLED']);
 let active:symbol|undefined,snapshot:StartupSnapshot|undefined;
 export function readSceneStartup():StartupSnapshot|undefined{return snapshot&&{...snapshot}}
@@ -11,7 +12,7 @@ export function startupCode(error:unknown,stage:StartupStage):StartupCode{
  if(codes.has(message as StartupCode)&&message!=='NONE')return message as StartupCode;
  if(/WebAssembly\.(?:instantiate|compile)/.test(message)&&/Content Security [Pp]olicy|unsafe-eval|wasm-unsafe-eval/.test(message))return 'WASM_POLICY_BLOCKED';
  if(message.startsWith('Current environment does not allow unsafe-eval'))return 'RENDERER_EVAL_UNAVAILABLE';
- if(/^(?:WebGPU not supported|WebGL unsupported|No available renderer|Unable to auto-detect a suitable renderer)/.test(message))return 'RENDERER_UNAVAILABLE';
+ if(rendererFailure(error))return 'RENDERER_UNAVAILABLE';
  if(message.startsWith('[WorkerManager.loadImageBitmap]'))return 'TEXTURE_WORKER_FAILED';
  return stage==='scene-assets'?'SCENE_ASSET_FAILED':'RENDERER_FAILED';
 }
@@ -23,7 +24,7 @@ export function beginSceneStartup(){
  return {signal:controller.signal,isLoading:loading,
   phase(stage:StartupStage){if(loading()){state.stage=stage;publish()}},
   ready(){if(!loading())return false;state.status='ready';state.stage='ready';state.code='NONE';publish();return true},
-  fail(error:unknown):StartupCode|undefined{if(!loading())return;const code=startupCode(error,state.stage);if(code==='SCENE_START_CANCELLED')return;state.code=code;state.status='failed';publish();controller.abort();return code},
+  fail(error:unknown):StartupCode|undefined{if(!loading())return;const code=startupCode(error,state.stage);if(code==='SCENE_START_CANCELLED')return;state.code=code;const reason=rendererFailure(error);if(reason){state.rendererFailure=reason;state.stage='renderer'}state.status='failed';publish();controller.abort();return code},
   cancel(){if(loading()){state.status='cancelled';state.code='SCENE_START_CANCELLED';publish()}controller.abort()}
  };
 }
