@@ -7,5 +7,5 @@ export function SceneStartupDetails({locale}:{locale:Locale}){
   <div style={{maxHeight:'24vh',overflow:'auto'}}><p>{tx(['可截图反馈；这里只显示阶段和错误代码，不包含账号或凭据。','Share these stages and codes when reporting a problem. No account or credentials appear.'],locale)}</p>
    <dl>{Object.entries(value).map(([key,item])=><div key={key}><dt>{key}</dt><dd>{item}</dd></div>)}</dl>
   </div>
- </details>{value.code==='SCENE_ASSET_TIMEOUT'&&<><p>{tx(['图片准备超时。重新载入游戏可重新开始加载，已保存的旅程保留。','Image preparation timed out. Reload the game to start loading again. Your saved journey is retained.'],locale)}</p><button onClick={()=>location.reload()}>{tx(['重新载入游戏','Reload game'],locale)}</button></>}</>;
+ </details>{value.code==='WASM_POLICY_BLOCKED'&&<p>{tx(['当前运行环境阻止了场景所需的 WebAssembly。请把启动详情反馈给我们；已保存的旅程保留。','This environment blocked WebAssembly required by the scene. Please share the startup details with us; your saved journey is retained.'],locale)}</p>}{value.code==='SCENE_ASSET_TIMEOUT'&&<><p>{tx(['图片准备超时。重新载入游戏可重新开始加载，已保存的旅程保留。','Image preparation timed out. Reload the game to start loading again. Your saved journey is retained.'],locale)}</p><button onClick={()=>location.reload()}>{tx(['重新载入游戏','Reload game'],locale)}</button></>}</>;
 }

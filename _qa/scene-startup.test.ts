@@ -41,3 +41,10 @@ test('visible failure details retain only the current sanitized codes in both la
 test('asset timeout offers explicit page reload rather than pretending cached pending textures recovered',()=>{
  const a=beginSceneStartup();a.fail(Error('SCENE_ASSET_TIMEOUT'));const html=renderToStaticMarkup(createElement(SceneStartupDetails,{locale:'en'}));assert.match(html,/Reload game/);assert.match(html,/SCENE_ASSET_TIMEOUT/);assert.equal(readSceneStartup()?.status,'failed');
 });
+
+test('Wasm policy refusal is distinguished without leaking the raw exception or advising weaker security',()=>{
+ const message='Aborted(CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because unsafe-eval is not allowed. private-synthetic-marker)';
+ const a=beginSceneStartup();a.fail(Error(message));assert.equal(readSceneStartup()?.code,'WASM_POLICY_BLOCKED');
+ const html=renderToStaticMarkup(createElement(SceneStartupDetails,{locale:'en'}));assert.match(html,/WebAssembly required by the scene/);assert.ok(!html.includes('private-synthetic-marker'));assert.ok(!html.includes('unsafe-eval'));
+ assert.equal(startupCode(Error('WebAssembly.compile invalid magic bytes'),'scene-assets'),'SCENE_ASSET_FAILED');
+});

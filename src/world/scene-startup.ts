@@ -1,14 +1,15 @@
 /** In-memory, allowlisted diagnostics only: never retain exception text, URLs,
  * account IDs, request bodies or storage. Each mount/scene owns its attempt. */
 export type StartupStage='scene-assets'|'renderer'|'map'|'ready';
-export type StartupCode='NONE'|'SCENE_ASSET_TIMEOUT'|'SCENE_ASSET_FAILED'|'SCENE_LOAD_TIMEOUT'|'MAP_LOAD_TIMEOUT'|'RENDERER_EVAL_UNAVAILABLE'|'RENDERER_UNAVAILABLE'|'RENDERER_FAILED'|'TEXTURE_WORKER_FAILED'|'SCENE_START_CANCELLED';
+export type StartupCode='NONE'|'SCENE_ASSET_TIMEOUT'|'SCENE_ASSET_FAILED'|'SCENE_LOAD_TIMEOUT'|'MAP_LOAD_TIMEOUT'|'RENDERER_EVAL_UNAVAILABLE'|'WASM_POLICY_BLOCKED'|'RENDERER_UNAVAILABLE'|'RENDERER_FAILED'|'TEXTURE_WORKER_FAILED'|'SCENE_START_CANCELLED';
 export type StartupSnapshot={schema:'scene-start-v1';status:'loading'|'ready'|'failed'|'cancelled';stage:StartupStage;code:StartupCode;textureLoader:'main-thread';evalMode:'static-polyfills'};
-const codes=new Set<StartupCode>(['NONE','SCENE_ASSET_TIMEOUT','SCENE_ASSET_FAILED','SCENE_LOAD_TIMEOUT','MAP_LOAD_TIMEOUT','RENDERER_EVAL_UNAVAILABLE','RENDERER_UNAVAILABLE','RENDERER_FAILED','TEXTURE_WORKER_FAILED','SCENE_START_CANCELLED']);
+const codes=new Set<StartupCode>(['NONE','SCENE_ASSET_TIMEOUT','SCENE_ASSET_FAILED','SCENE_LOAD_TIMEOUT','MAP_LOAD_TIMEOUT','RENDERER_EVAL_UNAVAILABLE','WASM_POLICY_BLOCKED','RENDERER_UNAVAILABLE','RENDERER_FAILED','TEXTURE_WORKER_FAILED','SCENE_START_CANCELLED']);
 let active:symbol|undefined,snapshot:StartupSnapshot|undefined;
 export function readSceneStartup():StartupSnapshot|undefined{return snapshot&&{...snapshot}}
 export function startupCode(error:unknown,stage:StartupStage):StartupCode{
  let message='';try{if(typeof error==='string')message=error;else if(error&&typeof(error as {message?:unknown}).message==='string')message=(error as {message:string}).message}catch{/* do not call a foreign error's toString */}
  if(codes.has(message as StartupCode)&&message!=='NONE')return message as StartupCode;
+ if(/WebAssembly\.(?:instantiate|compile)/.test(message)&&/Content Security [Pp]olicy|unsafe-eval|wasm-unsafe-eval/.test(message))return 'WASM_POLICY_BLOCKED';
  if(message.startsWith('Current environment does not allow unsafe-eval'))return 'RENDERER_EVAL_UNAVAILABLE';
  if(/^(?:WebGPU not supported|WebGL unsupported|No available renderer|Unable to auto-detect a suitable renderer)/.test(message))return 'RENDERER_UNAVAILABLE';
  if(message.startsWith('[WorkerManager.loadImageBitmap]'))return 'TEXTURE_WORKER_FAILED';
