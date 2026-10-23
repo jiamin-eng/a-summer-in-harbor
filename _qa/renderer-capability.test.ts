@@ -2,9 +2,24 @@ import {test} from 'node:test';import assert from 'node:assert/strict';
 import {rendererFailure,probeRendererCapability,type ProbeEnvironment} from '../src/world/renderer-capability';
 import {beginSceneStartup,readSceneStartup,startupCode} from '../src/world/scene-startup';
 const no=()=>{};
-function fixture(){let released=0,listeners=0,created=0,destroyed=0;const opts:unknown[]=[];
- const env:ProbeEnvironment={webglGlobal:true,webgl2Global:true,createCanvas:()=>{created++;return {width:0,height:0,addEventListener:()=>{listeners++},removeEventListener:()=>{listeners--},getContext:(_kind,options)=>{opts.push(options);return {getContextAttributes:()=>({stencil:true}),isContextLost:()=>false,getExtension:()=>({loseContext:()=>released++})}}},gpu:{requestAdapter:async()=>({requestDevice:async()=>({destroy:()=>destroyed++})})},setTimer:(fn,ms)=>setTimeout(fn,ms),clearTimer:id=>clearTimeout(id as ReturnType<typeof setTimeout>)};
- return{env,state:()=>({released,listeners,created,destroyed,opts})};}
+function fixture(){
+ let released=0,listeners=0,created=0,destroyed=0;const opts:unknown[]=[];
+ const env:ProbeEnvironment={
+  webglGlobal:true,webgl2Global:true,
+  createCanvas:()=>{
+   created++;
+   return {width:0,height:0,addEventListener:()=>{listeners++},removeEventListener:()=>{listeners--},
+    getContext:(_kind,options)=>{
+     opts.push(options);
+     return {getContextAttributes:()=>({stencil:true}),isContextLost:()=>false,getExtension:()=>({loseContext:()=>released++})};
+    }
+   };
+  },
+  gpu:{requestAdapter:async()=>({requestDevice:async()=>({destroy:()=>destroyed++})})},
+  setTimer:(fn,ms)=>setTimeout(fn,ms),clearTimer:id=>clearTimeout(id as ReturnType<typeof setTimeout>)
+ };
+ return {env,state:()=>({released,listeners,created,destroyed,opts})};
+}
 test('exact error origins are distinct; unknown text is not guessed',()=>{for(const [m,v]of [['No available renderer for the current environment','NO_SUPPORTED_BACKEND'],['WebGPU not supported. No GPU adapter was returned by navigator.gpu.requestAdapter().','WEBGPU_ADAPTER_UNAVAILABLE'],['This browser does not support WebGL. Try using the canvas renderer','WEBGL_CONTEXT_CREATION_FAILED'],['WebGL unsupported on legacy','WEBGL_UNSUPPORTED_LEGACY'],['Unable to auto-detect a suitable renderer','AUTO_DETECT_UNAVAILABLE_LEGACY']])assert.equal(rendererFailure(Error(m)),v);assert.equal(rendererFailure(Error('Network timeout https://secret.invalid/?token=x')),undefined)});
 test('known renderer exception corrects phase overwritten by map asset preparation',()=>{const attempt=beginSceneStartup();attempt.phase('renderer');attempt.phase('scene-assets');attempt.fail(Error('No available renderer for the current environment'));const value=readSceneStartup();assert.equal(value?.stage,'renderer');assert.equal(value?.rendererFailure,'NO_SUPPORTED_BACKEND');assert.equal(value?.code,'RENDERER_UNAVAILABLE');assert.ok(!JSON.stringify(value).includes('No available renderer'))});
 test('actual GL context creation failure now classified; generic init stays renderer failure',()=>{assert.equal(startupCode(Error('This browser does not support WebGL. Try using the canvas renderer'),'renderer'),'RENDERER_UNAVAILABLE');assert.equal(startupCode(Error('shader initialization failed'),'renderer'),'RENDERER_FAILED');assert.equal(startupCode(Error('fetch failed'),'scene-assets'),'SCENE_ASSET_FAILED')});
