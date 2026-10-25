@@ -31,7 +31,7 @@ export function shoreWaterCells(scene:string):WaterCell[]{
 }
 const waterObstacleKeys=new Map<string,Set<string>>();
 const rectKey=(r:Rect)=>[r.x,r.y,r.w,r.h].join(',');
-function clearCast(scene:string,from:Point,to:Point,world:World){
+export function clearCast(scene:string,from:Point,to:Point,world:World){
  // Water collision prevents walking, not casting. All other current collision
  // (including dynamic assets and planted beds) still occludes a cast.
  const blockers=zonesFor(scene).flatMap(zone=>{let water=waterObstacleKeys.get(zone);if(!water){water=new Set(outdoors[zone]?waterBarriers(outdoors[zone]).map(rectKey):[]);waterObstacleKeys.set(zone,water)}return (world.scenes[zone]?.obstacles??[]).filter(o=>!water!.has(rectKey(o))).map(o=>({...globalPoint(zone,o),w:o.w,h:o.h,zone}))}),a=globalPoint(scene,from),b=globalPoint(scene,to),steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3));
