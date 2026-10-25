@@ -5,7 +5,9 @@ import {checkShore,waterAt,clearCast,shoreWaterCells,castReach} from '../src/wor
 import {globalPoint,localPoint} from '../src/candidate/continuity';
 import {dynamicWorld} from '../src/dynamic-assets/layout';import {landWorld} from '../src/life/land';
 import {attachFishingScene} from '../src/world/FishingScene';import {fishingPresentationEvent} from '../src/ui/fishing-experience';
-import {legacyFishingAnchor as priorAnchor} from '../../../fishing-scene-lifecycle-20261024/source/src/world/fishing-legacy-anchor';
+import {createHash} from 'node:crypto';
+// Frozen legacy implementation: same checkShore contract, before the visual-only extension.
+function priorAnchor(scene:string,standing:Parameters<typeof checkShore>[1],world:Parameters<typeof checkShore>[2],renderedScene:string|null){if(scene!==renderedScene)return undefined;const check=checkShore(scene,standing,world);return check.ok?{scene,standing:{...standing},target:{...check.target.at}}:undefined;}
 const world=landWorld(dynamicWorld(['bag-returned','key','unpacked'],false),undefined),standing={x:414,y:279.7692307692308};
 const foot={x:standing.x+world.actor.w/2,y:standing.y+world.actor.h/2};
 test('recorded normal Ruth stand: old visual anchor is absent, new visual-only line reaches actual clear water without moving the player',()=>{
@@ -14,7 +16,7 @@ test('recorded normal Ruth stand: old visual anchor is absent, new visual-only l
  assert.ok(anchor);assert.deepEqual(anchor.standing,standing);assert.ok(waterAt('dock',anchor.target));assert.ok(clearCast('dock',foot,anchor.target,world));
  const distance=Math.hypot(anchor.target.x-foot.x,anchor.target.y-foot.y);assert.ok(distance>castReach&&distance<=castReach*2);
  assert.deepEqual(point,standing);assert.equal(JSON.stringify(world),before);
- fs.writeFileSync('reports/RECORDED-STAND.json',JSON.stringify({standing,actor:world.actor,oldCheck:old,newVisualAnchor:anchor,distance,ordinaryCastStillAllowed:checkShore('dock',point,world).ok,authorityTargetChanged:false},null,2));
+ fs.mkdirSync('reports',{recursive:true});fs.writeFileSync('reports/RECORDED-STAND.json',JSON.stringify({standing,actor:world.actor,oldCheck:old,newVisualAnchor:anchor,distance,ordinaryCastStillAllowed:checkShore('dock',point,world).ok,authorityTargetChanged:false},null,2));
 });
 test('a formerly legal shore anchor keeps the exact old target',()=>{
  const point={x:340,y:500};assert.deepEqual(legacyFishingAnchor('dock',point,world,'dock'),priorAnchor('dock',point,world,'dock'));
@@ -31,8 +33,8 @@ test('borrowed visual respects non-water obstruction at every candidate landing'
  assert.equal(legacyFishingAnchor('dock',standing,blocked,'dock'),undefined);
 });
 test('ordinary authoritative shore implementation is byte-identical except exporting its existing geometry helper',()=>{
- const before=fs.readFileSync('../fishing-scene-lifecycle-20261024/source/src/world/shore-water.ts','utf8'),after=fs.readFileSync('source/src/world/shore-water.ts','utf8');
- assert.equal(after.replace('export function clearCast(', 'function clearCast('),before);
+ const after=fs.readFileSync(new URL('../src/world/shore-water.ts',import.meta.url),'utf8');
+ assert.equal(createHash('sha256').update(after.replace('export function clearCast(', 'function clearCast(')).digest('hex'),'2e0a90959dc34f9e7d3e11cf848106905353b4af079f946b51c2a4a90a17fea2');
 });
 test('real bridge paints the recorded borrowed anchor, then clears it on cancel and scene travel',()=>{
  const prior={raf:globalThis.requestAnimationFrame,caf:globalThis.cancelAnimationFrame,media:globalThis.matchMedia};let id=0;const q=new Map<number,FrameRequestCallback>();
