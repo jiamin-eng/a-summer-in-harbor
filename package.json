@@ -10,7 +10,11 @@
     "server": "node scripts/authoring.mjs",
     "export:cartridge": "node --import tsx scripts/export-cartridge.ts",
     "server:public": "node --import tsx server/public.ts",
-    "migrate:public": "node --import tsx scripts/migrate-public.ts"
+    "migrate:public": "node --import tsx scripts/migrate-public.ts",
+    "text-agent:cli": "node --import tsx text-agent/interfaces/cli.ts",
+    "text-agent:http": "node --import tsx text-agent/interfaces/http-server.ts",
+    "text-agent:test": "node --import tsx --test text-agent/tests/tool-tests.ts",
+    "text-agent:demo": "node --import tsx text-agent/tests/demo-transcript.ts"
   },
   "keywords": [],
   "author": "",
@@ -40,6 +44,7 @@
     "@rpgjs/tiledmap": "5.0.0-beta.34",
     "@rpgjs/ui-css": "5.0.0-beta.26",
     "@signe/di": "^3.1.1",
+    "better-sqlite3": "^11.8.1",
     "canvasengine": "2.2.0",
     "pg": "8.16.3",
     "pixi.js": "^8.20.1",

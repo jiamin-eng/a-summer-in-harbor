@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>海湾新生活 - 文字冒险</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans CJK SC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 800px;
+      width: 100%;
+      height: 90vh;
+      max-height: 700px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f7f9fc;
+    }
+    
+    .message {
+      margin-bottom: 16px;
+      animation: fadeIn 0.3s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message.user {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .message.assistant {
+      display: flex;
+      justify-content: flex-start;
+    }
+    
+    .message-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      word-wrap: break-word;
+    }
+    
+    .message.user .message-bubble {
+      background: #667eea;
+      color: white;
+    }
+    
+    .message.assistant .message-bubble {
+      background: white;
+      border: 1px solid #e0e0e0;
+      color: #333;
+    }
+    
+    .suggestions {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    
+    .suggestions-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #856404;
+    }
+    
+    .suggestion-item {
+      padding: 6px 12px;
+      margin: 4px 0;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #ffc107;
+    }
+    
+    .suggestion-item:hover {
+      background: #ffc107;
+      color: white;
+      transform: translateX(4px);
+    }
+    
+    .input-area {
+      display: flex;
+      gap: 8px;
+      padding: 16px;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    #user-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    #user-input:focus {
+      border-color: #667eea;
+    }
+    
+    #send-btn {
+      padding: 12px 24px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    
+    #send-btn:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+    
+    #send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .thinking {
+      text-align: center;
+      padding: 12px;
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌊 海湾新生活</h1>
+      <p>A Summer in Harbor - 文字冒险版</p>
+    </div>
+    
+    <div class="messages" id="messages">
+      <div class="message assistant">
+        <div class="message-bubble">
+          你好！欢迎来到海湾小镇。在这里度过一个夏天，认识新朋友，探索小镇的故事。告诉我你想做什么吧！
+        </div>
+      </div>
+    </div>
+    
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="输入你想做的事..." />
+      <button id="send-btn">发送</button>
+    </div>
+  </div>
+  
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    
+    // Generate a player ID (use localStorage to persist)
+    let playerId = localStorage.getItem('harbor_player_id');
+    if (!playerId) {
+      playerId = 'player-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('harbor_player_id', playerId);
+    }
+    
+    function addMessage(role, content, suggestions = []) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      
+      // Format content (preserve line breaks)
+      bubble.innerHTML = content.replace(/\n/g, '<br>');
+      
+      messageDiv.appendChild(bubble);
+      
+      if (suggestions && suggestions.length > 0) {
+        const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'suggestions';
+        
+        const title = document.createElement('div');
+        title.className = 'suggestions-title';
+        title.textContent = '💡 建议行动：';
+        suggestionsDiv.appendChild(title);
+        
+        suggestions.forEach(suggestion => {
+          const item = document.createElement('div');
+          item.className = 'suggestion-item';
+          item.textContent = suggestion;
+          item.onclick = () => {
+            userInput.value = suggestion;
+            sendMessage();
+          };
+          suggestionsDiv.appendChild(item);
+        });
+        
+        messageDiv.appendChild(suggestionsDiv);
+      }
+      
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    function showThinking() {
+      const thinkingDiv = document.createElement('div');
+      thinkingDiv.className = 'thinking';
+      thinkingDiv.id = 'thinking';
+      thinkingDiv.innerHTML = '<div class="loading"></div> 思考中...';
+      messagesDiv.appendChild(thinkingDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    function hideThinking() {
+      const thinkingDiv = document.getElementById('thinking');
+      if (thinkingDiv) {
+        thinkingDiv.remove();
+      }
+    }
+    
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+      
+      addMessage('user', message);
+      userInput.value = '';
+      userInput.disabled = true;
+      sendBtn.disabled = true;
+      
+      showThinking();
+      
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            player_id: playerId,
+            message: message,
+            locale: 'zh'
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        hideThinking();
+        addMessage('assistant', data.message, data.suggested_actions);
+        
+      } catch (err) {
+        hideThinking();
+        addMessage('assistant', '抱歉，出现了错误：' + err.message);
+      } finally {
+        userInput.disabled = false;
+        sendBtn.disabled = false;
+        userInput.focus();
+      }
+    }
+    
+    sendBtn.onclick = sendMessage;
+    userInput.onkeypress = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    };
+    
+    userInput.focus();
+  </script>
+</body>
+</html>
