@@ -13,9 +13,8 @@
 - ✅ 游戏动作工具（observe, talk, move, use等）
 - ✅ 游戏资源（世界观、地图、角色、玩法规则）
 - ✅ 提示词（叙述者系统提示）
-- ✅ 可插拔状态存储接口（默认内存实现）
-- ✅ Stdio transport（本地Claude Desktop/Cursor）
-- ✅ HTTP SSE transport（远程部署）
+- ✅ **可插拔状态存储**: `StateStore`接口 + 内存默认实现 + JSON导入/导出
+- ✅ **Transports**: stdio（Claude Desktop/Cursor本地使用）和 HTTP Streamable（远程部署，可选Bearer token认证）
 
 ## 安装
 
@@ -47,7 +46,7 @@ PORT=8080 BEARER_TOKEN=your-secret npm run mcp:http
 
 HTTP端点：
 - `GET /health` - 健康检查
-- `POST /sse` - MCP SSE端点（需要 Authorization: Bearer <token> 如果设置了BEARER_TOKEN）
+- `POST /mcp` - MCP Streamable HTTP端点（需要 Authorization: Bearer <token> 如果设置了BEARER_TOKEN）
 
 ## Claude Desktop / Cursor 配置
 
@@ -74,7 +73,7 @@ HTTP端点：
 {
   "mcpServers": {
     "harbor": {
-      "url": "https://your-server.com/sse",
+      "url": "https://your-server.com/mcp",
       "headers": {
         "Authorization": "Bearer your-secret-token"
       }
@@ -188,7 +187,7 @@ mcp-server/
 ├── prompts/
 │   └── narrator.ts       # 提示词
 ├── transports/
-│   └── http.ts           # HTTP SSE transport
+│   └── http.ts           # HTTP Streamable transport
 └── tests/
     ├── server.test.ts    # 服务器测试
     └── playthrough.test.ts # 完整流程测试

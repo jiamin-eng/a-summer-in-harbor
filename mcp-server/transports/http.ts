@@ -1,10 +1,10 @@
 /**
- * HTTP SSE transport for MCP server
+ * HTTP Streamable transport for MCP server
  * Allows remote deployment with optional bearer token auth
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamable-http.js';
 import { createMCPServer, type ServerConfig } from '../index.js';
 
 export interface HttpServerConfig extends ServerConfig {
@@ -51,8 +51,8 @@ export async function runHttpServer(config: HttpServerConfig = {}) {
       return;
     }
     
-    // MCP SSE endpoint
-    if (url.pathname === '/sse') {
+    // MCP Streamable HTTP endpoint
+    if (url.pathname === '/mcp') {
       // Check auth
       if (!checkAuth(req, bearerToken)) {
         res.statusCode = 401;
@@ -61,27 +61,8 @@ export async function runHttpServer(config: HttpServerConfig = {}) {
         return;
       }
       
-      // Set up SSE
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      
-      const transport = new SSEServerTransport('/message', res);
+      const transport = new StreamableHTTPServerTransport({ req, res });
       await mcpServer.connect(transport);
-      
-      // Handle messages
-      req.on('data', async (chunk) => {
-        try {
-          const message = JSON.parse(chunk.toString());
-          // Transport will handle the message
-        } catch (err) {
-          console.error('Failed to parse message:', err);
-        }
-      });
-      
-      req.on('end', () => {
-        res.end();
-      });
       
       return;
     }
@@ -94,7 +75,7 @@ export async function runHttpServer(config: HttpServerConfig = {}) {
   
   httpServer.listen(port, host, () => {
     console.log(`Harbor MCP Server (HTTP) running on http://${host}:${port}`);
-    console.log(`SSE endpoint: http://${host}:${port}/sse`);
+    console.log(`MCP endpoint: http://${host}:${port}/mcp`);
     if (bearerToken) {
       console.log('Bearer token authentication enabled');
     }
