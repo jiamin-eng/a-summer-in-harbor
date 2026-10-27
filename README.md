@@ -31,21 +31,20 @@ npm run dev
 
 临时版本的旅程由当前浏览器/WebView 凭证持有。换设备不能自动恢复，同一浏览器切换 AlterU 账号也不会切换旅程；清除浏览器数据可能失去访问。平台真实账号绑定及持有权迁移是后续工作。
 
-## 文字冒险版
+## MCP 服务器
 
-`text-agent/` 目录包含纯文字对话版本：玩家通过与LLM代理聊天来玩游戏，无需打开2D界面。支持CLI、HTTP API和网页聊天。详见 [text-agent/README.md](text-agent/README.md)。
+`mcp-server/` 目录提供 Model Context Protocol 服务器，让 LLM 代理可以通过标准化协议玩游戏。支持 stdio（本地 Claude Desktop/Cursor）和 HTTP SSE（远程部署）。详见 [mcp-server/README.md](mcp-server/README.md)。
 
 ```bash
-# CLI聊天
-export OPENAI_API_KEY=sk-...
-npm run text-agent:cli
+# Stdio 模式（本地）
+npm run mcp:stdio
 
-# HTTP服务器（含网页UI）
-npm run text-agent:http
+# HTTP 模式（远程）
+npm run mcp:http
 
-# 测试与演示
-npm run text-agent:test
-npm run text-agent:demo
+# 测试
+npm run mcp:test
+npm run mcp:playthrough
 ```
 
 ## 服务端构建
