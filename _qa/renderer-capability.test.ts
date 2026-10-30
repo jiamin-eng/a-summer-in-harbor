@@ -1,0 +1,29 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {rendererFailure,probeRendererCapability,type ProbeEnvironment} from '../src/world/renderer-capability';
+import {beginSceneStartup,readSceneStartup,startupCode} from '../src/world/scene-startup';
+const no=()=>{};
+function fixture(){
+ let released=0,listeners=0,created=0,destroyed=0;const opts:unknown[]=[];
+ const env:ProbeEnvironment={
+  webglGlobal:true,webgl2Global:true,
+  createCanvas:()=>{
+   created++;
+   return {width:0,height:0,addEventListener:()=>{listeners++},removeEventListener:()=>{listeners--},
+    getContext:(_kind,options)=>{
+     opts.push(options);
+     return {getContextAttributes:()=>({stencil:true}),isContextLost:()=>false,getExtension:()=>({loseContext:()=>released++})};
+    }
+   };
+  },
+  gpu:{requestAdapter:async()=>({requestDevice:async()=>({destroy:()=>destroyed++})})},
+  setTimer:(fn,ms)=>setTimeout(fn,ms),clearTimer:id=>clearTimeout(id as ReturnType<typeof setTimeout>)
+ };
+ return {env,state:()=>({released,listeners,created,destroyed,opts})};
+}
+test('exact error origins are distinct; unknown text is not guessed',()=>{for(const [m,v]of [['No available renderer for the current environment','NO_SUPPORTED_BACKEND'],['WebGPU not supported. No GPU adapter was returned by navigator.gpu.requestAdapter().','WEBGPU_ADAPTER_UNAVAILABLE'],['This browser does not support WebGL. Try using the canvas renderer','WEBGL_CONTEXT_CREATION_FAILED'],['WebGL unsupported on legacy','WEBGL_UNSUPPORTED_LEGACY'],['Unable to auto-detect a suitable renderer','AUTO_DETECT_UNAVAILABLE_LEGACY']])assert.equal(rendererFailure(Error(m)),v);assert.equal(rendererFailure(Error('Network timeout https://secret.invalid/?token=x')),undefined)});
+test('known renderer exception corrects phase overwritten by map asset preparation',()=>{const attempt=beginSceneStartup();attempt.phase('renderer');attempt.phase('scene-assets');attempt.fail(Error('No available renderer for the current environment'));const value=readSceneStartup();assert.equal(value?.stage,'renderer');assert.equal(value?.rendererFailure,'NO_SUPPORTED_BACKEND');assert.equal(value?.code,'RENDERER_UNAVAILABLE');assert.ok(!JSON.stringify(value).includes('No available renderer'))});
+test('actual GL context creation failure now classified; generic init stays renderer failure',()=>{assert.equal(startupCode(Error('This browser does not support WebGL. Try using the canvas renderer'),'renderer'),'RENDERER_UNAVAILABLE');assert.equal(startupCode(Error('shader initialization failed'),'renderer'),'RENDERER_FAILED');assert.equal(startupCode(Error('fetch failed'),'scene-assets'),'SCENE_ASSET_FAILED')});
+test('probe returns fixed states and releases all own contexts/device/listeners',async()=>{const f=fixture();const p=await probeRendererCapability(f.env);assert.equal(p.webgl.result,'created');assert.equal(p.webgl2.result,'created');assert.equal(p.webgpuAdapter,'available');assert.equal(p.webgpuDevice,'created');assert.deepEqual(f.state(),{created:2,released:2,listeners:0,destroyed:1,opts:[{stencil:true,failIfMajorPerformanceCaveat:false},{stencil:true,failIfMajorPerformanceCaveat:false}]});assert.ok(!JSON.stringify(p).includes('vendor'))});
+test('null context, creation-error and context-lost/stencil are different states',async()=>{const f=fixture();let n=0;f.env.createCanvas=()=>({width:0,height:0,addEventListener:(_t,fn)=>fn(),removeEventListener:no,getContext:()=>++n===1?null:{getContextAttributes:()=>({stencil:false}),isContextLost:()=>true,getExtension:()=>null}});delete f.env.gpu;const p=await probeRendererCapability(f.env);assert.equal(p.webgl.result,'null');assert.equal(p.webgl.creationError,true);assert.equal(p.webgl2.stencil,'no');assert.equal(p.webgl2.lost,'yes');assert.equal(p.webgpuAPI,false);assert.equal(p.webgpuAdapter,'not-run')});
+test('exception text is never emitted; adapter/device absent or error remain distinct',async()=>{const f=fixture();f.env.createCanvas=()=>{throw Error('secret GPU and URL')};f.env.gpu={requestAdapter:async()=>null};let p=await probeRendererCapability(f.env);assert.equal(p.webgl.result,'exception');assert.equal(p.webgpuAdapter,'absent');assert.ok(!JSON.stringify(p).includes('secret'));f.env.gpu={requestAdapter:async()=>{throw Error('secret')}};p=await probeRendererCapability(f.env);assert.equal(p.webgpuAdapter,'exception');f.env.gpu={requestAdapter:async()=>({requestDevice:async()=>{throw Error('secret')}})};p=await probeRendererCapability(f.env);assert.equal(p.webgpuAdapter,'available');assert.equal(p.webgpuDevice,'exception')});
+test('bounded device timeout consumes late device and destroys it once',async()=>{const f=fixture();let pending:((v:{destroy:()=>void})=>void)|undefined,lateDestroyed=0;const timers=new Set<()=>void>();f.env.setTimer=fn=>{timers.add(fn);return fn};f.env.clearTimer=id=>{timers.delete(id as ()=>void)};f.env.gpu={requestAdapter:async()=>({requestDevice:()=>new Promise(resolve=>{pending=resolve})})};const work=probeRendererCapability(f.env);await new Promise<void>(r=>setImmediate(r));assert.ok(pending);for(const fn of timers)fn();const p=await work;assert.equal(p.webgpuDevice,'timeout');pending!({destroy:()=>lateDestroyed++});await new Promise<void>(r=>setImmediate(r));assert.equal(lateDestroyed,1)});

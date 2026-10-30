@@ -31,6 +31,10 @@ npm run dev
 
 临时版本的旅程由当前浏览器/WebView 凭证持有。换设备不能自动恢复，同一浏览器切换 AlterU 账号也不会切换旅程；清除浏览器数据可能失去访问。平台真实账号绑定及持有权迁移是后续工作。
 
+## MCP 服务器
+
+`mcp-server/` 挂在本地权威服务上。`npm run server` 启动后，MCP 在 `http://127.0.0.1:5236/mcp`，读写 `.data/preview.sqlite` 里的同一份旅程。详见 [mcp-server/README.md](mcp-server/README.md)。
+
 ## 服务端构建
 
 `node scripts/bundle-public.mjs` 生成 Linux 可用的 `dist-server/`（目标 Node22），不含私有配置。生产在既有 Node22/SWI 镜像的独立海湾层补充 Pillow；本地前端构建继续用 Node24。

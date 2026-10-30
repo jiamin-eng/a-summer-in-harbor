@@ -93,3 +93,36 @@
 .harbor-fishing-ready-actions:has([data-fishing-baits]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end;gap:8px}
 .harbor-fishing-ready-actions [data-fishing-baits]{min-width:0;font-size:12px;line-height:1.2}
 .harbor-fishing-ready-actions select{font-size:14px;margin:3px 0 0;min-height:44px}
+
+/* Experience slice: real encounter anchors, one scene, no second decorative water panel. */
+.harbor-fishing-scene{position:absolute;inset:0;width:100%;height:100%;z-index:4;overflow:hidden;pointer-events:none;visibility:hidden;shape-rendering:crispEdges}
+.harbor-fishing-scene [data-fishing-rod]{fill:none;stroke:#75522b;stroke-width:3;stroke-linecap:square}
+.harbor-fishing-scene [data-fishing-line]{fill:none;stroke:#fff5df;stroke-width:1.5}
+.harbor-fishing-scene [data-fishing-ripple]{fill:none;stroke:#fff5df;stroke-width:1;opacity:.8}
+.harbor-fishing-scene [data-fishing-float] path{stroke:#fff5df;stroke-width:2}
+.harbor-fishing-scene [data-fishing-float] ellipse{fill:#c45c43;stroke:#fff5df;stroke-width:1}
+.harbor-fishing-scene [data-fishing-fish]{fill:#e6e7d1;stroke:#405f58;stroke-width:1;visibility:hidden}
+.harbor-app[data-fishing-phase] .harbor-shore-preview{visibility:hidden!important}
+.harbor-backdrop--fishing [data-fishing-help] summary,.harbor-backdrop--fishing [data-fishing-change-bait] summary{min-height:44px;padding:10px 0;font-size:16px;cursor:pointer}
+.harbor-backdrop--fishing [data-fishing-help] p,.harbor-fishing-dock .harbor-panel__body p,.harbor-backdrop--fishing [data-shore-fishing] p,.harbor-fishing-ready-actions [data-fishing-baits] p{font-size:16px;line-height:1.4}
+.harbor-fishing-ready-actions [data-fishing-effective-bait]{margin:0 0 4px}
+@media(max-height:550px){.harbor-fishing-dock .harbor-panel__body p,.harbor-backdrop--fishing [data-shore-fishing] p{font-size:16px}.harbor-fishing-dock .harbor-fishing__cue{margin:4px 0}}
+
+/* C direct casting entry; old active challenges keep their original UI. */
+.harbor-shore-shortcuts{position:absolute;right:16px;bottom:calc(122px + env(safe-area-inset-bottom));z-index:7;width:min(344px,calc(100% - 32px));display:grid;grid-template-columns:minmax(0,1fr) 76px;gap:8px}
+.harbor-shore-shortcuts button{min-width:0;min-height:56px;padding:6px 8px;font-size:16px;line-height:1.2;white-space:normal}.harbor-shore-shortcuts button+button{font-size:14px}
+.harbor-shore-shortcuts strong,.harbor-shore-shortcuts small{display:block}.harbor-shore-shortcuts small{font-size:13px}
+.harbor-fishing__cue[data-warning=true]{color:var(--coral);border-left:4px solid var(--coral);padding-left:8px}
+
+/* C lives over the existing water scene; a compact status/action rail, no minigame window. */
+.harbor-app[data-fishing-interaction=tap-c] .harbor-backdrop--fishing {background:transparent;pointer-events:none;align-items:flex-end}
+.harbor-app[data-fishing-interaction=tap-c] .harbor-world{inset:var(--harbor-header-bottom,90px) 0 0}
+.harbor-fishing-tap{max-height:min(42dvh,260px);border-radius:16px 16px 0 0;box-shadow:0 -3px 14px #0002;pointer-events:auto}
+.harbor-fishing-tap .harbor-panel__body{padding:10px 14px;overflow:auto;min-height:0}
+.harbor-fishing-tap .harbor-panel__body p{margin:4px 0}
+.harbor-fishing-tap small{display:block;line-height:1.35}
+.harbor-fishing-tap .harbor-fishing__actions{display:flex;gap:8px;padding:8px 14px max(8px,env(safe-area-inset-bottom));flex-shrink:0}
+.harbor-fishing-tap .harbor-fishing__actions button{min-height:48px;flex:1}
+@media(max-height:550px){.harbor-fishing-tap{max-height:40dvh}.harbor-fishing-tap .harbor-panel__body{padding:5px 12px}.harbor-fishing-tap .harbor-fishing__actions{padding:4px 12px max(4px,env(safe-area-inset-bottom))}}
+
+.harbor-panel[data-fishing-ready=true]{max-height:42dvh;display:flex;flex-direction:column}.harbor-panel[data-fishing-ready=true]>header{padding:6px 12px}.harbor-panel[data-fishing-ready=true]>header small{display:none}.harbor-panel[data-fishing-ready=true]>header h2{font-size:1rem}.harbor-panel[data-fishing-ready=true]>.harbor-panel__body{overflow:auto;min-height:0;padding:6px 12px}.harbor-panel[data-fishing-ready=true] .harbor-fishing-ready-actions{padding:6px 12px;flex-shrink:0}

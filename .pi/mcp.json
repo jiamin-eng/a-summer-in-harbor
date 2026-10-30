@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "harbor": {
+      "url": "http://127.0.0.1:5236/mcp",
+      "exposure": "direct",
+      "description": "海湾新生活。说话、移动和任务结算都是游戏里的同一份旅程。",
+      "headers": {
+        "Authorization": "!node scripts/harbor-aigram-token.mjs"
+      }
+    }
+  }
+}

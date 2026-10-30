@@ -1,7 +1,7 @@
 /** Public protocol/build metadata; never identity or a credential. */
 declare const __HARBOR_FISHING_MODE__: 'open'|'stop-new';
-export const FISHING_PROTOCOL='3';
-export const FISHING_RELEASE='harbor-fishing-species-stage2-20261022-v1';
+export const FISHING_PROTOCOL='4';
+export const FISHING_RELEASE='harbor-fishing-scene-c-20261025-v2';
 export const FISHING_MODE=typeof __HARBOR_FISHING_MODE__==='undefined'?'open':__HARBOR_FISHING_MODE__;
 if(!['open','stop-new'].includes(FISHING_MODE))throw Error('INVALID_FISHING_RELEASE_MODE');
 export const FISHING_NEW_STARTS=FISHING_MODE==='open';

@@ -16,6 +16,10 @@ import {AsyncSessionAuthority,openPgAuthorityStore} from '../vendor/dynamic-runt
 // @ts-expect-error pinned library
 import {createPlayerUsage} from '../vendor/dynamic-runtime/packages/dynamic-pipeline/player-usage.mjs';
 import {json} from './http';import {privateText,validatePublicConfig,verifiedEdgeOwner} from './public-config';import {createDialogueResolver} from './dialogue';import {createFieldNotes} from './fieldnotes';import {createNoteMedia} from './note-media';import {GAME_UUID} from '../src/game-id';
+import {createAigramVerifier} from '../mcp-server/auth/aigram';
+import {createMcpHttpHandler} from '../mcp-server/transports/http';
+import {createGameJourneys} from '../mcp-server/state/journeys';
+import {createTownPresence} from '../mcp-server/state/presence';
 const config=validatePublicConfig(JSON.parse(await privateText(process.env.HARBOR_CONFIG_FILE))),token=await privateText(process.env.HARBOR_EDGE_FILE);if(!/^[a-f0-9]{64}$/.test(token))throw Error('EDGE_TOKEN_INVALID');
 // Candidate mode is absent from the published config. When explicitly enabled,
 // the verifier uses Wang Xing's fixed no-parameter self endpoint.
@@ -31,9 +35,12 @@ const authority=assembly.decorateAuthority(new AsyncSessionAuthority(store,runti
 const dynamicAssets=await createDynamicAssets({pool,authority,config,edgeToken:token});
 const deps={store,runtime,newsProject,lifeProject:assembly.lifeProject,landProject:assembly.landProject,decorateAuthority:assembly.decorateAuthority,dynamicAssets,usage:createPlayerUsage({store}),noteMedia:createNoteMedia(store)};
 const api=createTemporaryAccountTransport({...deps,mode:config.identityMode,gameId:GAME_UUID,accountOnly:true,verifyPlatformToken});
+const aigram=createAigramVerifier();
+const mcp=createMcpHttpHandler({journeys:createGameJourneys(authority,createTownPresence(authority)),resolve:(req)=>aigram.verify(Array.isArray(req.headers.authorization)?req.headers.authorization[0]:req.headers.authorization)});
 const server=createServer({maxHeaderSize:8192},async(req,res)=>{try{
  const who=verifiedEdgeOwner(req,config,token);const path=new URL(req.url!,'http://localhost').pathname;
  if(path==='/api/health')return json(res,200,{ok:true,gameId:GAME_UUID,release:'harbor-public-r1',sourceRelease:RELEASE,...fishingContract(),identity:config.identityMode,platformIdentityVerified:config.identityMode===PLATFORM_VERIFIED_MODE,persistence:'postgresql',runtimeCandidate:'2026-10-01.2'});
+ if(path==='/mcp')return mcp.handle(req,res);
  if(!['GET','POST'].includes(req.method??''))return json(res,405,{error:'METHOD_NOT_ALLOWED'});
  return await api(req,res,who);
  }catch(e:any){const error=String(e.code??e.message??'REQUEST_FAILED');const known=/^[A-Z][A-Z0-9_]{1,90}$/.test(error);json(res,req.url?.includes('/assets/')?assetHttpStatus(e):e.status??(error==='EDGE_IDENTITY_REQUIRED'?401:error==='PLAY_WINDOW_CLOSED'?410:400),{error:known?error:'SERVICE_UNAVAILABLE',terminal:e.terminal??error!=='MODEL_CALL_PENDING_OR_INTERRUPTED'})}});

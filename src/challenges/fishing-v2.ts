@@ -27,7 +27,7 @@ export function selectFishingBait(s:Save,a:Action):Words{gate(!s.activeChallenge
 export function buyFishingBait(s:Save,bait:string):Words{gate(shopOpen(s),'SHOP_CLOSED');gate(paidBaits.some(id=>id===bait),'INVALID_FISHING_BAIT');const b=baitCatalog[bait as BaitId];gate(s.cash>=b.price,'NOT_ENOUGH_CASH');gate((s.items[bait]??0)<999,'FISHING_BAIT_FULL');s.cash-=b.price;s.items[bait]=(s.items[bait]??0)+1;return [`买入1份${b.name[0]}，花费$${b.price}。`,`Bought 1 ${b.name[1]} for $${b.price}.`]}
 export const totalFish=(s:Pick<Save,'items'>)=>(s.items.fish??0)+speciesIds.reduce((n,id)=>n+(s.items[fishItem(id)]??0),0);
 export function validFishingV2(s:Save){
- const m=s.fishingV2;if(m===undefined)return s.activeChallenge?.fishing?.rules!=='shore-fishing-v2';const integer=(n:unknown)=>Number.isSafeInteger(n)&&(n as number)>=0;
+ const m=s.fishingV2;if(m===undefined)return !['shore-fishing-v2','shore-fishing-c-v1'].includes(s.activeChallenge?.fishing?.rules??'');const integer=(n:unknown)=>Number.isSafeInteger(n)&&(n as number)>=0;
  if(!m||m.schema!==1||!baitIds.includes(m.selected)||!m.cycles||!['saltwater','stream'].every(w=>integer(m.cycles[w as WaterKind]))||!m.tickets||!m.codex||Array.isArray(m.tickets)||Array.isArray(m.codex))return false;
  for(const [water,t]of Object.entries(m.tickets)){if(!['saltwater','stream'].includes(water)||!t||t.water!==water||!speciesIds.includes(t.species)||fishCatalog[t.species].water!==water||!baitIds.includes(t.bait)||!integer(t.minute)||!integer(t.cycle)||t.cycle!==m.cycles[t.water]||typeof t.zone!=='string')return false}
  for(const id of paidBaits){const n=s.items[id]??0;if(!integer(n)||n>999||n<Object.values(m.tickets).filter(t=>t?.bait===id).length)return false}
@@ -35,6 +35,6 @@ export function validFishingV2(s:Save){
  for(const [id,r]of Object.entries(m.codex))if(!speciesIds.includes(id as SpeciesId)||!r||!integer(r.count)||r.count<1||!integer(r.firstMinute)||!integer(r.lastMinute)||r.lastMinute<r.firstMinute)return false;
  const total=Object.values(m.codex).reduce((n,r)=>n+r!.count,0);if(total!==m.cycles.saltwater+m.cycles.stream)return false;
  const last=m.lastCatch;if(last&&(!speciesIds.includes(last.species)||!baitIds.includes(last.bait)||!integer(last.minute)||!m.codex[last.species]))return false;
- const active=s.activeChallenge?.fishing;if(active?.rules==='shore-fishing-v2'){const ticket=m.tickets[active.water];if(!ticket||JSON.stringify(ticket)!==JSON.stringify(active.ticket)||active.species!==ticket.species)return false}
+ const active=s.activeChallenge?.fishing;if(active&&['shore-fishing-v2','shore-fishing-c-v1'].includes(active.rules)){const ticket=m.tickets[active.water];if(!ticket||JSON.stringify(ticket)!==JSON.stringify(active.ticket)||active.species!==ticket.species)return false}
  return true;
 }
