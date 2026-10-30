@@ -11,8 +11,6 @@
     "export:cartridge": "node --import tsx scripts/export-cartridge.ts",
     "server:public": "node --import tsx server/public.ts",
     "migrate:public": "node --import tsx scripts/migrate-public.ts",
-    "mcp:stdio": "node --import tsx mcp-server/index.ts",
-    "mcp:http": "node --import tsx mcp-server/transports/http.ts",
     "mcp:playthrough": "node --import tsx mcp-server/tests/playthrough.test.ts"
   },
   "keywords": [],

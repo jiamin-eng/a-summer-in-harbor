@@ -4,6 +4,7 @@
  */
 
 import { initial } from '../../src/story/state.js';
+import { sceneOffers, type OfferedAction } from '../../src/story/player-actions.js';
 import { InMemoryStateStore } from '../state/store.js';
 import * as gameActions from '../tools/game-actions.js';
 
@@ -18,19 +19,25 @@ async function runPlaythrough() {
   let state = initial(locale, sessionId);
   await stateStore.save(sessionId, state);
   
-  const steps = [
+  const offered = (match: (action: OfferedAction) => boolean) => {
+    const action = sceneOffers(state).actions.find(match);
+    if (!action) return Promise.resolve({ success: false, error: '游戏没有列出这个动作', message: '' });
+    return gameActions.act(state, action.action, action.target, locale);
+  };
+  const steps: Array<{ name: string; fn: () => Promise<gameActions.ToolResult> | gameActions.ToolResult; expect: string }> = [
     { name: '观察车站街', fn: () => gameActions.observeScene(state, locale), expect: '车站街' },
-    { name: '与玛拉介绍', fn: () => gameActions.introduce(state, 'mara', locale), expect: '玛拉' },
-    { name: '领取钥匙', fn: () => gameActions.talk(state, 'mara', 'key', locale), expect: '钥匙' },
-    { name: '前往租屋', fn: () => gameActions.travel(state, 'home', locale), expect: '租屋' },
-    { name: '放下行李', fn: () => gameActions.useObject(state, 'bed', 'unpack', locale), expect: '行李' },
-    { name: '返回车站街', fn: () => gameActions.fastTravel(state, 'station', locale), expect: '抵达' },
-    { name: '告知玛拉已安顿', fn: () => gameActions.talk(state, 'mara', 'settle', locale), expect: '咖啡馆' },
-    { name: '前往咖啡馆', fn: () => gameActions.travel(state, 'cafe', locale), expect: '咖啡馆' },
-    { name: '与Theo介绍', fn: () => gameActions.introduce(state, 'theo', locale), expect: 'Theo' },
-    { name: '取回工具袋', fn: () => gameActions.talk(state, 'theo', 'bag', locale), expect: '帆布袋' },
-    { name: '快速返回车站街', fn: () => gameActions.fastTravel(state, 'station', locale), expect: '抵达' },
-    { name: '归还工具袋', fn: () => gameActions.talk(state, 'mara', 'return-bag', locale), expect: '谢谢' }
+    { name: '与玛拉介绍', fn: () => offered((action) => action.action === 'introduce'), expect: '玛拉' },
+    { name: '玛拉可以选的话', fn: () => gameActions.observeScene(state, locale), expect: '领取钥匙' },
+    { name: '领取钥匙', fn: () => offered((action) => action.action === 'talk:key'), expect: '新的任务' },
+    { name: '前往租屋', fn: () => offered((action) => action.action === 'travel' && action.destination === 'home'), expect: '租屋' },
+    { name: '放下行李', fn: () => offered((action) => action.action === 'unpack'), expect: '行李' },
+    { name: '返回车站街', fn: () => offered((action) => action.action === 'travel-map' && action.target === 'station'), expect: '抵达' },
+    { name: '告知玛拉已安顿', fn: () => offered((action) => action.action === 'talk:settle'), expect: '咖啡馆' },
+    { name: '前往咖啡馆', fn: () => offered((action) => action.action === 'travel' && action.destination === 'cafe'), expect: '咖啡馆' },
+    { name: '与Theo介绍', fn: () => offered((action) => action.action === 'introduce'), expect: 'Theo' },
+    { name: '取回工具袋', fn: () => offered((action) => action.action === 'talk:bag'), expect: '帆布袋' },
+    { name: '快速返回车站街', fn: () => offered((action) => action.action === 'travel-map' && action.target === 'station'), expect: '抵达' },
+    { name: '归还工具袋', fn: () => offered((action) => action.action === 'talk:return-bag'), expect: '谢谢' }
   ];
   
   for (let i = 0; i < steps.length; i++) {
@@ -38,7 +45,7 @@ async function runPlaythrough() {
     console.log(`步骤 ${i + 1}: ${step.name}`);
     
     try {
-      const result = step.fn();
+      const result = await step.fn();
       
       if (!result.success) {
         console.error(`  ❌ 失败: ${result.error}`);

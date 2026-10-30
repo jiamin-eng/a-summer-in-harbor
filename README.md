@@ -33,19 +33,7 @@ npm run dev
 
 ## MCP 服务器
 
-`mcp-server/` 目录提供 Model Context Protocol 服务器，让 LLM 代理可以通过标准化协议玩游戏。支持 stdio（本地 Claude Desktop/Cursor）和 HTTP SSE（远程部署）。详见 [mcp-server/README.md](mcp-server/README.md)。
-
-```bash
-# Stdio 模式（本地）
-npm run mcp:stdio
-
-# HTTP 模式（远程）
-npm run mcp:http
-
-# 测试
-npm run mcp:test
-npm run mcp:playthrough
-```
+`mcp-server/` 挂在本地权威服务上。`npm run server` 启动后，MCP 在 `http://127.0.0.1:5236/mcp`，读写 `.data/preview.sqlite` 里的同一份旅程。详见 [mcp-server/README.md](mcp-server/README.md)。
 
 ## 服务端构建
 

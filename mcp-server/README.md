@@ -14,7 +14,7 @@
 - ✅ 游戏资源（世界观、地图、角色、玩法规则）
 - ✅ 提示词（叙述者系统提示）
 - ✅ **可插拔状态存储**: `StateStore`接口 + 内存默认实现 + JSON导入/导出
-- ✅ **Transports**: stdio（Claude Desktop/Cursor本地使用）和 HTTP Streamable（远程部署，可选Bearer token认证）
+- ✅ **HTTP**：挂在本地权威服务 `http://127.0.0.1:5236/mcp`，读写游戏里的同一份旅程
 
 ## 安装
 
@@ -24,29 +24,13 @@ npm install
 
 ## 运行方式
 
-### Stdio 模式（本地使用）
+挂在本地权威服务上，没有单独的 MCP 进程：
 
 ```bash
-# 使用默认语言（中文）
-npm run mcp:stdio
-
-# 指定语言
-GAME_LOCALE=en npm run mcp:stdio
+npm run server
 ```
 
-### HTTP 模式（远程部署）
-
-```bash
-# 默认端口 3000
-npm run mcp:http
-
-# 自定义端口和认证
-PORT=8080 BEARER_TOKEN=your-secret npm run mcp:http
-```
-
-HTTP端点：
-- `GET /health` - 健康检查
-- `POST /mcp` - MCP Streamable HTTP端点（需要 Authorization: Bearer <token> 如果设置了BEARER_TOKEN）
+MCP 在 `http://127.0.0.1:5236/mcp`，和游戏共用 `.data/preview.sqlite`。身份是浏览器里的 `harbor_preview` 能力值：放在 Cookie 里，或作为 `Authorization: Bearer <64位十六进制>`。没有单独的 MCP 进程。
 
 ## Claude Desktop / Cursor 配置
 
@@ -56,26 +40,9 @@ HTTP端点：
 {
   "mcpServers": {
     "harbor": {
-      "command": "node",
-      "args": ["--import", "tsx", "mcp-server/index.ts"],
-      "cwd": "/path/to/a-summer-in-harbor",
-      "env": {
-        "GAME_LOCALE": "zh"
-      }
-    }
-  }
-}
-```
-
-或使用HTTP连接（远程服务器）：
-
-```json
-{
-  "mcpServers": {
-    "harbor": {
-      "url": "https://your-server.com/mcp",
+      "url": "http://127.0.0.1:5236/mcp",
       "headers": {
-        "Authorization": "Bearer your-secret-token"
+        "Authorization": "Bearer <浏览器 harbor_preview 的值>"
       }
     }
   }
@@ -84,7 +51,7 @@ HTTP端点：
 
 ## 工具列表
 
-所有工具都需要 `sessionId` 参数来标识玩家会话。
+身份来自浏览器的 `harbor_preview`。工具列表里没有 `sessionId`。`import_state` 不可用，因为进度只在游戏里。
 
 | 工具 | 描述 | 参数 |
 |------|------|------|
@@ -107,7 +74,9 @@ HTTP端点：
 | `harbor://game/map` | 世界地图 |
 | `harbor://game/characters` | 角色列表 |
 | `harbor://game/howtoplay` | 玩法规则 |
-| `harbor://session/{sessionId}/state` | 当前会话状态快照 |
+| `harbor://session/{sessionId}/state` | stdio：指定会话的存档 |
+| `harbor://me/state` | HTTP：当前认证玩家的存档 |
+| `harbor://me/context` | HTTP：当前认证玩家的叙述上下文 |
 
 ## 提示词列表
 
@@ -146,21 +115,19 @@ const server = createMCPServer({
 使用 `export_state` 和 `import_state` 工具在外部服务中管理状态：
 
 ```javascript
-// 导出
+// stdio 传入 sessionId。HTTP 连接已经绑定玩家，arguments 留空，存档键就是玩家 id。
 const exported = await client.callTool({
   name: 'export_state',
   arguments: { sessionId: 'player-123' }
 });
 const stateJson = exported.content[0].text;
 
-// 保存到你的数据库
 await myDatabase.save('player-123', stateJson);
 
-// 稍后导入
-const stateJson = await myDatabase.load('player-123');
+const restored = await myDatabase.load('player-123');
 await client.callTool({
   name: 'import_state',
-  arguments: { sessionId: 'player-123', stateJson }
+  arguments: { sessionId: 'player-123', stateJson: restored }
 });
 ```
 
@@ -178,8 +145,11 @@ npm run mcp:playthrough
 ```
 mcp-server/
 ├── index.ts              # 主MCP服务器
+├── auth/
+│   └── aigram.ts         # Aigram 登录令牌 → 游戏 owner
 ├── state/
-│   └── store.ts          # 状态存储接口
+│   ├── store.ts          # 仅 stdio 本机调试用的内存状态
+│   └── journeys.ts       # 游戏权威库里的旅程
 ├── tools/
 │   └── game-actions.ts   # 游戏动作工具
 ├── resources/
@@ -209,19 +179,18 @@ mcp-server/
 | 变量 | 描述 | 默认值 |
 |------|------|--------|
 | `GAME_LOCALE` | 游戏语言 (zh/en) | zh |
-| `PORT` | HTTP服务器端口 | 3000 |
-| `HOST` | HTTP服务器主机 | 0.0.0.0 |
-| `BEARER_TOKEN` | HTTP认证令牌（可选） | - |
 
 ## 与外部服务集成
 
 外部服务（如你们团队的聊天服务）应该：
 
-1. **连接MCP服务器**：通过stdio或HTTP SSE
-2. **管理会话**：为每个玩家生成 `sessionId`
-3. **持久化状态**：定期调用 `export_state` 备份到数据库
-4. **LLM集成**：将MCP工具、资源和提示词暴露给LLM
+1. **连接本地权威服务**：`http://127.0.0.1:5236/mcp`
+2. **本地 HTTP** 使用浏览器 `harbor_preview` 能力值。不要再签发另一把 MCP 令牌
+3. **进度在 `.data/preview.sqlite`**：MCP 不另存
+4. **LLM集成**：将MCP工具、资源和提示词暴露给LLM。`narrator` / `gamemaster` 和 `harbor://me/context` 只描述这位玩家的旅程
 5. **聊天UI**：提供自己的聊天界面
+
+同一登录令牌重新连接，读到的仍是游戏里该玩家最近的一份旅程。另一把登录令牌看不到它，也不能复用别人的 `Mcp-Session-Id`。
 
 示例流程：
 ```

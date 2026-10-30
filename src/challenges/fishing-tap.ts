@@ -5,6 +5,11 @@ export const tapWindow=(first=false):TapWindow=>({schema:1,biteTick:45,hookWindo
 export function validTapWindow(w:unknown):w is TapWindow{
  const v=w as TapWindow;return !!v&&v.schema===1&&v.biteTick===45&&[120,180].includes(v.hookWindow);
 }
+/** The tap the fishing scene records: a hook tick, or a miss when the window ends. */
+export function shoreTap(window:{biteTick:number;hookWindow:number},hookTick:number|null):TapInput{
+ if(hookTick===null)return {hookTick:null,waitTicks:window.biteTick+window.hookWindow,runs:[]};
+ return {hookTick,waitTicks:hookTick,runs:[]};
+}
 export function replayTap(w:TapWindow,input:{hookTick:number|null;waitTicks:number;runs:unknown[]}){
  const fail=()=>{throw Error('INVALID_FISHING_TAP_INPUT')};
  if(!validTapWindow(w)||!input||!Array.isArray(input.runs)||input.runs.length||!Number.isSafeInteger(input.waitTicks)||input.waitTicks<0||input.waitTicks>w.biteTick+w.hookWindow)fail();

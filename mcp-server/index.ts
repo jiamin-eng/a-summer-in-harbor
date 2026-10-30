@@ -1,28 +1,55 @@
 /**
- * Main MCP Server for A Summer in Harbor
- * Provides game tools, resources, and prompts via MCP protocol
+ * Tool, resource, and prompt registration for the local game server.
+ * server/index.ts is the process that listens. This file does not start one.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema, ListPromptsRequestSchema, GetPromptRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 
 import { StateStore, InMemoryStateStore } from './state/store.js';
-import { initial } from '../src/story/state.js';
+import { withPlayerLock } from './state/lock.js';
+import type { GameJourneys } from './state/journeys.js';
+import { game } from '../src/story/mcp-game.js';
 import type { Locale } from '../src/world/data.js';
 import * as gameActions from './tools/game-actions.js';
-import * as gameContent from './resources/game-content.js';
+import { withPerformer, adoptSave } from './tools/perform.js';
 import * as narrator from './prompts/narrator.js';
 
 export interface ServerConfig {
   stateStore?: StateStore;
   defaultLocale?: Locale;
+  /**
+   * When set, this server instance belongs to one authenticated player.
+   * Tools, resources, and prompts use this id. A different sessionId is rejected.
+   */
+  playerId?: string;
+  /** Shown to the model. The game owner hash stays in playerId. */
+  playerLabel?: string;
+  /** Game authority journeys. When set, MCP does not keep a second copy. */
+  journeys?: GameJourneys;
 }
+
+type ToolDef = {
+  name: string;
+  description: string;
+  inputSchema: {
+    type: 'object';
+    properties: Record<string, unknown>;
+    required?: string[];
+  };
+};
+
+type HandlerExtra = {
+  authInfo?: { extra?: Record<string, unknown> };
+};
 
 export function createMCPServer(config: ServerConfig = {}) {
   const stateStore = config.stateStore || new InMemoryStateStore();
   const defaultLocale: Locale = config.defaultLocale || 'zh';
+  const boundPlayerId = config.playerId;
+  const playerLabel = config.playerLabel || boundPlayerId;
+  const journeys = config.journeys;
   
   const server = new Server(
     {
@@ -35,27 +62,92 @@ export function createMCPServer(config: ServerConfig = {}) {
         resources: {},
         prompts: {},
       },
+      instructions: boundPlayerId
+        ? (defaultLocale === 'zh'
+          ? `当前连接是游戏登录玩家 ${playerLabel}。工具读写的是游戏里这一份旅程。不要传递 sessionId，也不要访问其他玩家。`
+          : `This connection is game player ${playerLabel}. Tools read and write that player's journey in the game. Do not pass sessionId or access another player.`)
+        : undefined,
     }
   );
+
+  function scopeTools(tools: ToolDef[]): ToolDef[] {
+    if (!boundPlayerId) return tools;
+    return tools.map((tool) => {
+      const properties = { ...tool.inputSchema.properties };
+      delete properties.sessionId;
+      const required = (tool.inputSchema.required ?? []).filter((name) => name !== 'sessionId');
+      return {
+        ...tool,
+        inputSchema: { ...tool.inputSchema, properties, required },
+      };
+    });
+  }
+
+  function assertSamePlayer(extra?: HandlerExtra) {
+    const claimed = extra?.authInfo?.extra?.playerId;
+    if (boundPlayerId && typeof claimed === 'string' && claimed !== boundPlayerId) {
+      throw new Error(defaultLocale === 'zh'
+        ? '认证玩家与此连接不一致'
+        : 'Authenticated player does not match this connection');
+    }
+  }
+
+  /**
+   * HTTP connections are bound to the authenticated game owner.
+   * Stdio still selects a local journey with sessionId.
+   */
+  function playerKey(args: Record<string, unknown> | undefined): string {
+    const requested = typeof args?.sessionId === 'string' ? args.sessionId : undefined;
+    if (boundPlayerId) {
+      if (requested && requested !== boundPlayerId) {
+        throw new Error(defaultLocale === 'zh'
+          ? '这个连接已经绑定到当前玩家，不能指定其他玩家'
+          : 'This connection is bound to the authenticated player');
+      }
+      return boundPlayerId;
+    }
+    if (!requested) throw new Error('sessionId is required');
+    return requested;
+  }
   
-  // Helper to get or create game state
   async function getOrCreateState(sessionId: string, locale: Locale) {
+    if (journeys) return journeys.current(sessionId, locale);
     let state = await stateStore.load(sessionId);
     if (!state) {
-      const saveId = `${sessionId}-${Date.now()}`;
-      state = initial(locale, saveId);
+      state = game.create(locale, sessionId);
       await stateStore.save(sessionId, state);
     }
     return state;
   }
+
+  async function remember(sessionId: string, state: Awaited<ReturnType<typeof getOrCreateState>>) {
+    if (journeys) return;
+    await stateStore.save(sessionId, state);
+  }
+
+  async function loadBound(locale: Locale) {
+    if (!boundPlayerId) return null;
+    if (journeys) return journeys.peek(boundPlayerId);
+    return stateStore.load(boundPlayerId);
+  }
+
+  async function playerPrompt(text: string, locale: Locale): Promise<string> {
+    if (!boundPlayerId) return text;
+    const state = await loadBound(locale);
+    const context = state
+      ? game.context(state, locale)
+      : (locale === 'zh'
+        ? '## 当前玩家上下文\n新游戏，尚未行动。先观察所在场景。身份已绑定，不要传 sessionId。'
+        : '## Current player context\nNew game. Observe the scene first. Identity is already bound; do not pass sessionId.');
+    return `${text}\n\n${context}`;
+  }
   
   // List tools
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: [
+    const tools: ToolDef[] = [
         {
           name: 'observe_scene',
-          description: 'Observe current scene: people, objects, exits, and available actions',
+          description: '观察当前地点。返回当前任务，以及游戏按所在位置给出的可选项。',
           inputSchema: {
             type: 'object',
             properties: {
@@ -66,70 +158,18 @@ export function createMCPServer(config: ServerConfig = {}) {
           }
         },
         {
-          name: 'introduce',
-          description: 'Introduce yourself to an unknown person',
+          name: 'act',
+          description: game.actInput().description,
           inputSchema: {
             type: 'object',
             properties: {
               sessionId: { type: 'string', description: 'Player session ID' },
-              personId: { type: 'string', description: 'Person identifier (e.g., mara, theo)' },
+              action: { type: 'string', description: 'Action id from the parentheses' },
+              target: { type: 'string', description: 'Target id from the parentheses' },
+              ...game.actInput().properties,
               locale: { type: 'string', enum: ['zh', 'en'], description: 'Language' }
             },
-            required: ['sessionId', 'personId']
-          }
-        },
-        {
-          name: 'talk',
-          description: 'Talk to a known person. If topicId is omitted, lists available topics.',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              sessionId: { type: 'string', description: 'Player session ID' },
-              personId: { type: 'string', description: 'Person identifier' },
-              topicId: { type: 'string', description: 'Topic identifier (optional)' },
-              locale: { type: 'string', enum: ['zh', 'en'], description: 'Language' }
-            },
-            required: ['sessionId', 'personId']
-          }
-        },
-        {
-          name: 'travel',
-          description: 'Travel to an adjacent location',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              sessionId: { type: 'string', description: 'Player session ID' },
-              destination: { type: 'string', description: 'Destination scene ID' },
-              locale: { type: 'string', enum: ['zh', 'en'], description: 'Language' }
-            },
-            required: ['sessionId', 'destination']
-          }
-        },
-        {
-          name: 'fast_travel',
-          description: 'Fast travel to a previously visited location',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              sessionId: { type: 'string', description: 'Player session ID' },
-              destination: { type: 'string', description: 'Destination scene ID' },
-              locale: { type: 'string', enum: ['zh', 'en'], description: 'Language' }
-            },
-            required: ['sessionId', 'destination']
-          }
-        },
-        {
-          name: 'use_object',
-          description: 'Interact with an object in the scene',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              sessionId: { type: 'string', description: 'Player session ID' },
-              objectId: { type: 'string', description: 'Object identifier' },
-              action: { type: 'string', description: 'Action to perform' },
-              locale: { type: 'string', enum: ['zh', 'en'], description: 'Language' }
-            },
-            required: ['sessionId', 'objectId', 'action']
+            required: ['sessionId', 'action', 'target']
           }
         },
         {
@@ -179,24 +219,32 @@ export function createMCPServer(config: ServerConfig = {}) {
             required: ['sessionId', 'stateJson']
           }
         }
-      ]
-    };
+    ];
+    return { tools: scopeTools(tools) };
   });
   
   // Handle tool calls
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  server.setRequestHandler(CallToolRequestSchema, async (request, extra: HandlerExtra) => {
     const { name, arguments: args } = request.params;
     
     try {
-      const sessionId = (args as any).sessionId as string;
+      assertSamePlayer(extra);
+      const sessionId = playerKey(args as Record<string, unknown> | undefined);
       const locale = ((args as any).locale as Locale) || defaultLocale;
-      
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
+
+      return await withPlayerLock(sessionId, async () => {
+        await journeys?.presence?.release(sessionId);
+        try {
+        const run = async () => {
       
       // Handle export/import separately (no game state modification)
       if (name === 'export_state') {
+        if (journeys) {
+          const state = await journeys.peek(sessionId);
+          return {
+            content: [{ type: 'text', text: state ? JSON.stringify(state) : 'No state found for this session' }]
+          };
+        }
         const json = await stateStore.export(sessionId);
         return {
           content: [
@@ -209,6 +257,9 @@ export function createMCPServer(config: ServerConfig = {}) {
       }
       
       if (name === 'import_state') {
+        if (journeys) {
+          throw new Error(locale === 'zh' ? '进度只在游戏里，不能导入另一份' : 'Progress lives in the game and cannot be imported');
+        }
         const stateJson = (args as any).stateJson as string;
         await stateStore.import(sessionId, stateJson);
         return {
@@ -230,41 +281,16 @@ export function createMCPServer(config: ServerConfig = {}) {
         case 'observe_scene':
           result = gameActions.observeScene(state, locale);
           break;
-          
-        case 'introduce':
-          result = gameActions.introduce(state, (args as any).personId, locale);
-          if (result.success) {
-            await stateStore.save(sessionId, state);
-          }
+
+        case 'act': {
+          const record = (args ?? {}) as Record<string, unknown>;
+          const { action, target, ...input } = record;
+          delete input.sessionId;
+          delete input.locale;
+          result = await gameActions.act(state, String(action ?? ''), String(target ?? ''), locale, input);
+          if (result.success) await remember(sessionId, state);
           break;
-          
-        case 'talk':
-          result = gameActions.talk(state, (args as any).personId, (args as any).topicId, locale);
-          if (result.success && (args as any).topicId) {
-            await stateStore.save(sessionId, state);
-          }
-          break;
-          
-        case 'travel':
-          result = gameActions.travel(state, (args as any).destination, locale);
-          if (result.success) {
-            await stateStore.save(sessionId, state);
-          }
-          break;
-          
-        case 'fast_travel':
-          result = gameActions.fastTravel(state, (args as any).destination, locale);
-          if (result.success) {
-            await stateStore.save(sessionId, state);
-          }
-          break;
-          
-        case 'use_object':
-          result = gameActions.useObject(state, (args as any).objectId, (args as any).action, locale);
-          if (result.success) {
-            await stateStore.save(sessionId, state);
-          }
-          break;
+        }
           
         case 'view_inventory':
           result = gameActions.viewInventory(state, locale);
@@ -290,11 +316,7 @@ export function createMCPServer(config: ServerConfig = {}) {
         };
       }
       
-      // Return result with structured data
-      const responseText = result.message + 
-        (result.availableActions && result.availableActions.length > 0 
-          ? `\n\n${locale === 'zh' ? '可用行动' : 'Available actions'}: ${result.availableActions.join(', ')}`
-          : '');
+      const responseText = result.message;
       
       return {
         content: [
@@ -307,6 +329,17 @@ export function createMCPServer(config: ServerConfig = {}) {
           _meta: result.structuredData
         })
       };
+        };
+        if (!journeys) return run();
+        return withPerformer(async (save, action) => {
+          const receipt = await journeys.act(sessionId, save.id, action);
+          adoptSave(save, receipt.head);
+          return { head: receipt.head, text: receipt.text };
+        }, run);
+        } finally {
+          await journeys?.presence?.resume(sessionId);
+        }
+      });
       
     } catch (error: any) {
       return {
@@ -349,20 +382,38 @@ export function createMCPServer(config: ServerConfig = {}) {
           name: 'How to Play',
           description: 'Game rules and mechanics'
         },
-        {
-          uri: 'harbor://session/{sessionId}/state',
-          mimeType: 'application/json',
-          name: 'Current Game State',
-          description: 'Current state snapshot for a session'
-        }
+        ...(boundPlayerId
+          ? [
+              {
+                uri: 'harbor://me/state',
+                mimeType: 'application/json',
+                name: 'My Game State',
+                description: 'Save belonging to the authenticated player'
+              },
+              {
+                uri: 'harbor://me/context',
+                mimeType: 'text/markdown',
+                name: 'My Context',
+                description: 'Narrative context for the authenticated player'
+              }
+            ]
+          : [
+              {
+                uri: 'harbor://session/{sessionId}/state',
+                mimeType: 'application/json',
+                name: 'Current Game State',
+                description: 'Current state snapshot for a session'
+              }
+            ])
       ]
     };
   });
   
   // Read resources
-  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  server.setRequestHandler(ReadResourceRequestSchema, async (request, extra: HandlerExtra) => {
     const { uri } = request.params;
     const locale = defaultLocale; // Could be extracted from URI parameters
+    assertSamePlayer(extra);
     
     if (uri === 'harbor://game/introduction') {
       return {
@@ -370,7 +421,7 @@ export function createMCPServer(config: ServerConfig = {}) {
           {
             uri,
             mimeType: 'text/markdown',
-            text: gameContent.getGameIntroduction(locale)
+            text: game.introduction(locale)
           }
         ]
       };
@@ -382,7 +433,7 @@ export function createMCPServer(config: ServerConfig = {}) {
           {
             uri,
             mimeType: 'text/markdown',
-            text: gameContent.getWorldMap(locale)
+            text: game.map(locale)
           }
         ]
       };
@@ -394,7 +445,7 @@ export function createMCPServer(config: ServerConfig = {}) {
           {
             uri,
             mimeType: 'text/markdown',
-            text: gameContent.getCharacters(locale)
+            text: game.characters(locale)
           }
         ]
       };
@@ -406,15 +457,50 @@ export function createMCPServer(config: ServerConfig = {}) {
           {
             uri,
             mimeType: 'text/markdown',
-            text: gameContent.getHowToPlay(locale)
+            text: game.guide(locale)
           }
         ]
       };
     }
     
+    if (uri === 'harbor://me/state' || uri === 'harbor://me/context') {
+      if (!boundPlayerId) {
+        throw new Error('harbor://me is only available on an authenticated player connection');
+      }
+      const state = await withPlayerLock(boundPlayerId, () => journeys ? journeys.peek(boundPlayerId) : stateStore.load(boundPlayerId));
+      if (!state) throw new Error('Session not found');
+      if (uri === 'harbor://me/context') {
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'text/markdown',
+              text: game.context(state, locale)
+            }
+          ]
+        };
+      }
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(state, null, 2)
+          }
+        ]
+      };
+    }
+
     if (uri.startsWith('harbor://session/') && uri.endsWith('/state')) {
-      const sessionId = uri.split('/')[3];
-      const state = await stateStore.load(sessionId);
+      const parts = uri.split('/');
+      if (parts.length !== 5 || !parts[3]) throw new Error('Session not found');
+      const sessionId = decodeURIComponent(parts[3]);
+      if (boundPlayerId && sessionId !== boundPlayerId) {
+        throw new Error(defaultLocale === 'zh'
+          ? '不能读取其他玩家的存档'
+          : "Cannot read another player's state");
+      }
+      const state = await withPlayerLock(sessionId, () => journeys ? journeys.peek(sessionId) : stateStore.load(sessionId));
       
       if (!state) {
         throw new Error('Session not found');
@@ -465,54 +551,34 @@ export function createMCPServer(config: ServerConfig = {}) {
   });
   
   // Get prompt
-  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  server.setRequestHandler(GetPromptRequestSchema, async (request, extra: HandlerExtra) => {
     const { name, arguments: args } = request.params;
     const locale = ((args?.locale as string) || defaultLocale) as Locale;
-    
-    if (name === 'narrator') {
-      return {
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: narrator.getNarratorPrompt(locale)
-            }
+    assertSamePlayer(extra);
+
+    const text = name === 'narrator'
+      ? narrator.getNarratorPrompt(locale)
+      : name === 'gamemaster'
+        ? narrator.getGameMasterInstructions(locale, playerLabel)
+        : undefined;
+    if (!text) throw new Error(`Unknown prompt: ${name}`);
+
+    const body = boundPlayerId
+      ? await withPlayerLock(boundPlayerId, () => playerPrompt(text, locale))
+      : text;
+
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: body
           }
-        ]
-      };
-    }
-    
-    if (name === 'gamemaster') {
-      return {
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: narrator.getGameMasterInstructions(locale)
-            }
-          }
-        ]
-      };
-    }
-    
-    throw new Error(`Unknown prompt: ${name}`);
+        }
+      ]
+    };
   });
   
   return server;
-}
-
-// Run as stdio server
-export async function runStdio(config?: ServerConfig) {
-  const server = createMCPServer(config);
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error('A Summer in Harbor MCP Server running on stdio');
-}
-
-// Main entry point
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const locale = (process.env.GAME_LOCALE || 'zh') as Locale;
-  runStdio({ defaultLocale: locale }).catch(console.error);
 }
